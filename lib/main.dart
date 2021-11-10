@@ -4,6 +4,13 @@ void main() {
   runApp(const MyApp());
 }
 
+void uncoveredCode() {
+  print('This is a lot of uncovered code');
+  var message = 'Maybe not a lot';
+  message += '. But if pushes code to less than 80% coverage';
+  print(message + '. At least I wish it does');
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
