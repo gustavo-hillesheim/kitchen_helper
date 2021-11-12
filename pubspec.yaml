@@ -19,6 +19,7 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   code_coverage: ^1.2.0
   path: ^1.8.0
+  synchronized: ^3.0.0
 
 flutter:
   uses-material-design: true

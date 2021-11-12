@@ -199,7 +199,7 @@ packages:
     source: hosted
     version: "1.1.0"
   synchronized:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: synchronized
       url: "https://pub.dartlang.org"
