@@ -26,3 +26,24 @@ final sugarWithoutId = Ingredient(
   measurementUnit: MeasurementUnit.grams,
   price: 10,
 );
+
+final ingredientList = [
+  Ingredient(
+    name: 'Flour',
+    quantity: 1,
+    measurementUnit: MeasurementUnit.kilograms,
+    price: 15.75,
+  ),
+  Ingredient(
+    name: 'egg',
+    quantity: 12,
+    measurementUnit: MeasurementUnit.units,
+    price: 10,
+  ),
+  Ingredient(
+    name: 'orange juice',
+    quantity: 250,
+    measurementUnit: MeasurementUnit.milliliters,
+    price: 2.25,
+  ),
+];

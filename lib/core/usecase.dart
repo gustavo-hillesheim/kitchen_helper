@@ -5,3 +5,7 @@ import 'failure.dart';
 abstract class UseCase<Input, Output> {
   Future<Either<Failure, Output>> execute(Input input);
 }
+
+class NoParams {
+  const NoParams();
+}

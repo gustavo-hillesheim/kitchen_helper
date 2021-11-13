@@ -1,1 +1,1 @@
-enum MeasurementUnit { kilograms, grams, liters, milliliters }
+enum MeasurementUnit { kilograms, grams, liters, milliliters, units }
