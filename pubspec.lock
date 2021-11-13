@@ -147,7 +147,7 @@ packages:
       name: code_coverage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.0"
   collection:
     dependency: transitive
     description:
