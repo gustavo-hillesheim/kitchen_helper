@@ -1,10 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+
+import 'measurement_unit.dart';
 
 part 'ingredient.g.dart';
 
 @JsonSerializable()
 class Ingredient {
+  final String? id;
   final String name;
   final double quantity;
   final MeasurementUnit measurementUnit;
@@ -15,6 +17,7 @@ class Ingredient {
     required this.quantity,
     required this.measurementUnit,
     required this.price,
+    this.id,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) =>

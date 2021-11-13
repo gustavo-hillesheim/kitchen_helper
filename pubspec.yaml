@@ -24,6 +24,7 @@ dev_dependencies:
   synchronized: ^3.0.0
   build_runner: ^2.1.5
   json_serializable: ^6.0.1
+  mocktail: ^0.2.0
 
 flutter:
   uses-material-design: true
