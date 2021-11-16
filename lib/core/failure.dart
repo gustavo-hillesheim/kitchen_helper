@@ -3,3 +3,7 @@ abstract class Failure {
 
   Failure(this.message);
 }
+
+class BusinessFailure extends Failure {
+  BusinessFailure(String message) : super(message);
+}

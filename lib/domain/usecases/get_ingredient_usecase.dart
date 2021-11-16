@@ -5,13 +5,13 @@ import '../../core/failure.dart';
 import '../../core/usecase.dart';
 import '../models/ingredient.dart';
 
-class GetIngredientUseCase extends UseCase<String, Ingredient> {
+class GetIngredientUseCase extends UseCase<String, Ingredient?> {
   final IngredientRepository repository;
 
   GetIngredientUseCase(this.repository);
 
   @override
-  Future<Either<Failure, Ingredient>> execute(String id) {
+  Future<Either<Failure, Ingredient?>> execute(String id) {
     return repository.findById(id);
   }
 }
