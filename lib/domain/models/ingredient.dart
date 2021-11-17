@@ -6,7 +6,7 @@ part 'ingredient.g.dart';
 
 @JsonSerializable()
 class Ingredient {
-  final String? id;
+  final int? id;
   final String name;
   final double quantity;
   final MeasurementUnit measurementUnit;
@@ -24,4 +24,20 @@ class Ingredient {
       _$IngredientFromJson(json);
 
   Map<String, dynamic> toJson() => _$IngredientToJson(this);
+
+  copyWith({
+    int? id,
+    String? name,
+    double? quantity,
+    MeasurementUnit? measurementUnit,
+    double? price,
+  }) {
+    return Ingredient(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      measurementUnit: measurementUnit ?? this.measurementUnit,
+      price: price ?? this.price,
+    );
+  }
 }

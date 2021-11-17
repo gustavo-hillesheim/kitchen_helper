@@ -13,11 +13,20 @@ class SaveIngredientUseCase extends UseCase<Ingredient, Ingredient> {
   SaveIngredientUseCase(this.repository);
 
   @override
-  Future<Either<Failure, Ingredient>> execute(Ingredient ingredient) {
+  Future<Either<Failure, Ingredient>> execute(Ingredient ingredient) async {
     if (ingredient.id != null) {
-      return repository.update(ingredient);
+      final result = await repository.update(ingredient);
+      if (result.isLeft()) {
+        return Left(result.getLeft().toNullable()!);
+      }
+      return Right(ingredient);
     } else {
-      return repository.create(ingredient);
+      final result = await repository.create(ingredient);
+      if (result.isLeft()) {
+        return Left(result.getLeft().toNullable()!);
+      }
+      ingredient = ingredient.copyWith(id: result.getRight().toNullable()!);
+      return Right(ingredient);
     }
   }
 }

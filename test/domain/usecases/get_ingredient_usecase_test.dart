@@ -32,7 +32,7 @@ void main() {
       when(() => repository.findById(any()))
           .thenAnswer((_) async => Left(FakeFailure('error')));
 
-      final result = await usecase.execute('123');
+      final result = await usecase.execute(123);
 
       expect(result.isLeft(), true);
       expect(result.getLeft().toNullable()?.message, 'error');

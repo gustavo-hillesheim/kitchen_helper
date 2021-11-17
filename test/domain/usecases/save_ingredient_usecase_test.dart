@@ -22,7 +22,7 @@ void main() {
     'THEN it should create a new register',
     () async {
       when(() => repository.create(any())).thenAnswer(
-        (_) async => Either.right(sugarWithId),
+        (_) async => Either.right(sugarWithId.id!),
       );
       final result = await usecase.execute(sugarWithoutId);
       expect(result.isRight(), true);
