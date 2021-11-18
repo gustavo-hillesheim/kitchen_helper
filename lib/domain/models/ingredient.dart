@@ -1,11 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../core/repository.dart';
 import 'measurement_unit.dart';
 
 part 'ingredient.g.dart';
 
 @JsonSerializable()
-class Ingredient {
+class Ingredient extends Entity<int> {
+  @override
   final int? id;
   final String name;
   final double quantity;

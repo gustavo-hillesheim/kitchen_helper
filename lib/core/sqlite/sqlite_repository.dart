@@ -1,17 +1,28 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../failure.dart';
 import '../repository.dart';
 
-class SQLiteRepository<T> extends Repository<T, int> {
+class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
+  static const couldNotInsertMessage = 'Não foi possível salvar o registro';
+  static const couldNotUpdateMessage = 'Não foi possível atualizar o registro';
+  static const couldNotDeleteMessage = 'Não foi possível deletar o registro';
+  static const couldNotFindAllMessage = 'Não foi possível encontrar registros';
+  static const couldNotFindMessage = 'Não foi possível encontrar o registro';
+  static const canNotUpdateWithIdMessage = 'Não é possível atualizar um '
+      'registro que não esteja salvo';
+
   final String tableName;
+  final String idColumn;
   final SQLiteDatabase database;
   final Map<String, dynamic> Function(T) toMap;
   final T Function(Map<String, dynamic>) fromMap;
 
   SQLiteRepository(
     this.tableName,
+    this.idColumn,
     this.database, {
     required this.toMap,
     required this.fromMap,
@@ -19,26 +30,51 @@ class SQLiteRepository<T> extends Repository<T, int> {
 
   @override
   Future<Either<Failure, int>> create(T entity) async {
-    return Right(await database.insert(tableName, toMap(entity)));
+    try {
+      return Right(await database.insert(tableName, toMap(entity)));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotInsertMessage, e));
+    }
   }
 
   @override
-  Future<Either<Failure, void>> deleteById(int id) {
-    throw UnimplementedError();
+  Future<Either<Failure, void>> update(T entity) async {
+    if (entity.id == null) {
+      return Left(RepositoryFailure(canNotUpdateWithIdMessage));
+    }
+    try {
+      await database.update(tableName, toMap(entity), idColumn, entity.id!);
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotUpdateMessage, e));
+    }
   }
 
   @override
-  Future<Either<Failure, List<T>>> findAll() {
-    throw UnimplementedError();
+  Future<Either<Failure, void>> deleteById(int id) async {
+    try {
+      await database.deleteById(tableName, idColumn, id);
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotDeleteMessage, e));
+    }
   }
 
   @override
-  Future<Either<Failure, T?>> findById(int id) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<T>>> findAll() async {
+    try {
+      return Right(await database.findAll(tableName, fromMap));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotFindAllMessage, e));
+    }
   }
 
   @override
-  Future<Either<Failure, T>> update(T entity) {
-    throw UnimplementedError();
+  Future<Either<Failure, T?>> findById(int id) async {
+    try {
+      return Right(await database.findById(tableName, idColumn, id, fromMap));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotFindMessage, e));
+    }
   }
 }

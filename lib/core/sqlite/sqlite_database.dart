@@ -39,4 +39,34 @@ class SQLiteDatabase {
   Future<int> insert(String table, Map<String, dynamic> data) async {
     return database.insert(table, data);
   }
+
+  Future<void> update(
+      String table, Map<String, dynamic> data, String idColumn, int id) async {
+    await database.update(
+      table,
+      data,
+      where: '$idColumn = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteById(String table, String idColumn, int id) async {
+    await database.delete(table, where: '$idColumn = ?', whereArgs: [id]);
+  }
+
+  Future<List<T>> findAll<T>(
+      String table, T Function(Map<String, dynamic>) fromMap) async {
+    final rows = await database.query(table);
+    return rows.map(fromMap).toList(growable: false);
+  }
+
+  Future<T?> findById<T>(String table, String idColumn, int id,
+      T Function(Map<String, dynamic>) fromMap) async {
+    final rows =
+        await database.query(table, where: '$idColumn = ?', whereArgs: [id]);
+    if (rows.isNotEmpty) {
+      return fromMap(rows[0]);
+    }
+    return null;
+  }
 }
