@@ -54,18 +54,16 @@ class SQLiteDatabase {
     await database.delete(table, where: '$idColumn = ?', whereArgs: [id]);
   }
 
-  Future<List<T>> findAll<T>(
-      String table, T Function(Map<String, dynamic>) fromMap) async {
-    final rows = await database.query(table);
-    return rows.map(fromMap).toList(growable: false);
+  Future<List<Map<String, dynamic>>> findAll(String table) async {
+    return await database.query(table);
   }
 
-  Future<T?> findById<T>(String table, String idColumn, int id,
-      T Function(Map<String, dynamic>) fromMap) async {
+  Future<Map<String, dynamic>?> findById(
+      String table, String idColumn, int id) async {
     final rows =
         await database.query(table, where: '$idColumn = ?', whereArgs: [id]);
     if (rows.isNotEmpty) {
-      return fromMap(rows[0]);
+      return rows[0];
     }
     return null;
   }

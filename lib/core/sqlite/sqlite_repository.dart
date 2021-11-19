@@ -63,7 +63,8 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   @override
   Future<Either<Failure, List<T>>> findAll() async {
     try {
-      return Right(await database.findAll(tableName, fromMap));
+      final entities = await database.findAll(tableName);
+      return Right(entities.map(fromMap).toList(growable: false));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotFindAllMessage, e));
     }
@@ -72,7 +73,8 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   @override
   Future<Either<Failure, T?>> findById(int id) async {
     try {
-      return Right(await database.findById(tableName, idColumn, id, fromMap));
+      final entity = await database.findById(tableName, idColumn, id);
+      return Right(entity != null ? fromMap(entity) : null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotFindMessage, e));
     }

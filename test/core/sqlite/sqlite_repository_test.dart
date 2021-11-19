@@ -179,8 +179,8 @@ void main() {
 
   group('findAll', () {
     test('WHEN called SHOULD return all elements', () async {
-      when(() => database.findAll(any(), any()))
-          .thenAnswer((_) async => <Person>[neo, morpheus, sullivan]);
+      when(() => database.findAll(any())).thenAnswer(
+          (_) async => [neo.toJson(), morpheus.toJson(), sullivan.toJson()]);
 
       final result = await repository.findAll();
 
@@ -189,13 +189,13 @@ void main() {
             .equals(result.getRight().toNullable(), [neo, morpheus, sullivan]),
         true,
       );
-      verify(() => database.findAll(tableName, any()));
+      verify(() => database.findAll(tableName));
     });
 
     test(
         'WHEN a DatabaseException is thrown'
         'SHOULD return a Failure', () async {
-      when(() => database.findAll(any(), any()))
+      when(() => database.findAll(any()))
           .thenThrow(FakeDatabaseException('Database error'));
 
       final result = await repository.findAll();
@@ -203,40 +203,39 @@ void main() {
       expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
       expect(result.getLeft().toNullable()?.message,
           SQLiteRepository.couldNotFindAllMessage);
-      verify(() => database.findAll(tableName, any()));
+      verify(() => database.findAll(tableName));
     });
 
     test(
         'WHEN an unknown Exception is thrown'
         'SHOULD throw Exception', () async {
-      when(() => database.findAll(any(), any()))
-          .thenThrow(Exception('Unknown error'));
+      when(() => database.findAll(any())).thenThrow(Exception('Unknown error'));
 
       try {
         await repository.findAll();
         fail('Should have thrown exception');
       } catch (e) {
         expect(e, isA<Exception>());
-        verify(() => database.findAll(tableName, any()));
+        verify(() => database.findAll(tableName));
       }
     });
   });
 
   group('findById', () {
     test('WHEN called SHOULD return element', () async {
-      when(() => database.findById(any(), any(), any(), any()))
-          .thenAnswer((_) async => neo);
+      when(() => database.findById(any(), any(), any()))
+          .thenAnswer((_) async => neo.toJson());
 
       final result = await repository.findById(neo.id!);
 
       expect(result.getRight().toNullable(), neo);
-      verify(() => database.findById(tableName, idColumn, neo.id!, any()));
+      verify(() => database.findById(tableName, idColumn, neo.id!));
     });
 
     test(
         'WHEN a DatabaseException is thrown'
         'SHOULD return a Failure', () async {
-      when(() => database.findById(any(), any(), any(), any()))
+      when(() => database.findById(any(), any(), any()))
           .thenThrow(FakeDatabaseException('Database error'));
 
       final result = await repository.findById(neo.id!);
@@ -244,13 +243,13 @@ void main() {
       expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
       expect(result.getLeft().toNullable()?.message,
           SQLiteRepository.couldNotFindMessage);
-      verify(() => database.findById(tableName, idColumn, neo.id!, any()));
+      verify(() => database.findById(tableName, idColumn, neo.id!));
     });
 
     test(
         'WHEN an unknown Exception is thrown'
         'SHOULD throw Exception', () async {
-      when(() => database.findById(any(), any(), any(), any()))
+      when(() => database.findById(any(), any(), any()))
           .thenThrow(Exception('Unknown error'));
 
       try {
@@ -258,7 +257,7 @@ void main() {
         fail('Should have thrown exception');
       } catch (e) {
         expect(e, isA<Exception>());
-        verify(() => database.findById(tableName, idColumn, neo.id!, any()));
+        verify(() => database.findById(tableName, idColumn, neo.id!));
       }
     });
   });
