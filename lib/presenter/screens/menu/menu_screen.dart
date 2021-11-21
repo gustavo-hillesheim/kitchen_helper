@@ -8,12 +8,7 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        title: const Text(
-          'Kitchen Helper',
-          style: TextStyle(color: Colors.black),
-        ),
+        title: const Text('Kitchen Helper'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -21,20 +16,23 @@ class MenuScreen extends StatelessWidget {
             PageDescriptionTile(
               name: 'Ingredientes',
               description: 'Cadastre ingredientes para usar nas suas receitas',
+              route: '/ingredients',
               icon: Icons.food_bank_outlined,
               color: Colors.blue,
             ),
             PageDescriptionTile(
               name: 'Receitas',
               description: 'Cadastre receitas para vender',
+              route: '/ingredients',
               icon: Icons.fastfood_outlined,
               color: Colors.green,
             ),
             PageDescriptionTile(
               name: 'Pedidos',
               description: 'Cadastre e acompanhe seus pedidos',
+              route: '/ingredients',
               icon: Icons.file_copy_outlined,
-              color: Colors.red,
+              color: Colors.purple,
             ),
           ],
         ),
