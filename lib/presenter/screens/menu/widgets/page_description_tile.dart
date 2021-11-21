@@ -57,9 +57,9 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(50),
-            spreadRadius: 1 * elevation,
-            blurRadius: 2 * elevation,
-            offset: Offset(0, 2 * elevation),
+            spreadRadius: 0.5 * elevation,
+            blurRadius: 1 * elevation,
+            offset: Offset(0, 1 * elevation),
           ),
         ],
       );
@@ -97,7 +97,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
             height: constraints.maxHeight,
             width: constraints.maxHeight,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+              padding: const EdgeInsets.fromLTRB(0, 14, 14, 14),
               child: FittedBox(child: Icon(widget.icon)),
             ),
           );
@@ -111,7 +111,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
           Text(
             widget.name,
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w400,
               fontSize: 28,
             ),
           ),

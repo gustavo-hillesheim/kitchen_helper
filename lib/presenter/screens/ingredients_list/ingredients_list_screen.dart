@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
+import 'package:kitchen_helper/presenter/widgets/bottom_card.dart';
+import 'package:kitchen_helper/presenter/widgets/sliver_screen_bar.dart';
 
 final ingredients = [
   Ingredient(
@@ -45,43 +47,16 @@ class IngredientsListScreen extends StatelessWidget {
       body: NestedScrollView(
         floatHeaderSlivers: false,
         headerSliverBuilder: (context, __) => [
-          const SliverAppBar(
-            floating: true,
-            automaticallyImplyLeading: false,
-            collapsedHeight: 75,
-            expandedHeight: 200,
-            titleSpacing: 0,
-            flexibleSpace: Padding(
-              padding: EdgeInsets.all(16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Ingredientes',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const SliverScreenBar(title: 'Ingredientes'),
         ],
-        body: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: ClipRRect(
-            clipBehavior: Clip.hardEdge,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ListView.builder(
-                itemCount: ingredients.length,
-                itemBuilder: (_, index) {
-                  final ingredient = ingredients[index];
-                  return IngredientListTile(ingredient);
-                },
-              ),
-            ),
+        body: BottomCard(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: ingredients.length,
+            itemBuilder: (_, index) {
+              final ingredient = ingredients[index];
+              return IngredientListTile(ingredient);
+            },
           ),
         ),
       ),

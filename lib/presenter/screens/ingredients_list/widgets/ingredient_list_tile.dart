@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/presenter/utils/formatter.dart';
 
 import '../../../../domain/models/ingredient.dart';
+import '../../../../domain/models/measurement_unit.dart';
 
 class IngredientListTile extends StatelessWidget {
   final Ingredient ingredient;
@@ -13,78 +14,55 @@ class IngredientListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final nameText = Text(
+      ingredient.name,
+      style: textTheme.headline6!.copyWith(
+        fontWeight: FontWeight.w400,
+      ),
+    );
+    final quantityText = Text(
+      '${Formatter.simple(ingredient.quantity)} '
+      '${ingredient.measurementUnit.label}',
+      style: textTheme.subtitle2,
+    );
+    final priceText = Text(
+      Formatter.price(ingredient.price),
+      style: textTheme.headline5!.copyWith(
+        fontWeight: FontWeight.w300,
+      ),
+    );
+    final ingredientInfo = Row(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            nameText,
+            const SizedBox(height: 8),
+            quantityText,
+          ],
+        ),
+        const Spacer(),
+        priceText,
+      ],
+    );
+
     return Container(
-      margin: const EdgeInsets.all(8),
-      height: 80,
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
       width: double.infinity,
+      color: Colors.white,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           onTap: () {},
           child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      ingredient.name,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${formatQuantity(ingredient.quantity)} '
-                      '${measurementUnitLabel(ingredient.measurementUnit)}',
-                      style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                            color: Colors.black54,
-                          ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  formatPrice(ingredient.price),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(color: Colors.black87),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.all(14),
+            child: ingredientInfo,
           ),
         ),
       ),
     );
-  }
-}
-
-String formatPrice(double price) {
-  return 'R\$${price.toStringAsFixed(2)}';
-}
-
-String formatQuantity(double quantity) {
-  var quantityStr = quantity.toString();
-  while (quantityStr.contains('.') &&
-      (quantityStr.endsWith('0') || quantityStr.endsWith('.'))) {
-    quantityStr = quantityStr.substring(0, quantityStr.length - 1);
-  }
-  return quantityStr;
-}
-
-String measurementUnitLabel(MeasurementUnit measurementUnit) {
-  switch (measurementUnit) {
-    case MeasurementUnit.grams:
-      return 'gramas';
-    case MeasurementUnit.kilograms:
-      return 'kilogramas';
-    case MeasurementUnit.liters:
-      return 'litros';
-    case MeasurementUnit.milliliters:
-      return 'mililitros';
-    case MeasurementUnit.units:
-      return 'unidades';
   }
 }
