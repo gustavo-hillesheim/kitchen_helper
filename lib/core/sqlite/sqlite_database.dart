@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
 
 class SQLiteDatabase {
-  static SQLiteDatabase? instance;
+  static SQLiteDatabase? _instance;
   static const _databaseName = 'KitchenHelper.db';
   static const _databaseVersion = 1;
   static final lock = Lock();
@@ -13,9 +13,9 @@ class SQLiteDatabase {
 
   SQLiteDatabase._(this.database);
 
-  Future<SQLiteDatabase> getInstance() async {
-    instance ??= SQLiteDatabase._(await _initDatabase());
-    return instance!;
+  static Future<SQLiteDatabase> getInstance() async {
+    _instance ??= SQLiteDatabase._(await _initDatabase());
+    return _instance!;
   }
 
   static Future<Database> _initDatabase() async {
@@ -33,7 +33,7 @@ class SQLiteDatabase {
       quantity REAL,
       measurementUnit TEXT,
       price REAL
-    ''');
+    )''');
   }
 
   Future<int> insert(String table, Map<String, dynamic> data) async {

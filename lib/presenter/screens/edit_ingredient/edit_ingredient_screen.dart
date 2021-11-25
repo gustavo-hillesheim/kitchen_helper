@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
 import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
 
 class EditIngredientScreen extends StatefulWidget {
@@ -11,10 +13,17 @@ class EditIngredientScreen extends StatefulWidget {
 }
 
 class _EditIngredientScreenState extends State<EditIngredientScreen> {
+  late final EditIngredientBloc bloc;
   final nameController = TextEditingController();
   final quantityController = TextEditingController();
   MeasurementUnit? measurementUnit;
   final priceController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = EditIngredientBloc(Modular.get());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +100,14 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
     );
   }
 
-  void _save() {
-    /*final ingredient = Ingredient(
+  void _save() async {
+    final ingredient = Ingredient(
       name: nameController.text,
       quantity: double.parse(quantityController.text),
       measurementUnit: measurementUnit!,
       price: double.parse(priceController.text),
-    );*/
-    Modular.to.pop();
+    );
+    await bloc.save(ingredient);
+    Modular.to.pop(true);
   }
 }

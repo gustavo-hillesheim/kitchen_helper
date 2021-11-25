@@ -1,8 +1,8 @@
 import 'package:kitchen_helper/core/failure.dart';
 import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
-import 'package:kitchen_helper/domain/data/ingredient_repository.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockIngredientRepository extends Mock implements IngredientRepository {}

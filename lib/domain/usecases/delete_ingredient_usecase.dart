@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 
-import '../data/ingredient_repository.dart';
 import '../../core/failure.dart';
 import '../../core/usecase.dart';
+import '../repository/ingredient_repository.dart';
 
 class DeleteIngredientUseCase extends UseCase<Ingredient, void> {
   static const cantDeleteIngredientWithoutIdMessage =

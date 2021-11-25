@@ -1,15 +1,40 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_screen.dart';
-import 'package:kitchen_helper/presenter/screens/menu/menu_screen.dart';
+import 'package:kitchen_helper/app_guard.dart';
 
+import 'core/sqlite/sqlite_database.dart';
+import 'data/repository/sqlite_ingredient_repository.dart';
+import 'domain/repository/ingredient_repository.dart';
+import 'domain/usecases/delete_ingredient_usecase.dart';
+import 'domain/usecases/get_ingredient_usecase.dart';
+import 'domain/usecases/get_ingredients_usecase.dart';
+import 'domain/usecases/save_ingredient_usecase.dart';
+import 'presenter/screens/edit_ingredient/edit_ingredient_screen.dart';
 import 'presenter/screens/ingredients_list/ingredients_list_screen.dart';
+import 'presenter/screens/menu/menu_screen.dart';
 
 class AppModule extends Module {
   @override
+  List<Bind<Object>> get binds => [
+        AsyncBind((i) => SQLiteDatabase.getInstance()),
+        Bind<IngredientRepository>((i) => SQLiteIngredientRepository(i())),
+        Bind((i) => SaveIngredientUseCase(i())),
+        Bind((i) => GetIngredientsUseCase(i())),
+        Bind((i) => GetIngredientUseCase(i())),
+        Bind((i) => DeleteIngredientUseCase(i())),
+      ];
+
+  @override
   List<ModularRoute> get routes => [
         ChildRoute(Modular.initialRoute, child: (_, __) => const MenuScreen()),
-        ChildRoute('/ingredients', child: (_, __) => IngredientsListScreen()),
-        ChildRoute('/edit-ingredient',
-            child: (_, __) => EditIngredientScreen()),
+        ChildRoute(
+          '/ingredients',
+          child: (_, __) => const IngredientsListScreen(),
+          guards: [AppGuard()],
+        ),
+        ChildRoute(
+          '/edit-ingredient',
+          child: (_, __) => const EditIngredientScreen(),
+          guards: [AppGuard()],
+        ),
       ];
 }

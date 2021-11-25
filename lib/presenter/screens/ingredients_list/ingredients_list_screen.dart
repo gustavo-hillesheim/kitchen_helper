@@ -1,58 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
-import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
-import 'package:kitchen_helper/presenter/widgets/bottom_card.dart';
-import 'package:kitchen_helper/presenter/widgets/sliver_screen_bar.dart';
 
-final ingredients = [
-  Ingredient(
-    name: 'Açucar',
-    quantity: 1,
-    measurementUnit: MeasurementUnit.kilograms,
-    price: 15,
-  ),
-  Ingredient(
-    name: 'Farinha de trigo',
-    quantity: 500,
-    measurementUnit: MeasurementUnit.grams,
-    price: 32.50,
-  ),
-  Ingredient(
-    name: 'Água',
-    quantity: 1,
-    measurementUnit: MeasurementUnit.liters,
-    price: 1,
-  ),
-  Ingredient(
-    name: 'Suco de limão',
-    quantity: 100,
-    measurementUnit: MeasurementUnit.milliliters,
-    price: 5,
-  ),
-  Ingredient(
-    name: 'Laranja',
-    quantity: 10,
-    measurementUnit: MeasurementUnit.units,
-    price: 10,
-  ),
-];
+import '../../../domain/models/ingredient.dart';
+import '../../widgets/bottom_card.dart';
+import '../../widgets/sliver_screen_bar.dart';
+import 'ingredients_list_bloc.dart';
+import 'widgets/ingredient_list_tile.dart';
 
 class IngredientsListScreen extends StatefulWidget {
-  IngredientsListScreen({Key? key}) : super(key: key);
+  const IngredientsListScreen({Key? key}) : super(key: key);
 
   @override
   State<IngredientsListScreen> createState() => _IngredientsListScreenState();
 }
 
 class _IngredientsListScreenState extends State<IngredientsListScreen> {
+  late final IngredientsListBloc bloc;
   final controller = ScrollController();
-  final addAction = SliverScreenBarAction(
+  late final addAction = SliverScreenBarAction(
     icon: Icons.add,
     label: 'Adicionar',
-    onPressed: () {
-      Modular.to.pushNamed('/edit-ingredient');
+    onPressed: () async {
+      final reload = await Modular.to.pushNamed<bool?>('/edit-ingredient');
+      if (reload ?? false) {
+        bloc.loadIngredients();
+      }
     },
   );
   bool isShowingHeader = true;
@@ -60,6 +32,8 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   @override
   void initState() {
     super.initState();
+    bloc = IngredientsListBloc(Modular.get());
+    bloc.loadIngredients();
     controller.addListener(() {
       setState(() {
         isShowingHeader = controller.offset <
@@ -80,15 +54,30 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
             action: addAction,
           ),
         ],
-        body: BottomCard(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: ingredients.length,
-            itemBuilder: (_, index) {
-              final ingredient = ingredients[index];
-              return IngredientListTile(ingredient);
-            },
-          ),
+        body: StreamBuilder<List<Ingredient>?>(
+          stream: bloc.stream,
+          builder: (_, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting ||
+                snapshot.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final ingredients = snapshot.data;
+            if (ingredients!.isEmpty) {
+              return const Center(child: Text('Sem ingredientes'));
+            }
+            return BottomCard(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: ingredients.length,
+                itemBuilder: (_, index) {
+                  final ingredient = ingredients[index];
+                  return IngredientListTile(ingredient);
+                },
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: !isShowingHeader
