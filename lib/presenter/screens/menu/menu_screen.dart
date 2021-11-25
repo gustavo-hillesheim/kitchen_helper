@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/screens/menu/widgets/page_description_tile.dart';
+
+import 'widgets/page_description_tile.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({Key? key}) : super(key: key);

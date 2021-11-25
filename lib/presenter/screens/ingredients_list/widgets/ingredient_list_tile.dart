@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/utils/formatter.dart';
 
 import '../../../../domain/models/ingredient.dart';
 import '../../../../domain/models/measurement_unit.dart';
+import '../../../constants.dart';
+import '../../../utils/formatter.dart';
 
 class IngredientListTile extends StatelessWidget {
   final Ingredient ingredient;
@@ -39,7 +40,7 @@ class IngredientListTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             nameText,
-            const SizedBox(height: 8),
+            kSmallSpacerVertical,
             quantityText,
           ],
         ),
@@ -49,16 +50,16 @@ class IngredientListTile extends StatelessWidget {
     );
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: kSmallSpace),
       width: double.infinity,
       color: Colors.white,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: kExtraSmallBorder,
           onTap: () {},
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(kMediumSpace - 2.0),
             child: ingredientInfo,
           ),
         ),

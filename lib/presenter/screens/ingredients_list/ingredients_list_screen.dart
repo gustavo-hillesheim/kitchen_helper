@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../domain/models/ingredient.dart';
+import '../../constants.dart';
 import '../../widgets/bottom_card.dart';
 import '../../widgets/sliver_screen_bar.dart';
 import 'ingredients_list_bloc.dart';
@@ -69,7 +70,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
             }
             return BottomCard(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: kSmallSpace),
                 itemCount: ingredients.length,
                 itemBuilder: (_, index) {
                   final ingredient = ingredients[index];

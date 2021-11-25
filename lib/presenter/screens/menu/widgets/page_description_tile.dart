@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../constants.dart';
+
 class PageDescriptionTile extends StatefulWidget {
   final String name;
   final String description;
@@ -34,7 +36,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
       lowerBound: 0,
       upperBound: 1,
       value: 1,
-      duration: const Duration(milliseconds: 300),
+      duration: kFastDuration,
     );
   }
 
@@ -44,7 +46,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
       valueListenable: _elevationController,
       builder: (_, elevation, __) => Container(
         height: 100,
-        margin: const EdgeInsets.all(16),
+        margin: kMediumEdgeInsets,
         decoration: _buildDecoration(elevation),
         child: _buildInkWell(_buildContent()),
       ),
@@ -52,7 +54,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
   }
 
   BoxDecoration _buildDecoration(double elevation) => BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: kMediumBorder,
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -67,7 +69,7 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
   Widget _buildInkWell(Widget child) => Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: kMediumBorder,
           onTap: () {
             Modular.to.pushNamed(widget.route);
             _elevationController.forward();
@@ -79,14 +81,14 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
       );
 
   Widget _buildContent() => Padding(
-        padding: const EdgeInsets.all(8),
+        padding: kSmallEdgeInsets,
         child: Row(
           children: [
             _buildIcon(),
             Expanded(
               child: _buildPageInfo(),
             ),
-            const SizedBox(width: 64),
+            kExtraLargeSpacerVertical,
           ],
         ),
       );
@@ -97,7 +99,12 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
             height: constraints.maxHeight,
             width: constraints.maxHeight,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 14, 14, 14),
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                kMediumSpace,
+                kMediumSpace,
+                kMediumSpace,
+              ),
               child: FittedBox(child: Icon(widget.icon)),
             ),
           );
@@ -112,10 +119,10 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
             widget.name,
             style: const TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 28,
+              fontSize: kLargeFontSize,
             ),
           ),
-          const SizedBox(height: 8),
+          kSmallSpacerVertical,
           Text(widget.description),
         ],
       );

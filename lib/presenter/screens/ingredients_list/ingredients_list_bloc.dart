@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:kitchen_helper/core/usecase.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/usecases/get_ingredients_usecase.dart';
+
+import '../../../core/usecase.dart';
+import '../../../domain/models/ingredient.dart';
+import '../../../domain/usecases/get_ingredients_usecase.dart'
+    show GetIngredientsUseCase;
 
 class IngredientsListBloc extends Cubit<List<Ingredient>?> {
   final GetIngredientsUseCase usecase;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
+
 class SliverScreenBar extends StatelessWidget {
   final String title;
   final SliverScreenBarAction? action;
@@ -20,7 +22,7 @@ class SliverScreenBar extends StatelessWidget {
       titleSpacing: 0,
       flexibleSpace: LayoutBuilder(builder: (context, constraints) {
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: kMediumEdgeInsets,
           child: Center(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +32,7 @@ class SliverScreenBar extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 32,
+                    fontSize: kLargeFontSize,
                   ),
                 ),
                 const Spacer(),

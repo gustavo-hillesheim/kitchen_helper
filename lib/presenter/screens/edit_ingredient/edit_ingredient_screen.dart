@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
-import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
-import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
+
+import '../../../domain/models/ingredient.dart';
+import '../../../domain/models/measurement_unit.dart';
+import '../../constants.dart';
+import '../../widgets/app_text_form_field.dart';
+import 'edit_ingredient_bloc.dart';
 
 class EditIngredientScreen extends StatefulWidget {
   const EditIngredientScreen({Key? key}) : super(key: key);
@@ -36,14 +38,14 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: kMediumEdgeInsets,
                 child: Column(
                   children: [
                     AppTextFormField(
                       name: 'Nome',
                       controller: nameController,
                     ),
-                    SizedBox(height: 16),
+                    kMediumSpacerVertical,
                     Row(
                       children: [
                         Expanded(
@@ -52,7 +54,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
                             controller: quantityController,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        kMediumSpacerHorizontal,
                         Expanded(
                           child: DropdownButtonFormField<MeasurementUnit>(
                             value: measurementUnit,
@@ -75,7 +77,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    kMediumSpacerVertical,
                     AppTextFormField.number(
                       name: 'Custo',
                       controller: priceController,
@@ -86,13 +88,15 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: kMediumEdgeInsets,
             child: ElevatedButton(
               style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(Size.fromHeight(48)),
+                minimumSize: MaterialStateProperty.all(
+                  const Size.fromHeight(48),
+                ),
               ),
               onPressed: _save,
-              child: Text('Salvar'),
+              child: const Text('Salvar', style: TextStyle(fontSize: 18)),
             ),
           ),
         ],

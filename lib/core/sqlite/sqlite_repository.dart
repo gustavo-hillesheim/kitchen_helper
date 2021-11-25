@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../failure.dart';
 import '../repository.dart';
+import 'sqlite_database.dart';
 
 class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   static const couldNotInsertMessage = 'Não foi possível salvar o registro';

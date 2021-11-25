@@ -1,7 +1,7 @@
-import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
-import 'package:kitchen_helper/core/sqlite/sqlite_repository.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
+import '../../core/sqlite/sqlite_database.dart';
+import '../../core/sqlite/sqlite_repository.dart';
+import '../../domain/models/ingredient.dart';
+import '../../domain/repository/ingredient_repository.dart';
 
 class SQLiteIngredientRepository extends SQLiteRepository<Ingredient>
     implements IngredientRepository {

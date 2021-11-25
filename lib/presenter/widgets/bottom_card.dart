@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
+
 class BottomCard extends StatelessWidget {
   final Widget child;
 
@@ -11,7 +13,7 @@ class BottomCard extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       child: ClipRRect(
         clipBehavior: Clip.hardEdge,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: kMediumRadius),
         child: Container(
           color: Theme.of(context).scaffoldBackgroundColor,
           child: child,

@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/app_guard.dart';
 
+import 'app_guard.dart';
 import 'core/sqlite/sqlite_database.dart';
 import 'data/repository/sqlite_ingredient_repository.dart';
 import 'domain/repository/ingredient_repository.dart';
