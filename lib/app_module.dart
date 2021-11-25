@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/domain/models/ingredient.dart';
 
 import 'app_guard.dart';
 import 'core/sqlite/sqlite_database.dart';
@@ -33,7 +34,15 @@ class AppModule extends Module {
         ),
         ChildRoute(
           '/edit-ingredient',
-          child: (_, __) => const EditIngredientScreen(),
+          child: (_, route) {
+            if (route.data is! Ingredient?) {
+              throw Exception('The route /edit-ingredient only accepts values'
+                  ' of type Ingredient? as argument');
+            }
+            return EditIngredientScreen(
+              initialValue: route.data as Ingredient?,
+            );
+          },
           guards: [AppGuard()],
         ),
       ];

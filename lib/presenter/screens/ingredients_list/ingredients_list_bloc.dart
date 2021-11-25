@@ -11,6 +11,7 @@ class IngredientsListBloc extends Cubit<List<Ingredient>?> {
   IngredientsListBloc(this.usecase) : super(null);
 
   void loadIngredients() async {
+    emit(null);
     await Future.delayed(const Duration(seconds: 1));
     final result = await usecase.execute(const NoParams());
     if (result.isRight()) {

@@ -28,7 +28,7 @@ class SQLiteDatabase {
   static Future _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE ingredients (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
       quantity REAL,
       measurementUnit TEXT,

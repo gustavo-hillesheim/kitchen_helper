@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/presenter/utils/formatter.dart';
 
 import '../../../domain/models/ingredient.dart';
 import '../../../domain/models/measurement_unit.dart';
@@ -8,14 +9,27 @@ import '../../widgets/app_text_form_field.dart';
 import 'edit_ingredient_bloc.dart';
 
 class EditIngredientScreen extends StatefulWidget {
-  const EditIngredientScreen({Key? key}) : super(key: key);
+  final Ingredient? initialValue;
+
+  const EditIngredientScreen({
+    Key? key,
+    this.initialValue,
+  }) : super(key: key);
 
   @override
   State<EditIngredientScreen> createState() => _EditIngredientScreenState();
+
+  static Future<bool?> navigate([Ingredient? ingredient]) {
+    return Modular.to.pushNamed<bool?>(
+      '/edit-ingredient',
+      arguments: ingredient,
+    );
+  }
 }
 
 class _EditIngredientScreenState extends State<EditIngredientScreen> {
   late final EditIngredientBloc bloc;
+  int? id;
   final nameController = TextEditingController();
   final quantityController = TextEditingController();
   MeasurementUnit? measurementUnit;
@@ -25,6 +39,15 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
   void initState() {
     super.initState();
     bloc = EditIngredientBloc(Modular.get());
+    final initialValue = widget.initialValue;
+    print(initialValue?.toJson());
+    if (initialValue != null) {
+      id = initialValue.id;
+      nameController.text = initialValue.name;
+      quantityController.text = Formatter.simple(initialValue.quantity);
+      measurementUnit = initialValue.measurementUnit;
+      priceController.text = initialValue.price.toStringAsFixed(2);
+    }
   }
 
   @override
@@ -106,6 +129,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
 
   void _save() async {
     final ingredient = Ingredient(
+      id: id,
       name: nameController.text,
       quantity: double.parse(quantityController.text),
       measurementUnit: measurementUnit!,

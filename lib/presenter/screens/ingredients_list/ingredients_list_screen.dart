@@ -5,6 +5,7 @@ import '../../../domain/models/ingredient.dart';
 import '../../constants.dart';
 import '../../widgets/bottom_card.dart';
 import '../../widgets/sliver_screen_bar.dart';
+import '../edit_ingredient/edit_ingredient_screen.dart';
 import 'ingredients_list_bloc.dart';
 import 'widgets/ingredient_list_tile.dart';
 
@@ -21,12 +22,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   late final addAction = SliverScreenBarAction(
     icon: Icons.add,
     label: 'Adicionar',
-    onPressed: () async {
-      final reload = await Modular.to.pushNamed<bool?>('/edit-ingredient');
-      if (reload ?? false) {
-        bloc.loadIngredients();
-      }
-    },
+    onPressed: () => _goToEditIngredientScreen(),
   );
   bool isShowingHeader = true;
 
@@ -74,7 +70,10 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
                 itemCount: ingredients.length,
                 itemBuilder: (_, index) {
                   final ingredient = ingredients[index];
-                  return IngredientListTile(ingredient);
+                  return IngredientListTile(
+                    ingredient,
+                    onTap: () => _goToEditIngredientScreen(ingredient),
+                  );
                 },
               ),
             );
@@ -89,5 +88,12 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
             )
           : null,
     );
+  }
+
+  void _goToEditIngredientScreen([Ingredient? ingredient]) async {
+    final reload = await EditIngredientScreen.navigate(ingredient);
+    if (reload ?? false) {
+      bloc.loadIngredients();
+    }
   }
 }
