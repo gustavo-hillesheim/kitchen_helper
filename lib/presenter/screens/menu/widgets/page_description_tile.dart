@@ -105,7 +105,11 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
                 kMediumSpace,
                 kMediumSpace,
               ),
-              child: FittedBox(child: Icon(widget.icon)),
+              child: FittedBox(
+                  child: Icon(
+                widget.icon,
+                color: Theme.of(context).textTheme.headline4?.color,
+              )),
             ),
           );
         },
@@ -117,13 +121,13 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
         children: [
           Text(
             widget.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: kLargeFontSize,
-            ),
+            style: Theme.of(context).textTheme.headline4,
           ),
           kSmallSpacerVertical,
-          Text(widget.description),
+          Text(
+            widget.description,
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
         ],
       );
 }

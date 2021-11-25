@@ -29,11 +29,9 @@ class SliverScreenBar extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: kLargeFontSize,
-                  ),
+                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: Colors.white,
+                      ),
                 ),
                 const Spacer(),
                 if (action != null)

@@ -96,7 +96,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
                 ),
               ),
               onPressed: _save,
-              child: const Text('Salvar', style: TextStyle(fontSize: 18)),
+              child: const Text('Salvar'),
             ),
           ),
         ],
