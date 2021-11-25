@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
@@ -38,16 +39,46 @@ final ingredients = [
   ),
 ];
 
-class IngredientsListScreen extends StatelessWidget {
-  const IngredientsListScreen({Key? key}) : super(key: key);
+class IngredientsListScreen extends StatefulWidget {
+  IngredientsListScreen({Key? key}) : super(key: key);
+
+  @override
+  State<IngredientsListScreen> createState() => _IngredientsListScreenState();
+}
+
+class _IngredientsListScreenState extends State<IngredientsListScreen> {
+  final controller = ScrollController();
+  final addAction = SliverScreenBarAction(
+    icon: Icons.add,
+    label: 'Adicionar',
+    onPressed: () {
+      Modular.to.pushNamed('/edit-ingredient');
+    },
+  );
+  bool isShowingHeader = true;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      setState(() {
+        isShowingHeader = controller.offset <
+            controller.position.maxScrollExtent - kToolbarHeight * 2;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
+        controller: controller,
         floatHeaderSlivers: false,
         headerSliverBuilder: (context, __) => [
-          const SliverScreenBar(title: 'Ingredientes'),
+          SliverScreenBar(
+            title: 'Ingredientes',
+            action: addAction,
+          ),
         ],
         body: BottomCard(
           child: ListView.builder(
@@ -60,6 +91,13 @@ class IngredientsListScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: !isShowingHeader
+          ? FloatingActionButton(
+              onPressed: addAction.onPressed,
+              child: Icon(addAction.icon),
+              tooltip: addAction.label,
+            )
+          : null,
     );
   }
 }

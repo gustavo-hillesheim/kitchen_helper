@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class SliverScreenBar extends StatelessWidget {
   final String title;
+  final SliverScreenBarAction? action;
 
-  const SliverScreenBar({Key? key, required this.title}) : super(key: key);
+  const SliverScreenBar({
+    Key? key,
+    required this.title,
+    this.action,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +34,17 @@ class SliverScreenBar extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: Icon(Icons.add),
-                  label: Text('Adicionar'),
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                    overlayColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.1)),
+                if (action != null)
+                  TextButton.icon(
+                    onPressed: action!.onPressed,
+                    icon: Icon(action!.icon),
+                    label: Text(action!.label),
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      overlayColor: MaterialStateProperty.all(
+                          Colors.white.withOpacity(0.1)),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -46,4 +52,16 @@ class SliverScreenBar extends StatelessWidget {
       }),
     );
   }
+}
+
+class SliverScreenBarAction {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  SliverScreenBarAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
 }
