@@ -29,7 +29,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   @override
   void initState() {
     super.initState();
-    bloc = IngredientsListBloc(Modular.get());
+    bloc = IngredientsListBloc(Modular.get(), Modular.get());
     bloc.loadIngredients();
     controller.addListener(() {
       setState(() {
@@ -51,33 +51,51 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
             action: addAction,
           ),
         ],
-        body: StreamBuilder<List<Ingredient>?>(
-          stream: bloc.stream,
-          builder: (_, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                snapshot.data == null) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            final ingredients = snapshot.data;
-            if (ingredients!.isEmpty) {
-              return const Center(child: Text('Sem ingredientes'));
-            }
-            return BottomCard(
-              child: ListView.builder(
+        body: BottomCard(
+          child: StreamBuilder<List<Ingredient>?>(
+            stream: bloc.stream,
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.data == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final ingredients = snapshot.data;
+              if (ingredients!.isEmpty) {
+                return const Center(child: Text('Sem ingredientes'));
+              }
+              return ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: kSmallSpace),
                 itemCount: ingredients.length,
-                itemBuilder: (_, index) {
+                itemBuilder: (context, index) {
                   final ingredient = ingredients[index];
-                  return IngredientListTile(
-                    ingredient,
-                    onTap: () => _goToEditIngredientScreen(ingredient),
+                  return Dismissible(
+                    key: ObjectKey(ingredient),
+                    direction: DismissDirection.startToEnd,
+                    onDismissed: (_) => _deleteIngredient(ingredient),
+                    background: Container(
+                      color: Colors.red,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: kMediumEdgeInsets,
+                          child: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: IngredientListTile(
+                      ingredient,
+                      onTap: () => _goToEditIngredientScreen(ingredient),
+                    ),
                   );
                 },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: !isShowingHeader
@@ -95,5 +113,9 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     if (reload ?? false) {
       bloc.loadIngredients();
     }
+  }
+
+  void _deleteIngredient(Ingredient ingredient) async {
+    bloc.delete(ingredient);
   }
 }
