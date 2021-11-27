@@ -14,42 +14,36 @@ class SliverScreenBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      floating: true,
-      automaticallyImplyLeading: false,
-      collapsedHeight: 75,
-      expandedHeight: 200,
-      titleSpacing: 0,
-      flexibleSpace: LayoutBuilder(builder: (context, constraints) {
-        return Padding(
-          padding: kMediumEdgeInsets,
-          child: Center(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: Colors.white,
-                      ),
-                ),
-                const Spacer(),
-                if (action != null)
-                  TextButton.icon(
-                    onPressed: action!.onPressed,
-                    icon: Icon(action!.icon),
-                    label: Text(action!.label),
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      overlayColor: MaterialStateProperty.all(
-                          Colors.white.withOpacity(0.1)),
+    return Container(
+      padding: kMediumEdgeInsets,
+      color: Theme.of(context).colorScheme.primary,
+      child: SafeArea(
+        child: Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                      color: Colors.white,
                     ),
+              ),
+              const Spacer(),
+              if (action != null)
+                TextButton.icon(
+                  onPressed: action!.onPressed,
+                  icon: Icon(action!.icon),
+                  label: Text(action!.label),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    overlayColor: MaterialStateProperty.all(
+                        Colors.white.withOpacity(0.1)),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }

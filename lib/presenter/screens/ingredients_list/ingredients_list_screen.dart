@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:kitchen_helper/presenter/widgets/page_template.dart';
 
 import '../../../domain/models/ingredient.dart';
 import '../../constants.dart';
@@ -19,7 +20,6 @@ class IngredientsListScreen extends StatefulWidget {
 
 class _IngredientsListScreenState extends State<IngredientsListScreen> {
   late final IngredientsListBloc bloc;
-  final controller = ScrollController();
   late final addAction = SliverScreenBarAction(
     icon: Icons.add,
     label: 'Adicionar',
@@ -32,84 +32,68 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     super.initState();
     bloc = IngredientsListBloc(Modular.get(), Modular.get(), Modular.get());
     bloc.loadIngredients();
-    controller.addListener(() {
-      setState(() {
-        isShowingHeader = controller.offset <
-            controller.position.maxScrollExtent - kToolbarHeight * 2;
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        controller: controller,
-        floatHeaderSlivers: false,
-        headerSliverBuilder: (context, __) => [
-          SliverScreenBar(
-            title: 'Ingredientes',
-            action: addAction,
-          ),
-        ],
+      body: PageTemplate(
+        headerBuilder: (_, __) => SliverScreenBar(
+          title: 'Ingredientes',
+          action: addAction,
+        ),
+        maxHeaderHeight: 200,
         body: BottomCard(
-          child: StreamBuilder<List<Ingredient>?>(
-            stream: bloc.stream,
-            builder: (_, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  snapshot.data == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              final ingredients = snapshot.data;
-              if (ingredients!.isEmpty) {
-                return const Center(child: Text('Sem ingredientes'));
-              }
-              return ListView.builder(
-                padding: kSmallEdgeInsets,
-                itemCount: ingredients.length,
-                itemBuilder: (_, index) => _buildTile(ingredients[index]),
-              );
-            },
-          ),
+          child: _buildIngredientsList(),
         ),
       ),
-      floatingActionButton: !isShowingHeader
-          ? FloatingActionButton(
-              onPressed: addAction.onPressed,
-              child: Icon(addAction.icon),
-              tooltip: addAction.label,
-            )
-          : null,
     );
   }
 
-  Widget _buildTile(Ingredient ingredient) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: kSmallSpace),
-      child: Slidable(
-        closeOnScroll: true,
-        endActionPane: ActionPane(
-          extentRatio: 0.25,
-          motion: const DrawerMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (context) => _deleteIngredient(ingredient, context),
-              icon: Icons.delete,
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              label: 'Excluir',
-            ),
-          ],
+  Widget _buildIngredientsList() => StreamBuilder<List<Ingredient>?>(
+        stream: bloc.stream,
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final ingredients = snapshot.data;
+          if (ingredients!.isEmpty) {
+            return const Center(child: Text('Sem ingredientes'));
+          }
+          return ListView.builder(
+            padding: kSmallEdgeInsets,
+            itemCount: ingredients.length,
+            itemBuilder: (_, index) => _buildTile(ingredients[index]),
+          );
+        },
+      );
+
+  Widget _buildTile(Ingredient ingredient) => Padding(
+        padding: const EdgeInsets.only(bottom: kSmallSpace),
+        child: Slidable(
+          closeOnScroll: true,
+          endActionPane: ActionPane(
+            extentRatio: 0.25,
+            motion: const DrawerMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (context) => _deleteIngredient(ingredient, context),
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                label: 'Excluir',
+              ),
+            ],
+          ),
+          child: IngredientListTile(
+            ingredient,
+            onTap: () => _goToEditIngredientScreen(ingredient),
+          ),
         ),
-        child: IngredientListTile(
-          ingredient,
-          onTap: () => _goToEditIngredientScreen(ingredient),
-        ),
-      ),
-    );
-  }
+      );
 
   void _goToEditIngredientScreen([Ingredient? ingredient]) async {
     final reload = await EditIngredientScreen.navigate(ingredient);
