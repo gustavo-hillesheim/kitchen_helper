@@ -51,7 +51,7 @@ void main() {
     );
 
     test(
-        'WHEN a DatabaseException is thrown'
+        'WHEN a DatabaseException is thrown '
         'SHOULD return a Failure', () async {
       when(() => database.insert(any(), any()))
           .thenThrow(FakeDatabaseException('Database error'));
@@ -65,7 +65,7 @@ void main() {
     });
 
     test(
-        'WHEN an unknown exception is thrown while creating an entity'
+        'WHEN an unknown exception is thrown while creating an entity '
         'SHOULD throw exception', () async {
       when(() => database.insert(any(), any()))
           .thenThrow(Exception('Unknown error'));
@@ -82,7 +82,7 @@ void main() {
 
   group('update', () {
     test(
-        'WHEN updating an entity'
+        'WHEN updating an entity '
         'SHOULD call the database with correct table and data', () async {
       when(() => database.update(any(), any(), any(), any()))
           .thenAnswer((_) async => const Left(null));
@@ -107,7 +107,7 @@ void main() {
     );
 
     test(
-        'WHEN a DatabaseException is thrown'
+        'WHEN a DatabaseException is thrown '
         'SHOULD return a Failure', () async {
       when(() => database.update(any(), any(), any(), any()))
           .thenThrow(FakeDatabaseException('Database error'));
@@ -120,7 +120,7 @@ void main() {
     });
 
     test(
-        'WHEN an unknown Exception is thrown'
+        'WHEN an unknown Exception is thrown '
         'THEN should throw Exception', () async {
       when(() => database.update(any(), any(), any(), any()))
           .thenThrow(Exception('Unknown error'));
@@ -149,7 +149,7 @@ void main() {
     );
 
     test(
-        'WHEN a DatabaseException is thrown'
+        'WHEN a DatabaseException is thrown '
         'SHOULD return Failure', () async {
       when(() => database.deleteById(any(), any(), any()))
           .thenThrow(FakeDatabaseException('Database error'));
@@ -163,7 +163,7 @@ void main() {
     });
 
     test(
-        'WHEN an unknown Exception is thrown'
+        'WHEN an unknown Exception is thrown '
         'SHOULD throw Exception', () async {
       when(() => database.deleteById(any(), any(), any()))
           .thenThrow(Exception('Unknown error'));
@@ -193,7 +193,7 @@ void main() {
     });
 
     test(
-        'WHEN a DatabaseException is thrown'
+        'WHEN a DatabaseException is thrown '
         'SHOULD return a Failure', () async {
       when(() => database.findAll(any()))
           .thenThrow(FakeDatabaseException('Database error'));
@@ -207,7 +207,7 @@ void main() {
     });
 
     test(
-        'WHEN an unknown Exception is thrown'
+        'WHEN an unknown Exception is thrown '
         'SHOULD throw Exception', () async {
       when(() => database.findAll(any())).thenThrow(Exception('Unknown error'));
 
@@ -233,7 +233,7 @@ void main() {
     });
 
     test(
-        'WHEN a DatabaseException is thrown'
+        'WHEN a DatabaseException is thrown '
         'SHOULD return a Failure', () async {
       when(() => database.findById(any(), any(), any()))
           .thenThrow(FakeDatabaseException('Database error'));
@@ -247,7 +247,7 @@ void main() {
     });
 
     test(
-        'WHEN an unknown Exception is thrown'
+        'WHEN an unknown Exception is thrown '
         'SHOULD throw Exception', () async {
       when(() => database.findById(any(), any(), any()))
           .thenThrow(Exception('Unknown error'));
@@ -258,6 +258,47 @@ void main() {
       } catch (e) {
         expect(e, isA<Exception>());
         verify(() => database.findById(tableName, idColumn, neo.id!));
+      }
+    });
+  });
+
+  group('exists', () {
+    test('WHEN called SHOULD return same result as database', () async {
+      when(() => database.exists(any(), any(), any()))
+          .thenAnswer((_) async => true);
+
+      final result = await repository.exists(neo.id!);
+
+      expect(result.getRight().toNullable(), true);
+      verify(() => database.exists(tableName, idColumn, neo.id!));
+    });
+
+    test(
+        'WHEN a DatabaseException is thrown '
+        'SHOULD return a Failure', () async {
+      when(() => database.exists(any(), any(), any()))
+          .thenThrow(FakeDatabaseException('Database error'));
+
+      final result = await repository.exists(neo.id!);
+
+      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
+      expect(result.getLeft().toNullable()?.message,
+          SQLiteRepository.couldNotVerifyExistenceMessage);
+      verify(() => database.exists(tableName, idColumn, neo.id!));
+    });
+
+    test(
+        'WHEN an unknown Exception is thrown '
+        'SHOULD throw Exception', () async {
+      when(() => database.exists(any(), any(), any()))
+          .thenThrow(Exception('Unknown error'));
+
+      try {
+        await repository.exists(neo.id!);
+        fail('Should have thrown exception');
+      } catch (e) {
+        expect(e, isA<Exception>());
+        verify(() => database.exists(tableName, idColumn, neo.id!));
       }
     });
   });

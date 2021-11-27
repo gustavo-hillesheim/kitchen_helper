@@ -13,6 +13,8 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   static const couldNotFindMessage = 'Não foi possível encontrar o registro';
   static const canNotUpdateWithIdMessage = 'Não é possível atualizar um '
       'registro que não esteja salvo';
+  static const couldNotVerifyExistenceMessage = 'Não foi possível verificar '
+      'se o registro existe';
 
   final String tableName;
   final String idColumn;
@@ -80,6 +82,15 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
       return Right(entity != null ? fromMap(entity) : null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotFindMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> exists(int id) async {
+    try {
+      return Right(await database.exists(tableName, idColumn, id));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotVerifyExistenceMessage, e));
     }
   }
 }

@@ -21,6 +21,7 @@ dependencies:
   equatable: ^2.0.3
   flutter_modular: ^4.2.0
   bloc: ^8.0.1
+  flutter_slidable: ^1.1.0
 
 dev_dependencies:
   flutter_test:

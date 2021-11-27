@@ -67,4 +67,10 @@ class SQLiteDatabase {
     }
     return null;
   }
+
+  Future<bool> exists(String table, String idColumn, int id) async {
+    final rows = await database
+        .rawQuery('select 1 from $table where $idColumn = ?', [id]);
+    return rows.isNotEmpty;
+  }
 }

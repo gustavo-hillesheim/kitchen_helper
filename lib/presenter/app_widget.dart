@@ -14,7 +14,7 @@ class AppWidget extends StatelessWidget {
 
   ThemeData createTheme() => ThemeData(
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.red,
+          primarySwatch: Colors.teal,
         ),
         scaffoldBackgroundColor: Colors.grey.shade100,
         textTheme: const TextTheme(

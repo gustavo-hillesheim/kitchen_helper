@@ -54,7 +54,6 @@ class IngredientListTile extends StatelessWidget {
     );
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: kSmallSpace),
       width: double.infinity,
       color: Colors.white,
       child: Material(
@@ -64,7 +63,7 @@ class IngredientListTile extends StatelessWidget {
           onTap: onTap,
           onLongPress: onLongPress,
           child: Padding(
-            padding: const EdgeInsets.all(kMediumSpace - 2.0),
+            padding: const EdgeInsets.all(kMediumSpace),
             child: ingredientInfo,
           ),
         ),

@@ -8,6 +8,7 @@ abstract class Repository<T extends Entity<ID>, ID> {
   Future<Either<Failure, T?>> findById(ID id);
   Future<Either<Failure, void>> deleteById(ID id);
   Future<Either<Failure, List<T>>> findAll();
+  Future<Either<Failure, bool>> exists(ID id);
 }
 
 abstract class Entity<ID> {

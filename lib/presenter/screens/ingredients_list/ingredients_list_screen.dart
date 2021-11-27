@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../domain/models/ingredient.dart';
 import '../../constants.dart';
@@ -29,7 +30,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   @override
   void initState() {
     super.initState();
-    bloc = IngredientsListBloc(Modular.get(), Modular.get());
+    bloc = IngredientsListBloc(Modular.get(), Modular.get(), Modular.get());
     bloc.loadIngredients();
     controller.addListener(() {
       setState(() {
@@ -66,33 +67,9 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
                 return const Center(child: Text('Sem ingredientes'));
               }
               return ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: kSmallSpace),
+                padding: kSmallEdgeInsets,
                 itemCount: ingredients.length,
-                itemBuilder: (context, index) {
-                  final ingredient = ingredients[index];
-                  return Dismissible(
-                    key: ObjectKey(ingredient),
-                    direction: DismissDirection.startToEnd,
-                    onDismissed: (_) => _deleteIngredient(ingredient),
-                    background: Container(
-                      color: Colors.red,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: kMediumEdgeInsets,
-                          child: Icon(
-                            Icons.delete,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    child: IngredientListTile(
-                      ingredient,
-                      onTap: () => _goToEditIngredientScreen(ingredient),
-                    ),
-                  );
-                },
+                itemBuilder: (_, index) => _buildTile(ingredients[index]),
               );
             },
           ),
@@ -108,6 +85,29 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     );
   }
 
+  Widget _buildTile(Ingredient ingredient) {
+    return Slidable(
+      closeOnScroll: true,
+      endActionPane: ActionPane(
+        extentRatio: 0.25,
+        motion: const DrawerMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (context) => _deleteIngredient(ingredient, context),
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            label: 'Excluir',
+          ),
+        ],
+      ),
+      child: IngredientListTile(
+        ingredient,
+        onTap: () => _goToEditIngredientScreen(ingredient),
+      ),
+    );
+  }
+
   void _goToEditIngredientScreen([Ingredient? ingredient]) async {
     final reload = await EditIngredientScreen.navigate(ingredient);
     if (reload ?? false) {
@@ -115,7 +115,16 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     }
   }
 
-  void _deleteIngredient(Ingredient ingredient) async {
+  void _deleteIngredient(Ingredient ingredient, BuildContext context) async {
     bloc.delete(ingredient);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${ingredient.name} foi excluído'),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () => bloc.save(ingredient),
+        ),
+      ),
+    );
   }
 }
