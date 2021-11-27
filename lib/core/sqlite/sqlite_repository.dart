@@ -34,7 +34,6 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   Future<Either<Failure, int>> create(T entity) async {
     try {
       final id = await database.insert(tableName, toMap(entity));
-      print(id);
       return Right(id);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotInsertMessage, e));
@@ -68,7 +67,6 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   Future<Either<Failure, List<T>>> findAll() async {
     try {
       final entities = await database.findAll(tableName);
-      print(entities);
       return Right(entities.map(fromMap).toList(growable: false));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotFindAllMessage, e));

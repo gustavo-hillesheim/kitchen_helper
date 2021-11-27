@@ -86,24 +86,27 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   }
 
   Widget _buildTile(Ingredient ingredient) {
-    return Slidable(
-      closeOnScroll: true,
-      endActionPane: ActionPane(
-        extentRatio: 0.25,
-        motion: const DrawerMotion(),
-        children: [
-          SlidableAction(
-            onPressed: (context) => _deleteIngredient(ingredient, context),
-            icon: Icons.delete,
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            label: 'Excluir',
-          ),
-        ],
-      ),
-      child: IngredientListTile(
-        ingredient,
-        onTap: () => _goToEditIngredientScreen(ingredient),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: kSmallSpace),
+      child: Slidable(
+        closeOnScroll: true,
+        endActionPane: ActionPane(
+          extentRatio: 0.25,
+          motion: const DrawerMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (context) => _deleteIngredient(ingredient, context),
+              icon: Icons.delete,
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              label: 'Excluir',
+            ),
+          ],
+        ),
+        child: IngredientListTile(
+          ingredient,
+          onTap: () => _goToEditIngredientScreen(ingredient),
+        ),
       ),
     );
   }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/presenter/utils/formatter.dart';
 
 import '../../../domain/models/ingredient.dart';
 import '../../../domain/models/measurement_unit.dart';
 import '../../constants.dart';
+import '../../utils/formatter.dart';
 import '../../widgets/app_text_form_field.dart';
+import '../../widgets/measurement_unit_selector.dart';
 import 'edit_ingredient_bloc.dart';
 
 class EditIngredientScreen extends StatefulWidget {
@@ -28,19 +29,19 @@ class EditIngredientScreen extends StatefulWidget {
 }
 
 class _EditIngredientScreenState extends State<EditIngredientScreen> {
-  late final EditIngredientBloc bloc;
-  int? id;
+  final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final quantityController = TextEditingController();
-  MeasurementUnit? measurementUnit;
   final priceController = TextEditingController();
+  MeasurementUnit? measurementUnit;
+  late final EditIngredientBloc bloc;
+  int? id;
 
   @override
   void initState() {
     super.initState();
     bloc = EditIngredientBloc(Modular.get());
     final initialValue = widget.initialValue;
-    print(initialValue?.toJson());
     if (initialValue != null) {
       id = initialValue.id;
       nameController.text = initialValue.name;
@@ -54,88 +55,89 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Novo ingrediente'),
+        title: Text(widget.initialValue != null
+            ? 'Editar ingrediente'
+            : 'Novo ingrediente'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: kMediumEdgeInsets,
-                child: Column(
-                  children: [
-                    AppTextFormField(
-                      name: 'Nome',
-                      controller: nameController,
-                    ),
-                    kMediumSpacerVertical,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppTextFormField.number(
-                            name: 'Quantidade',
-                            controller: quantityController,
-                          ),
-                        ),
-                        kMediumSpacerHorizontal,
-                        Expanded(
-                          child: DropdownButtonFormField<MeasurementUnit>(
-                            value: measurementUnit,
-                            onChanged: (m) {
-                              setState(() {
-                                measurementUnit = m;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              label: Text('Medida'),
-                              border: OutlineInputBorder(),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: kMediumEdgeInsets,
+                  child: Column(
+                    children: [
+                      AppTextFormField(
+                        name: 'Nome',
+                        controller: nameController,
+                        example: 'Farinha',
+                      ),
+                      kMediumSpacerVertical,
+                      SizedBox(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: AppTextFormField.number(
+                                name: 'Quantidade',
+                                controller: quantityController,
+                              ),
                             ),
-                            items: MeasurementUnit.values
-                                .map((m) => DropdownMenuItem(
-                                      value: m,
-                                      child: Text(m.label),
-                                    ))
-                                .toList(),
-                          ),
+                            kMediumSpacerHorizontal,
+                            Expanded(
+                              child: MeasurementUnitSelector(
+                                value: measurementUnit,
+                                onChange: (m) {
+                                  setState(() {
+                                    measurementUnit = m;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    kMediumSpacerVertical,
-                    AppTextFormField.number(
-                      name: 'Custo',
-                      controller: priceController,
-                    ),
-                  ],
+                      ),
+                      kMediumSpacerVertical,
+                      AppTextFormField.money(
+                        name: 'Custo',
+                        controller: priceController,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: kMediumEdgeInsets,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(
-                  const Size.fromHeight(48),
+            Padding(
+              padding: kMediumEdgeInsets,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(
+                    const Size.fromHeight(48),
+                  ),
                 ),
+                onPressed: _save,
+                child: const Text('Salvar'),
               ),
-              onPressed: _save,
-              child: const Text('Salvar'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   void _save() async {
-    final ingredient = Ingredient(
-      id: id,
-      name: nameController.text,
-      quantity: double.parse(quantityController.text),
-      measurementUnit: measurementUnit!,
-      price: double.parse(priceController.text),
-    );
-    await bloc.save(ingredient);
-    Modular.to.pop(true);
+    if (_formKey.currentState?.validate() ?? false) {
+      final ingredient = Ingredient(
+        id: id,
+        name: nameController.text,
+        quantity: double.parse(quantityController.text),
+        measurementUnit: measurementUnit!,
+        price: double.parse(priceController.text),
+      );
+      await bloc.save(ingredient);
+      Modular.to.pop(true);
+    }
   }
 }
