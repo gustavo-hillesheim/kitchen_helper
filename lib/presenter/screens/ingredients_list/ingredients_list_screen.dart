@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:kitchen_helper/presenter/widgets/page_template.dart';
+import '../../widgets/app_bar_page_header.dart';
+import '../../widgets/page_template.dart';
 
 import '../../../domain/models/ingredient.dart';
 import '../../constants.dart';
 import '../../widgets/bottom_card.dart';
-import '../../widgets/sliver_screen_bar.dart';
 import '../edit_ingredient/edit_ingredient_screen.dart';
 import 'ingredients_list_bloc.dart';
 import 'widgets/ingredient_list_tile.dart';
@@ -20,11 +20,6 @@ class IngredientsListScreen extends StatefulWidget {
 
 class _IngredientsListScreenState extends State<IngredientsListScreen> {
   late final IngredientsListBloc bloc;
-  late final addAction = SliverScreenBarAction(
-    icon: Icons.add,
-    label: 'Adicionar',
-    onPressed: () => _goToEditIngredientScreen(),
-  );
   bool isShowingHeader = true;
 
   @override
@@ -38,11 +33,15 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageTemplate(
-        headerBuilder: (_, __) => SliverScreenBar(
+        header: AppBarPageHeader(
           title: 'Ingredientes',
-          action: addAction,
+          action: AppBarPageHeaderAction(
+            icon: Icons.add,
+            label: 'Adicionar',
+            onPressed: () => _goToEditIngredientScreen(),
+          ),
+          context: context,
         ),
-        maxHeaderHeight: 200,
         body: BottomCard(
           child: _buildIngredientsList(),
         ),
@@ -65,8 +64,8 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
           }
           return ListView.builder(
             padding: kSmallEdgeInsets,
-            itemCount: ingredients.length,
-            itemBuilder: (_, index) => _buildTile(ingredients[index]),
+            itemCount: ingredients.length * 15,
+            itemBuilder: (_, index) => _buildTile(ingredients[index ~/ 15]),
           );
         },
       );

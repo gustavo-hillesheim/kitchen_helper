@@ -6,15 +6,13 @@ typedef HeaderBuilder = Widget Function(BuildContext context, double height);
 typedef BeforeScrollCallback = bool Function(ScrollEvent event);
 
 class PageTemplate extends StatefulWidget {
-  final HeaderBuilder headerBuilder;
+  final PageHeader header;
   final Widget body;
-  final double maxHeaderHeight;
 
   const PageTemplate({
     Key? key,
-    required this.headerBuilder,
+    required this.header,
     required this.body,
-    required this.maxHeaderHeight,
   }) : super(key: key);
 
   @override
@@ -25,21 +23,21 @@ class _PageTemplateState extends State<PageTemplate> {
   late final scrollController = StoppableScrollController(
     beforeScroll: _handleScroll,
   );
-  late double headerHeight = widget.maxHeaderHeight;
+  late double headerHeight = widget.header.maxHeight;
 
   bool _handleScroll(ScrollEvent scrollEvent) {
     if (scrollEvent.oldPixels != 0 || scrollEvent.maxScroll == 0) {
       return true;
     }
-    final newHeaderHeight =
-        _clamp(headerHeight + scrollEvent.delta, 0, widget.maxHeaderHeight);
+    final newHeaderHeight = _clamp(headerHeight + scrollEvent.delta,
+        widget.header.minHeight, widget.header.maxHeight);
     if (headerHeight != newHeaderHeight) {
       setState(() {
         headerHeight = newHeaderHeight;
       });
     }
-    final shouldScroll =
-        headerHeight > 0 && scrollEvent.direction == ScrollDirection.down;
+    final shouldScroll = headerHeight > widget.header.minHeight &&
+        scrollEvent.direction == ScrollDirection.down;
     return !shouldScroll;
   }
 
@@ -63,11 +61,43 @@ class _PageTemplateState extends State<PageTemplate> {
           left: 0,
           right: 0,
           height: headerHeight,
-          child: widget.headerBuilder(context, headerHeight),
+          child: widget.header.builder(context, headerHeight),
         ),
       ],
     );
   }
+}
+
+abstract class PageHeader {
+  double get minHeight;
+  double get maxHeight;
+  HeaderBuilder get builder;
+
+  factory PageHeader({
+    required double minHeight,
+    required double maxHeight,
+    required HeaderBuilder builder,
+  }) =>
+      _PageHeaderImpl(
+        minHeight: minHeight,
+        maxHeight: maxHeight,
+        builder: builder,
+      );
+}
+
+class _PageHeaderImpl implements PageHeader {
+  @override
+  final double minHeight;
+  @override
+  final double maxHeight;
+  @override
+  final HeaderBuilder builder;
+
+  _PageHeaderImpl({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.builder,
+  });
 }
 
 class StoppableScrollController extends ScrollController {
