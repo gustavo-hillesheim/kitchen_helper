@@ -1,10 +1,12 @@
 import 'package:bloc/bloc.dart';
-import 'package:kitchen_helper/domain/usecases/save_ingredient_usecase.dart';
+import 'package:fpdart/fpdart.dart';
 
+import '../../../core/failure.dart';
 import '../../../core/usecase.dart';
 import '../../../domain/models/ingredient.dart';
 import '../../../domain/usecases/delete_ingredient_usecase.dart';
 import '../../../domain/usecases/get_ingredients_usecase.dart';
+import '../../../domain/usecases/save_ingredient_usecase.dart';
 
 class IngredientsListBloc extends Cubit<List<Ingredient>?> {
   final GetIngredientsUseCase getIngredientsUseCase;
@@ -27,13 +29,17 @@ class IngredientsListBloc extends Cubit<List<Ingredient>?> {
     }
   }
 
-  Future<void> delete(Ingredient ingredient) async {
-    await deleteIngredientsUseCase.execute(ingredient);
-    loadIngredients();
+  Future<Either<Failure, void>> delete(Ingredient ingredient) async {
+    return deleteIngredientsUseCase.execute(ingredient).then((result) {
+      loadIngredients();
+      return result;
+    });
   }
 
-  void save(Ingredient ingredient) async {
-    await saveIngredientUseCase.execute(ingredient);
-    loadIngredients();
+  Future<Either<Failure, Ingredient>> save(Ingredient ingredient) async {
+    return saveIngredientUseCase.execute(ingredient).then((result) {
+      loadIngredients();
+      return result;
+    });
   }
 }

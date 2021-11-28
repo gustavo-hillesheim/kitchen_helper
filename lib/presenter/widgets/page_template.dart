@@ -51,11 +51,13 @@ class _PageTemplateState extends State<PageTemplate> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Padding(
-          padding: EdgeInsets.only(top: headerHeight),
-          child: PrimaryScrollController(
-            child: widget.body,
-            controller: scrollController,
+        SizedBox.expand(
+          child: Padding(
+            padding: EdgeInsets.only(top: headerHeight),
+            child: PrimaryScrollController(
+              child: widget.body,
+              controller: scrollController,
+            ),
           ),
         ),
         Positioned(

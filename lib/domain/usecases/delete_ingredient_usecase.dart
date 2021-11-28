@@ -7,7 +7,7 @@ import '../repository/ingredient_repository.dart';
 
 class DeleteIngredientUseCase extends UseCase<Ingredient, void> {
   static const cantDeleteIngredientWithoutIdMessage =
-      'Can\'t delete ingredient without an id';
+      'Não é possível excluir um  registro que não foi salvo';
 
   final IngredientRepository repository;
 
