@@ -8,7 +8,21 @@ import '../../../domain/usecases/delete_ingredient_usecase.dart';
 import '../../../domain/usecases/get_ingredients_usecase.dart';
 import '../../../domain/usecases/save_ingredient_usecase.dart';
 
-class IngredientsListBloc extends Cubit<List<Ingredient>?> {
+abstract class IngredientListState {}
+
+class LoadingState extends IngredientListState {}
+
+class SuccessState extends IngredientListState {
+  final List<Ingredient> ingredients;
+  SuccessState(this.ingredients);
+}
+
+class FailureState extends IngredientListState {
+  final Failure failure;
+  FailureState(this.failure);
+}
+
+class IngredientsListBloc extends Cubit<IngredientListState> {
   final GetIngredientsUseCase getIngredientsUseCase;
   final SaveIngredientUseCase saveIngredientUseCase;
   final DeleteIngredientUseCase deleteIngredientsUseCase;
@@ -17,16 +31,16 @@ class IngredientsListBloc extends Cubit<List<Ingredient>?> {
     this.getIngredientsUseCase,
     this.saveIngredientUseCase,
     this.deleteIngredientsUseCase,
-  ) : super(null);
+  ) : super(LoadingState());
 
   void loadIngredients() async {
-    emit(null);
+    emit(LoadingState());
     await Future.delayed(const Duration(seconds: 1));
-    final result = await getIngredientsUseCase.execute(const NoParams());
-    if (result.isRight()) {
-      final ingredients = result.getRight().toNullable();
-      emit(ingredients);
-    }
+    var result = await getIngredientsUseCase.execute(const NoParams());
+    result.fold(
+      (failure) => emit(FailureState(failure)),
+      (ingredients) => emit(SuccessState(ingredients)),
+    );
   }
 
   Future<Either<Failure, void>> delete(Ingredient ingredient) async {
