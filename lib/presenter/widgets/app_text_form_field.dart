@@ -43,7 +43,7 @@ class AppTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: (v) => required ? Validator.required(v) : null,
+      validator: required ? Validator.required : null,
       keyboardType: keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(

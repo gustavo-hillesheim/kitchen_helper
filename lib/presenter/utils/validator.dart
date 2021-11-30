@@ -1,10 +1,12 @@
 class Validator {
+  static const requiredValueMessage = 'O valor é obrigatório';
+
   static String? required(Object? value) {
     if (value == null) {
-      return 'O valor é obrigatório';
+      return requiredValueMessage;
     }
     if (value is String && value.isEmpty) {
-      return 'O valor é obrigatório';
+      return requiredValueMessage;
     }
     return null;
   }

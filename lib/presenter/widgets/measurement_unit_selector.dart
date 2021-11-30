@@ -4,6 +4,8 @@ import '../../domain/models/measurement_unit.dart';
 import '../utils/validator.dart';
 
 class MeasurementUnitSelector extends StatelessWidget {
+  @visibleForTesting
+  static const dropdownFieldKey = ValueKey('dropdown-field-key');
   final MeasurementUnit? value;
   final bool required;
   final ValueChanged<MeasurementUnit?> onChange;
@@ -18,7 +20,8 @@ class MeasurementUnitSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<MeasurementUnit>(
-      validator: (v) => required ? Validator.required(v) : null,
+      key: dropdownFieldKey,
+      validator: required ? Validator.required : null,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       value: value,
       onChanged: onChange,
