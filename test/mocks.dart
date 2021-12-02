@@ -3,7 +3,17 @@ import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
+import 'package:kitchen_helper/domain/usecases/delete_ingredient_usecase.dart';
+import 'package:kitchen_helper/domain/usecases/get_ingredients_usecase.dart';
+import 'package:kitchen_helper/domain/usecases/save_ingredient_usecase.dart';
 import 'package:mocktail/mocktail.dart';
+
+class GetIngredientsUseCaseMock extends Mock implements GetIngredientsUseCase {}
+
+class SaveIngredientUseCaseMock extends Mock implements SaveIngredientUseCase {}
+
+class DeleteIngredientUseCaseMock extends Mock
+    implements DeleteIngredientUseCase {}
 
 class MockIngredientRepository extends Mock implements IngredientRepository {}
 
@@ -30,23 +40,28 @@ final sugarWithoutId = Ingredient(
   price: 10,
 );
 
-final ingredientList = [
-  Ingredient(
-    name: 'Flour',
-    quantity: 1,
-    measurementUnit: MeasurementUnit.kilograms,
-    price: 15.75,
-  ),
-  Ingredient(
-    name: 'egg',
-    quantity: 12,
-    measurementUnit: MeasurementUnit.units,
-    price: 10,
-  ),
-  Ingredient(
-    name: 'orange juice',
-    quantity: 250,
-    measurementUnit: MeasurementUnit.milliliters,
-    price: 2.25,
-  ),
-];
+final flour = Ingredient(
+  id: 5,
+  name: 'Flour',
+  quantity: 1,
+  measurementUnit: MeasurementUnit.kilograms,
+  price: 15.75,
+);
+
+final egg = Ingredient(
+  id: 6,
+  name: 'egg',
+  quantity: 12,
+  measurementUnit: MeasurementUnit.units,
+  price: 10,
+);
+
+final orangeJuice = Ingredient(
+  id: 7,
+  name: 'orange juice',
+  quantity: 250,
+  measurementUnit: MeasurementUnit.milliliters,
+  price: 2.25,
+);
+
+final ingredientList = [flour, egg, orangeJuice];

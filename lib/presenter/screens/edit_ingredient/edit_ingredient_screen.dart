@@ -111,15 +111,29 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
             ),
             Padding(
               padding: kMediumEdgeInsets,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(
-                    const Size.fromHeight(48),
-                  ),
-                ),
-                onPressed: _save,
-                child: const Text('Salvar'),
-              ),
+              child: StreamBuilder<EditIngredientState>(
+                  stream: bloc.stream,
+                  builder: (_, snapshot) {
+                    final buttonStyle = ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(
+                        const Size.fromHeight(48),
+                      ),
+                    );
+
+                    if (snapshot.data is LoadingState) {
+                      return ElevatedButton(
+                        style: buttonStyle,
+                        onPressed: null,
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    return ElevatedButton(
+                      style: buttonStyle,
+                      onPressed: _save,
+                      child: const Text('Salvar'),
+                    );
+                  }),
             ),
           ],
         ),
@@ -136,8 +150,14 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
         measurementUnit: measurementUnit!,
         price: double.parse(priceController.text),
       );
-      await bloc.save(ingredient);
-      Modular.to.pop(true);
+      final state = await bloc.save(ingredient);
+      if (state is SuccessState) {
+        Modular.to.pop(true);
+      } else if (state is FailureState) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.failure.message)),
+        );
+      }
     }
   }
 }

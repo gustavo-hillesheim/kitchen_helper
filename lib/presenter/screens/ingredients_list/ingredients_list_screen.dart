@@ -129,7 +129,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     result.fold((failure) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Não foi possível excluir ${ingredient.name}'),
+          content: Text(failure.message),
           action: SnackBarAction(
             label: 'Tentar novamente',
             onPressed: () => _tryDelete(ingredient),
@@ -155,7 +155,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
       (failure) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Não foi possível salvar ${ingredient.name}'),
+            content: Text(failure.message),
             action: SnackBarAction(
               label: 'Tentar novamente',
               onPressed: () => _trySave(ingredient),
