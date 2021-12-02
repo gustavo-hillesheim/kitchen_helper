@@ -19,7 +19,6 @@ class MenuScreen extends StatelessWidget {
               description: 'Cadastre ingredientes para usar nas suas receitas',
               route: '/ingredients',
               icon: Icons.food_bank_outlined,
-              color: Colors.blue,
             ),
           ],
         ),

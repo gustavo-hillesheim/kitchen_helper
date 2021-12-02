@@ -9,7 +9,6 @@ class PageDescriptionTile extends StatefulWidget {
   final String description;
   final String route;
   final IconData icon;
-  final MaterialColor color;
 
   const PageDescriptionTile({
     Key? key,
@@ -17,7 +16,6 @@ class PageDescriptionTile extends StatefulWidget {
     required this.description,
     required this.route,
     required this.icon,
-    required this.color,
   }) : super(key: key);
 
   @override
