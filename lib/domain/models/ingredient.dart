@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../core/repository.dart';
@@ -6,7 +7,7 @@ import 'measurement_unit.dart';
 part 'ingredient.g.dart';
 
 @JsonSerializable()
-class Ingredient extends Entity<int> {
+class Ingredient extends Equatable implements Entity<int> {
   @override
   final int? id;
   final String name;
@@ -42,4 +43,7 @@ class Ingredient extends Entity<int> {
       price: price ?? this.price,
     );
   }
+
+  @override
+  List<Object?> get props => [id, name, quantity, measurementUnit, price];
 }

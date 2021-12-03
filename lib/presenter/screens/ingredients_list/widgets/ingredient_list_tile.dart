@@ -8,12 +8,10 @@ import '../../../utils/formatter.dart';
 class IngredientListTile extends StatelessWidget {
   final Ingredient ingredient;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
 
   const IngredientListTile(
     this.ingredient, {
     this.onTap,
-    this.onLongPress,
     Key? key,
   }) : super(key: key);
 
@@ -61,7 +59,6 @@ class IngredientListTile extends StatelessWidget {
         child: InkWell(
           borderRadius: kExtraSmallBorder,
           onTap: onTap,
-          onLongPress: onLongPress,
           child: Padding(
             padding: const EdgeInsets.all(kMediumSpace),
             child: ingredientInfo,

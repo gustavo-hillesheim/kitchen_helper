@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/presenter/screens/menu/widgets/page_description_tile.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../mocks.dart';
+
 void main() {
   testWidgets('Should render PageDescriptionTile correctly', (tester) async {
     final navigator = ModularNavigateMock();
@@ -28,5 +30,3 @@ void main() {
     verify(() => navigator.pushNamed('/test-page'));
   });
 }
-
-class ModularNavigateMock extends Mock implements IModularNavigator {}

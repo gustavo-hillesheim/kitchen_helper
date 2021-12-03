@@ -11,10 +11,12 @@ import 'edit_ingredient_bloc.dart';
 
 class EditIngredientScreen extends StatefulWidget {
   final Ingredient? initialValue;
+  final EditIngredientBloc? bloc;
 
   const EditIngredientScreen({
     Key? key,
     this.initialValue,
+    this.bloc,
   }) : super(key: key);
 
   @override
@@ -33,14 +35,14 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
   final nameController = TextEditingController();
   final quantityController = TextEditingController();
   final priceController = TextEditingController();
-  MeasurementUnit? measurementUnit;
   late final EditIngredientBloc bloc;
+  MeasurementUnit? measurementUnit;
   int? id;
 
   @override
   void initState() {
     super.initState();
-    bloc = EditIngredientBloc(Modular.get());
+    bloc = widget.bloc ?? EditIngredientBloc(Modular.get());
     final initialValue = widget.initialValue;
     if (initialValue != null) {
       id = initialValue.id;
@@ -146,9 +148,9 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
       final ingredient = Ingredient(
         id: id,
         name: nameController.text,
-        quantity: double.parse(quantityController.text),
+        quantity: double.parse(quantityController.text.replaceAll(',', '.')),
         measurementUnit: measurementUnit!,
-        price: double.parse(priceController.text),
+        price: double.parse(priceController.text.replaceAll(',', '.')),
       );
       final state = await bloc.save(ingredient);
       if (state is SuccessState) {

@@ -1,3 +1,4 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/failure.dart';
 import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
@@ -7,6 +8,8 @@ import 'package:kitchen_helper/domain/usecases/delete_ingredient_usecase.dart';
 import 'package:kitchen_helper/domain/usecases/get_ingredients_usecase.dart';
 import 'package:kitchen_helper/domain/usecases/save_ingredient_usecase.dart';
 import 'package:mocktail/mocktail.dart';
+
+class ModularNavigateMock extends Mock implements IModularNavigator {}
 
 class GetIngredientsUseCaseMock extends Mock implements GetIngredientsUseCase {}
 
