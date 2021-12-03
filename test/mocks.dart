@@ -68,3 +68,9 @@ final orangeJuice = Ingredient(
 );
 
 final ingredientList = [flour, egg, orangeJuice];
+
+IModularNavigator mockNavigator() {
+  final navigator = ModularNavigateMock();
+  Modular.navigatorDelegate = navigator;
+  return navigator;
+}

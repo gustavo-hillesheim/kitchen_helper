@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/presenter/screens/menu/widgets/page_description_tile.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,8 +7,7 @@ import '../../../../mocks.dart';
 
 void main() {
   testWidgets('Should render PageDescriptionTile correctly', (tester) async {
-    final navigator = ModularNavigateMock();
-    Modular.navigatorDelegate = navigator;
+    final navigator = mockNavigator();
 
     const tile = PageDescriptionTile(
       name: 'Test page',

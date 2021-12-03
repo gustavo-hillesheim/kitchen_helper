@@ -13,7 +13,9 @@ import 'ingredients_list_bloc.dart';
 import 'widgets/ingredient_list_tile.dart';
 
 class IngredientsListScreen extends StatefulWidget {
-  const IngredientsListScreen({Key? key}) : super(key: key);
+  final IngredientsListBloc? bloc;
+
+  const IngredientsListScreen({Key? key, this.bloc}) : super(key: key);
 
   @override
   State<IngredientsListScreen> createState() => _IngredientsListScreenState();
@@ -21,12 +23,12 @@ class IngredientsListScreen extends StatefulWidget {
 
 class _IngredientsListScreenState extends State<IngredientsListScreen> {
   late final IngredientsListBloc bloc;
-  bool isShowingHeader = true;
 
   @override
   void initState() {
     super.initState();
-    bloc = IngredientsListBloc(Modular.get(), Modular.get(), Modular.get());
+    bloc = widget.bloc ??
+        IngredientsListBloc(Modular.get(), Modular.get(), Modular.get());
     bloc.loadIngredients();
   }
 
@@ -60,7 +62,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
           }
           final state = snapshot.data;
           if (state is FailureState) {
-            return _buildErrorState();
+            return _buildErrorState(state.failure.message);
           }
           final ingredients = (state as SuccessState).ingredients;
           if (ingredients.isEmpty) {
@@ -74,10 +76,10 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
         },
       );
 
-  Widget _buildErrorState() => Empty(
+  Widget _buildErrorState(String message) => Empty(
         icon: Icons.error_outline_outlined,
         text: 'Erro',
-        subtext: 'Não foi possível carregar os ingredientes',
+        subtext: message,
         action: ElevatedButton(
           onPressed: bloc.loadIngredients,
           child: const Text('Tente novamente'),

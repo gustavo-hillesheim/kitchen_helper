@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
@@ -159,8 +158,7 @@ void main() {
   });
 
   testWidgets('Should exit screen if save is successful', (tester) async {
-    final navigator = ModularNavigateMock();
-    Modular.navigatorDelegate = navigator;
+    final navigator = mockNavigator();
     when(() => bloc.save(egg)).thenAnswer((_) async => SuccessState(egg));
 
     await tester.pumpWidget(MaterialApp(
@@ -177,8 +175,7 @@ void main() {
   });
 
   testWidgets('Should show error text if save fails', (tester) async {
-    final navigator = ModularNavigateMock();
-    Modular.navigatorDelegate = navigator;
+    final navigator = mockNavigator();
     when(() => bloc.save(egg))
         .thenAnswer((_) async => FailureState(FakeFailure('Error text')));
 
@@ -197,8 +194,8 @@ void main() {
   });
 
   test('Should navigate to ingredients route', () async {
-    final navigator = ModularNavigateMock();
-    Modular.navigatorDelegate = navigator;
+    final navigator = mockNavigator();
+
     when(() => navigator.pushNamed(any(), arguments: any(named: 'arguments')))
         .thenAnswer((_) async => false);
 

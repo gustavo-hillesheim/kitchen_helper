@@ -20,16 +20,17 @@ void main(List<String> args) {
   });
 }
 
-void killProcess() {
+Future<void> killProcess() async {
   if (process != null) {
     print('[WATCHER] Killing existing process...');
     process!.kill();
+    await process!.exitCode;
     process = null;
   }
 }
 
-void debounce(void Function() fn, Duration duration) {
-  killProcess();
+void debounce(void Function() fn, Duration duration) async {
+  await killProcess();
   if (debounceTimer != null && debounceTimer!.isActive) {
     debounceTimer!.cancel();
   }
@@ -38,7 +39,7 @@ void debounce(void Function() fn, Duration duration) {
 
 Future<void> runProcess(List<String> args) {
   return lock.synchronized(() async {
-    killProcess();
+    await killProcess();
     print('[WATCHER] Running "${args.join(' ')}"...');
     process = await Process.start(
       args[0],
