@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/usecases/save_ingredient_usecase.dart';
 import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
@@ -23,13 +22,10 @@ void main() {
       when(() => saveUseCase.execute(egg)).thenAnswer((_) async => Right(egg));
       return bloc;
     },
-    expect: () {
-      expect(bloc.state, EmptyState());
-      return [
-        LoadingState(),
-        SuccessState(egg),
-      ];
-    },
+    expect: () => [
+      LoadingState(),
+      SuccessState(egg),
+    ],
     act: (bloc) => bloc.save(egg),
   );
 
