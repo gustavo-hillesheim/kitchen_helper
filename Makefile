@@ -30,7 +30,10 @@ test_run:
 	fvm flutter test --reporter expanded
 
 test_watch:
-	dart scripts/watcher.dart fvm flutter test --reporter expanded
+	fvm dart scripts/watcher.dart fvm flutter test --reporter expanded
+
+watch_test_file:
+	fvm dart scripts/watch_test_file.dart $(filter-out $@, $(MAKECMDGOALS))
 
 build_runner:
 	fvm flutter pub run build_runner build --delete-conflicting-outputs

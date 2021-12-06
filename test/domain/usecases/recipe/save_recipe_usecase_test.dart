@@ -23,6 +23,7 @@ void main() {
       final result = await usecase.execute(sugarWithEggRecipe);
 
       expect(result.isLeft(), true);
+      expect(result.getLeft().toNullable()!.message, '');
     },
   );
 }
