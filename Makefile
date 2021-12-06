@@ -34,3 +34,6 @@ test_watch:
 
 build_runner:
 	fvm flutter pub run build_runner build --delete-conflicting-outputs
+
+build_runner_ci:
+	flutter pub run build_runner build --delete-conflicting-outputs
