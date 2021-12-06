@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/models/measurement_unit.dart';
+import '../../domain/domain.dart';
 import '../utils/validator.dart';
 
 class MeasurementUnitSelector extends StatelessWidget {

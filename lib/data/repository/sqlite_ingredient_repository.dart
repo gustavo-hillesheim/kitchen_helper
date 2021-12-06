@@ -1,7 +1,5 @@
-import '../../core/sqlite/sqlite_database.dart';
-import '../../core/sqlite/sqlite_repository.dart';
-import '../../domain/models/ingredient.dart';
-import '../../domain/repository/ingredient_repository.dart';
+import '../../core/core.dart';
+import '../../domain/domain.dart';
 
 class SQLiteIngredientRepository extends SQLiteRepository<Ingredient>
     implements IngredientRepository {

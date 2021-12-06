@@ -1,10 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/usecase.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/delete_ingredient_usecase.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/get_ingredients_usecase.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/save_ingredient_usecase.dart';
+import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 

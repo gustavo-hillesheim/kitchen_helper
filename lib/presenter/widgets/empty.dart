@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/constants.dart';
+
+import '../presenter.dart';
 
 class Empty extends StatelessWidget {
   final IconData icon;

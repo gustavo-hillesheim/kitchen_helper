@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../core/failure.dart';
-import '../../../core/usecase.dart';
+import '../../../core/core.dart';
 import '../../models/ingredient.dart';
 import '../../repository/ingredient_repository.dart';
 

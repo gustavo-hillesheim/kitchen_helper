@@ -72,7 +72,9 @@ class _PageTemplateState extends State<PageTemplate> {
 
 abstract class PageHeader {
   double get minHeight;
+
   double get maxHeight;
+
   HeaderBuilder get builder;
 
   factory PageHeader({

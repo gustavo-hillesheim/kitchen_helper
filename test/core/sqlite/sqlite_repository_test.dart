@@ -2,10 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/failure.dart';
-import 'package:kitchen_helper/core/repository.dart';
-import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
-import 'package:kitchen_helper/core/sqlite/sqlite_repository.dart';
+import 'package:kitchen_helper/core/core.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
 

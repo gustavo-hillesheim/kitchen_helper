@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import '../../../domain/models/ingredient.dart';
+import '../../../domain/domain.dart';
 import '../../constants.dart';
 import '../../widgets/app_bar_page_header.dart';
 import '../../widgets/bottom_card.dart';

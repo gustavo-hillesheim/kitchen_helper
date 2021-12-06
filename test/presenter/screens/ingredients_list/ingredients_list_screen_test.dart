@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_screen.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
-import 'package:kitchen_helper/presenter/widgets/empty.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';

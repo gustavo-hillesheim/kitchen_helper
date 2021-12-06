@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../domain/models/ingredient.dart';
-import '../../../domain/models/measurement_unit.dart';
+import '../../../domain/domain.dart';
 import '../../constants.dart';
 import '../../utils/formatter.dart';
 import '../../widgets/app_text_form_field.dart';

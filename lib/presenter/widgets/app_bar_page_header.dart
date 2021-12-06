@@ -10,6 +10,7 @@ class AppBarPageHeader implements PageHeader {
   final double maxHeight = 250;
   @override
   final double minHeight;
+
   @override
   HeaderBuilder get builder => build;
 

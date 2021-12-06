@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
-import 'package:kitchen_helper/presenter/utils/validator.dart';
-import 'package:kitchen_helper/presenter/widgets/measurement_unit_selector.dart';
+import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   testWidgets('Should render default MeasurementUnitSelector correctly',

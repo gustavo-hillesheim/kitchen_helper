@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/models/ingredient.dart';
-import '../../../../domain/models/measurement_unit.dart';
+import '../../../../domain/domain.dart';
 import '../../../constants.dart';
 import '../../../utils/formatter.dart';
 

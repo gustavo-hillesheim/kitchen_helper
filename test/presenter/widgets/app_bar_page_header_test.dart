@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/widgets/app_bar_page_header.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   testWidgets('Should render default AppBarPageHeader correctly',

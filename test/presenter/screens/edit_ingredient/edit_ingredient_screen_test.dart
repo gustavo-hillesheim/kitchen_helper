@@ -2,13 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_screen.dart';
-import 'package:kitchen_helper/presenter/utils/formatter.dart';
-import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
-import 'package:kitchen_helper/presenter/widgets/measurement_unit_selector.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';

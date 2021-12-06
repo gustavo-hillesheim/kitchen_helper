@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/widgets/bottom_card.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   testWidgets('Should render child widget', (tester) async {

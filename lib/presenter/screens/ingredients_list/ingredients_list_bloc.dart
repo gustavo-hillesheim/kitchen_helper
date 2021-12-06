@@ -2,12 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 
-import '../../../core/failure.dart';
-import '../../../core/usecase.dart';
-import '../../../domain/models/ingredient.dart';
-import '../../../domain/usecases/ingredient/delete_ingredient_usecase.dart';
-import '../../../domain/usecases/ingredient/get_ingredients_usecase.dart';
-import '../../../domain/usecases/ingredient/save_ingredient_usecase.dart';
+import '../../../core/core.dart';
+import '../../../domain/domain.dart';
 
 class IngredientsListBloc extends Cubit<IngredientListState> {
   final GetIngredientsUseCase getIngredientsUseCase;
@@ -53,6 +49,7 @@ class LoadingState extends IngredientListState {
 
 class SuccessState extends IngredientListState {
   final List<Ingredient> ingredients;
+
   SuccessState(this.ingredients);
 
   @override
@@ -61,6 +58,7 @@ class SuccessState extends IngredientListState {
 
 class FailureState extends IngredientListState {
   final Failure failure;
+
   FailureState(this.failure);
 
   @override

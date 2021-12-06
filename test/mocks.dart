@@ -1,13 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/core/failure.dart';
-import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
-import 'package:kitchen_helper/domain/models/recipe.dart';
-import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/delete_ingredient_usecase.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/get_ingredients_usecase.dart';
-import 'package:kitchen_helper/domain/usecases/ingredient/save_ingredient_usecase.dart';
+import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 class ModularNavigateMock extends Mock implements IModularNavigator {}

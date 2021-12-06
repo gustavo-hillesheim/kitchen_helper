@@ -1,17 +1,11 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 
 import 'app_guard.dart';
-import 'core/sqlite/sqlite_database.dart';
+import 'core/core.dart';
 import 'data/repository/sqlite_ingredient_repository.dart';
-import 'domain/repository/ingredient_repository.dart';
-import 'domain/usecases/ingredient/delete_ingredient_usecase.dart';
-import 'domain/usecases/ingredient/get_ingredient_usecase.dart';
-import 'domain/usecases/ingredient/get_ingredients_usecase.dart';
-import 'domain/usecases/ingredient/save_ingredient_usecase.dart';
-import 'presenter/screens/edit_ingredient/edit_ingredient_screen.dart';
-import 'presenter/screens/ingredients_list/ingredients_list_screen.dart';
-import 'presenter/screens/menu/menu_screen.dart';
+import 'domain/domain.dart';
+import 'presenter/presenter.dart';
 
 class AppModule extends Module {
   @override

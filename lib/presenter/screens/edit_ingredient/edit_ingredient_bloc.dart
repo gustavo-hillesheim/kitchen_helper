@@ -1,9 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:kitchen_helper/core/failure.dart';
 
-import '../../../domain/models/ingredient.dart';
-import '../../../domain/usecases/ingredient/save_ingredient_usecase.dart';
+import '../../../core/core.dart';
+import '../../../domain/domain.dart';
 
 class EditIngredientBloc extends Cubit<EditIngredientState> {
   final SaveIngredientUseCase usecase;

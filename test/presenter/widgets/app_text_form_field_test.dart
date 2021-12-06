@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/utils/validator.dart';
-import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   testWidgets('Should render default AppTextFormField correctly',

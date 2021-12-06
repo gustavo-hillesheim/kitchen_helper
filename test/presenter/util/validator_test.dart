@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/utils/validator.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   test('Should validate required values correctly', () {
