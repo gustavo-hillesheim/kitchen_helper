@@ -12,7 +12,7 @@ void main() {
   late IngredientRepository repository;
 
   setUp(() {
-    repository = MockIngredientRepository();
+    repository = IngredientRepositoryMock();
     usecase = GetIngredientsUseCase(repository);
   });
 

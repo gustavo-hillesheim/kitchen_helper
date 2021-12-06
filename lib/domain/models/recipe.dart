@@ -10,7 +10,7 @@ class Recipe extends Equatable implements Entity<int> {
   @override
   final int? id;
   final String name;
-  final String notes;
+  final String? notes;
   final double quantityProduced;
   final double? quantitySold;
   final double? price;
@@ -21,7 +21,7 @@ class Recipe extends Equatable implements Entity<int> {
   const Recipe({
     this.id,
     required this.name,
-    required this.notes,
+    this.notes,
     required this.quantityProduced,
     this.quantitySold,
     this.price,
@@ -78,23 +78,44 @@ class Recipe extends Equatable implements Entity<int> {
 
 @JsonSerializable()
 class RecipeIngredient extends Equatable {
-  final int ingredientId;
+  final int id;
   final double quantity;
+  final RecipeIngredientType type;
 
-  const RecipeIngredient({required this.ingredientId, required this.quantity});
+  const RecipeIngredient({
+    required this.id,
+    required this.quantity,
+    required this.type,
+  });
+
+  const RecipeIngredient.ingredient(
+    int id, {
+    required double quantity,
+  }) : this(
+          id: id,
+          quantity: quantity,
+          type: RecipeIngredientType.ingredient,
+        );
 
   factory RecipeIngredient.fromJson(Map<String, dynamic> json) =>
       _$RecipeIngredientFromJson(json);
 
   Map<String, dynamic> toJson() => _$RecipeIngredientToJson(this);
 
-  RecipeIngredient copyWith({int? ingredientId, double? quantity}) {
+  RecipeIngredient copyWith({
+    int? id,
+    double? quantity,
+    RecipeIngredientType? type,
+  }) {
     return RecipeIngredient(
-      ingredientId: ingredientId ?? this.ingredientId,
+      id: id ?? this.id,
       quantity: quantity ?? this.quantity,
+      type: type ?? this.type,
     );
   }
 
   @override
-  List<Object?> get props => [ingredientId, quantity];
+  List<Object?> get props => [id, quantity, type];
 }
+
+enum RecipeIngredientType { ingredient, recipe }

@@ -13,7 +13,7 @@ void main() {
   setUp(() {
     registerFallbackValue(FakeIngredient());
 
-    repository = MockIngredientRepository();
+    repository = IngredientRepositoryMock();
     usecase = SaveIngredientUseCase(repository);
   });
 

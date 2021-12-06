@@ -11,7 +11,7 @@ void main() {
   late IngredientRepository repository;
 
   setUp(() {
-    repository = MockIngredientRepository();
+    repository = IngredientRepositoryMock();
     usecase = DeleteIngredientUseCase(repository);
   });
 

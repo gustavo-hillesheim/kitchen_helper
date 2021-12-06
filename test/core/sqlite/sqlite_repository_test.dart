@@ -26,7 +26,7 @@ void main() {
   final sullivan = Person(3, 'Sullivan', 28);
 
   setUp(() {
-    database = MockSQLiteDatabase();
+    database = SQLiteDatabaseMock();
     repository = SQLiteRepository(
       tableName,
       idColumn,

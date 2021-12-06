@@ -3,6 +3,7 @@ import 'package:kitchen_helper/core/failure.dart';
 import 'package:kitchen_helper/core/sqlite/sqlite_database.dart';
 import 'package:kitchen_helper/domain/models/ingredient.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/domain/models/recipe.dart';
 import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
 import 'package:kitchen_helper/domain/usecases/ingredient/delete_ingredient_usecase.dart';
 import 'package:kitchen_helper/domain/usecases/ingredient/get_ingredients_usecase.dart';
@@ -18,9 +19,9 @@ class SaveIngredientUseCaseMock extends Mock implements SaveIngredientUseCase {}
 class DeleteIngredientUseCaseMock extends Mock
     implements DeleteIngredientUseCase {}
 
-class MockIngredientRepository extends Mock implements IngredientRepository {}
+class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
-class MockSQLiteDatabase extends Mock implements SQLiteDatabase {}
+class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
 class FakeIngredient extends Fake implements Ingredient {}
 
@@ -28,7 +29,7 @@ class FakeFailure extends Failure {
   FakeFailure(String message) : super(message);
 }
 
-final sugarWithId = Ingredient(
+const sugarWithId = Ingredient(
   id: 123,
   name: 'Sugar',
   quantity: 100,
@@ -36,14 +37,14 @@ final sugarWithId = Ingredient(
   price: 10,
 );
 
-final sugarWithoutId = Ingredient(
+const sugarWithoutId = Ingredient(
   name: 'Sugar',
   quantity: 100,
   measurementUnit: MeasurementUnit.grams,
   price: 10,
 );
 
-final flour = Ingredient(
+const flour = Ingredient(
   id: 5,
   name: 'Flour',
   quantity: 1,
@@ -51,7 +52,7 @@ final flour = Ingredient(
   price: 15.75,
 );
 
-final egg = Ingredient(
+const egg = Ingredient(
   id: 6,
   name: 'egg',
   quantity: 12,
@@ -59,12 +60,24 @@ final egg = Ingredient(
   price: 10,
 );
 
-final orangeJuice = Ingredient(
+const orangeJuice = Ingredient(
   id: 7,
   name: 'orange juice',
   quantity: 250,
   measurementUnit: MeasurementUnit.milliliters,
   price: 2.25,
+);
+
+final sugarWithEggRecipe = Recipe(
+  id: 1,
+  name: 'Sugar with egg',
+  measurementUnit: MeasurementUnit.milliliters,
+  quantityProduced: 100,
+  canBeSold: false,
+  ingredients: [
+    RecipeIngredient.ingredient(egg.id!, quantity: 1),
+    RecipeIngredient.ingredient(sugarWithId.id!, quantity: 100),
+  ],
 );
 
 final ingredientList = [flour, egg, orangeJuice];
