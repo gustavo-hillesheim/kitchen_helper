@@ -96,8 +96,8 @@ void main() {
 
   test(
     'WHEN the repository returns a Failure on exists '
-        'THEN the usecase should return it too',
-        () async {
+    'THEN the usecase should return it too',
+    () async {
       when(() => repository.exists(any()))
           .thenAnswer((_) async => Left(FakeFailure('some error')));
       final result = await usecase.execute(sugarWithId);
