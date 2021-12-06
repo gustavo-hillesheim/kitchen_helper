@@ -12,12 +12,27 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  json_annotation: ^4.3.0
+  fpdart: ^0.0.12
+  synchronized: ^3.0.0
+  sqflite: ^2.0.0+4
+  path: ^1.8.0
+  path_provider: ^2.0.7
+  equatable: ^2.0.3
+  flutter_modular: ^4.2.0
+  bloc: ^8.0.1
+  flutter_slidable: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
-  code_coverage: ^1.2.0
+  code_coverage: ^1.3.0
+  build_runner: ^2.1.5
+  json_serializable: ^6.0.1
+  mocktail: ^0.2.0
+  bloc_test: ^9.0.1
+  modular_test: ^1.0.1+1
 
 flutter:
   uses-material-design: true
