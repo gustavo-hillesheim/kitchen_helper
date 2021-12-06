@@ -15,7 +15,7 @@ class Ingredient extends Equatable implements Entity<int> {
   final MeasurementUnit measurementUnit;
   final double price;
 
-  Ingredient({
+  const Ingredient({
     required this.name,
     required this.quantity,
     required this.measurementUnit,

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
-import 'package:kitchen_helper/domain/usecases/get_ingredient_usecase.dart';
+import 'package:kitchen_helper/domain/usecases/ingredient/get_ingredient_usecase.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../mocks.dart';
+import '../../../mocks.dart';
 
 void main() {
   late GetIngredientUseCase usecase;

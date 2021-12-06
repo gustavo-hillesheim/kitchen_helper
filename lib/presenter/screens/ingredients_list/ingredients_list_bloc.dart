@@ -5,9 +5,9 @@ import 'package:fpdart/fpdart.dart';
 import '../../../core/failure.dart';
 import '../../../core/usecase.dart';
 import '../../../domain/models/ingredient.dart';
-import '../../../domain/usecases/delete_ingredient_usecase.dart';
-import '../../../domain/usecases/get_ingredients_usecase.dart';
-import '../../../domain/usecases/save_ingredient_usecase.dart';
+import '../../../domain/usecases/ingredient/delete_ingredient_usecase.dart';
+import '../../../domain/usecases/ingredient/get_ingredients_usecase.dart';
+import '../../../domain/usecases/ingredient/save_ingredient_usecase.dart';
 
 class IngredientsListBloc extends Cubit<IngredientListState> {
   final GetIngredientsUseCase getIngredientsUseCase;
