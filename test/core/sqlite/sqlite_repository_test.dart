@@ -431,6 +431,8 @@ class Person extends Entity<int> with EquatableMixin {
   List<Object?> get props => [id, name, age];
 }
 
+class TransactionMock extends Mock implements Transaction {}
+
 class FakeDatabaseException extends DatabaseException with EquatableMixin {
   final String message;
 

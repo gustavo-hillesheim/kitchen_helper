@@ -8,11 +8,13 @@ class SaveRecipeUseCase extends UseCase<Recipe, Recipe> {
   static const allIngredientsMustExistMessage = "É necessário salvar os "
       "ingredientes antes da receita";
 
+  final SQLiteDatabase database;
   final IngredientRepository ingredientRepository;
   final RecipeRepository recipeRepository;
   final RecipeIngredientRepository recipeIngredientRepository;
 
   SaveRecipeUseCase(
+    this.database,
     this.ingredientRepository,
     this.recipeRepository,
     this.recipeIngredientRepository,
@@ -20,15 +22,20 @@ class SaveRecipeUseCase extends UseCase<Recipe, Recipe> {
 
   @override
   Future<Either<Failure, Recipe>> execute(Recipe recipe) async {
-    return _validateIngredients(recipe.ingredients)
-        .onRightThen((_) => recipeRepository.save(recipe))
+    return _validateIngredients(recipe.ingredients).onRightThen(
+        (_) => database.insideTransaction(() => _saveRecipe(recipe)));
+  }
+
+  Future<Either<Failure, Recipe>> _saveRecipe(Recipe recipe) {
+    return recipeRepository
+        .save(recipe)
         .onRightThen((id) => Right(recipe.copyWith(id: id)))
-        .onRightThen((newRecipe) async {
-      final saveIngredientsResult = await _saveIngredients(newRecipe);
+        .onRightThen((recipe) async {
+      final saveIngredientsResult = await _saveIngredients(recipe);
       if (saveIngredientsResult.isLeft()) {
-        return Left((saveIngredientsResult as Left).value);
+        return Left(saveIngredientsResult.getLeft().toNullable()!);
       }
-      return Right(newRecipe);
+      return Right(recipe);
     });
   }
 

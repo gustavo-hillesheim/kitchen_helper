@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
@@ -11,6 +13,7 @@ void main() {
   late IngredientRepository ingredientRepository;
   late RecipeRepository recipeRepository;
   late RecipeIngredientRepository recipeIngredientRepository;
+  late SQLiteDatabase database;
 
   setUp(() {
     registerFallbackValue(FakeRecipeIngredientEntity());
@@ -19,12 +22,23 @@ void main() {
     ingredientRepository = IngredientRepositoryMock();
     recipeRepository = RecipeRepositoryMock();
     recipeIngredientRepository = RecipeIngredientRepositoryMock();
+    database = SQLiteDatabaseMock();
     usecase = SaveRecipeUseCase(
+      database,
       ingredientRepository,
       recipeRepository,
       recipeIngredientRepository,
     );
   });
+
+  void mockDatabaseTransaction() {
+    when(() => database.insideTransaction(any()))
+        .thenAnswer((invocation) async {
+      final future = invocation.positionalArguments[0]()
+          as FutureOr<Either<Failure, Recipe>>;
+      return future;
+    });
+  }
 
   void mockRecipeIngredientRepositorySave(Either<Failure, int> result) {
     when(() => recipeIngredientRepository.save(any()))
@@ -70,24 +84,27 @@ void main() {
   test(
       'WHEN recipe have ingredients of type ingredient and recipe '
       'SHOULD check both repositories', () async {
-    mockRecipeIngredientRepositoryFindId(const Right(1));
-    mockRecipeIngredientRepositorySave(const Right(1));
-    mockRecipeRepositorySave(const Right(1));
     mockIngredientRepositoryExists(const Right(true));
     mockRecipeRepositoryExists(const Right(true));
+    mockDatabaseTransaction();
+    mockRecipeRepositorySave(const Right(1));
+    mockRecipeIngredientRepositoryFindId(const Right(1));
+    mockRecipeIngredientRepositorySave(const Right(1));
 
     final result = await usecase.execute(cakeRecipe);
 
     expect(result.isRight(), true);
     verify(() => ingredientRepository.exists(any()));
     verify(() => recipeRepository.exists(any()));
+    verify(() => database.insideTransaction(any()));
   });
 
   test('WHEN called with a valid recipe SHOULD save it', () async {
+    mockIngredientRepositoryExists(const Right(true));
+    mockDatabaseTransaction();
+    mockRecipeRepositorySave(const Right(1));
     mockRecipeIngredientRepositoryFindId(const Right(null));
     mockRecipeIngredientRepositorySave(const Right(1));
-    mockRecipeRepositorySave(const Right(1));
-    mockIngredientRepositoryExists(const Right(true));
 
     final result = await usecase.execute(sugarWithEggRecipeWithoutId);
 
@@ -102,5 +119,6 @@ void main() {
             type: ingredient.type,
           )));
     }
+    verify(() => database.insideTransaction(any()));
   });
 }
