@@ -92,11 +92,12 @@ class RecipeIngredient extends Equatable {
   const RecipeIngredient.ingredient(
     int id, {
     required double quantity,
-  }) : this(
-          id: id,
-          quantity: quantity,
-          type: RecipeIngredientType.ingredient,
-        );
+  }) : this(id: id, quantity: quantity, type: RecipeIngredientType.ingredient);
+
+  const RecipeIngredient.recipe(
+    int id, {
+    required double quantity,
+  }) : this(id: id, quantity: quantity, type: RecipeIngredientType.recipe);
 
   factory RecipeIngredient.fromJson(Map<String, dynamic> json) =>
       _$RecipeIngredientFromJson(json);

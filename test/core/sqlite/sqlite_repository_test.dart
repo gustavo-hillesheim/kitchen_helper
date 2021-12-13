@@ -299,6 +299,114 @@ void main() {
       }
     });
   });
+
+  group('save', () {
+    test(
+      'WHEN the repository is called with a register without id '
+      'THEN it should create a new register',
+      () async {
+        when(() => database.insert(any(), any())).thenAnswer((_) async => 1);
+
+        final result = await repository.save(mike);
+
+        expect(result.isRight(), true);
+        expect(result.getRight().toNullable(), 1);
+        verifyNever(() => database.exists(any(), any(), any()));
+        verify(() => database.insert(tableName, mike.toJson()));
+      },
+    );
+
+    test(
+      'WHEN the repository is called with a register with id that exists '
+      'THEN it should update the register',
+      () async {
+        when(() => database.exists(any(), any(), any()))
+            .thenAnswer((_) async => true);
+        when(() => database.update(any(), any(), any(), any()))
+            .thenAnswer((_) async {});
+
+        final result = await repository.save(neo);
+
+        expect(result.isRight(), true);
+        verify(() => database.exists(tableName, idColumn, neo.id!));
+        verify(
+            () => database.update(tableName, neo.toJson(), idColumn, neo.id!));
+      },
+    );
+
+    test(
+      'WHEN the usecase is called with a register with id that doesn\'t exists '
+      'THEN it should create the register',
+      () async {
+        when(() => database.exists(any(), any(), any()))
+            .thenAnswer((_) async => false);
+        when(() => database.insert(any(), any())).thenAnswer((_) async => 1);
+
+        final result = await repository.save(neo);
+
+        expect(result.isRight(), true);
+        expect(result.getRight().toNullable(), 1);
+        verify(() => database.exists(tableName, idColumn, neo.id!));
+        verify(() => database.insert(tableName, neo.toJson()));
+      },
+    );
+
+    test(
+      'WHEN the database throws an Exception on insert '
+      'THEN the repository should return a Failure',
+      () async {
+        final exception = FakeDatabaseException('insert error');
+        when(() => database.insert(any(), any())).thenThrow(exception);
+
+        final result = await repository.save(mike);
+
+        expect(result.isLeft(), true);
+        final failure = result.getLeft().toNullable()! as DatabaseFailure;
+        expect(failure.message, SQLiteRepository.couldNotInsertMessage);
+        expect(failure.exception, exception);
+        verify(() => database.insert(tableName, mike.toJson()));
+      },
+    );
+
+    test(
+      'WHEN the database throws an Exception on update '
+      'THEN the repository should return a Failure',
+      () async {
+        final exception = FakeDatabaseException('update error');
+        when(() => database.exists(any(), any(), any()))
+            .thenAnswer((_) async => true);
+        when(() => database.update(any(), any(), any(), any()))
+            .thenThrow(exception);
+
+        final result = await repository.save(neo);
+
+        expect(result.isLeft(), true);
+        final failure = result.getLeft().toNullable()! as DatabaseFailure;
+        expect(failure.message, SQLiteRepository.couldNotUpdateMessage);
+        expect(failure.exception, exception);
+        verify(
+            () => database.update(tableName, neo.toJson(), idColumn, neo.id!));
+      },
+    );
+
+    test(
+      'WHEN the repository throws an Exception on exists '
+      'THEN the usecase should return a Failure',
+      () async {
+        final exception = FakeDatabaseException('exists error');
+        when(() => database.exists(any(), any(), any())).thenThrow(exception);
+
+        final result = await repository.save(neo);
+
+        expect(result.isLeft(), true);
+        final failure = result.getLeft().toNullable()! as DatabaseFailure;
+        expect(
+            failure.message, SQLiteRepository.couldNotVerifyExistenceMessage);
+        expect(failure.exception, exception);
+        verify(() => database.exists(tableName, idColumn, neo.id!));
+      },
+    );
+  });
 }
 
 class Person extends Entity<int> with EquatableMixin {
@@ -323,11 +431,16 @@ class Person extends Entity<int> with EquatableMixin {
   List<Object?> get props => [id, name, age];
 }
 
-class FakeDatabaseException extends DatabaseException {
-  FakeDatabaseException(String message) : super(message);
+class FakeDatabaseException extends DatabaseException with EquatableMixin {
+  final String message;
+
+  FakeDatabaseException(this.message) : super(message);
 
   @override
   int? getResultCode() {
     throw UnimplementedError();
   }
+
+  @override
+  List<Object?> get props => [message];
 }

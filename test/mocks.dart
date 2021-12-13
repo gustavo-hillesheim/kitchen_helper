@@ -14,6 +14,8 @@ class DeleteIngredientUseCaseMock extends Mock
 
 class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
+class RecipeRepositoryMock extends Mock implements RecipeRepository {}
+
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
 class FakeIngredient extends Fake implements Ingredient {}
@@ -70,6 +72,19 @@ final sugarWithEggRecipe = Recipe(
   ingredients: [
     RecipeIngredient.ingredient(egg.id!, quantity: 1),
     RecipeIngredient.ingredient(sugarWithId.id!, quantity: 100),
+  ],
+);
+
+final cakeRecipe = Recipe(
+  id: 2,
+  name: 'Cake',
+  measurementUnit: MeasurementUnit.units,
+  quantityProduced: 1,
+  quantitySold: 1,
+  canBeSold: true,
+  ingredients: [
+    RecipeIngredient.ingredient(flour.id!, quantity: 1),
+    RecipeIngredient.recipe(sugarWithEggRecipe.id!, quantity: 5),
   ],
 );
 

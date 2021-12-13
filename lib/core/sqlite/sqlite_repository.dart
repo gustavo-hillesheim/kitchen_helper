@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../extensions.dart';
 import '../failure.dart';
 import '../repository.dart';
 import 'sqlite_database.dart';
@@ -31,6 +32,19 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   });
 
   @override
+  Future<Either<Failure, int>> save(T entity) async {
+    if (entity.id == null) {
+      return create(entity);
+    }
+    return exists(entity.id!).thenEither((exists) {
+      if (exists) {
+        return update(entity).thenEither((_) => Right(entity.id!));
+      }
+      return create(entity);
+    });
+  }
+
+  @override
   Future<Either<Failure, int>> create(T entity) async {
     try {
       final id = await database.insert(tableName, toMap(entity));
@@ -43,7 +57,7 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   @override
   Future<Either<Failure, void>> update(T entity) async {
     if (entity.id == null) {
-      return Left(RepositoryFailure(canNotUpdateWithIdMessage));
+      return const Left(RepositoryFailure(canNotUpdateWithIdMessage));
     }
     try {
       await database.update(tableName, toMap(entity), idColumn, entity.id!);
