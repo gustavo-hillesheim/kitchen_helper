@@ -36,9 +36,9 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
     if (entity.id == null) {
       return create(entity);
     }
-    return exists(entity.id!).thenEither((exists) {
+    return exists(entity.id!).onRightThen((exists) {
       if (exists) {
-        return update(entity).thenEither((_) => Right(entity.id!));
+        return update(entity).onRightThen((_) => Right(entity.id!));
       }
       return create(entity);
     });

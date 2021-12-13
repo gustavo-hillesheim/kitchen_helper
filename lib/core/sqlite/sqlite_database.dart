@@ -29,10 +29,28 @@ class SQLiteDatabase {
     await db.execute('''
     CREATE TABLE ingredients (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      quantity REAL,
-      measurementUnit TEXT,
-      price REAL
+      name TEXT NOT NULL,
+      quantity REAL NOT NULL,
+      measurementUnit TEXT NOT NULL,
+      price REAL NOT NULL
+    )''');
+    await db.execute('''
+    CREATE TABLE recipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      notes TEXT,
+      quantityProduced REAL NOT NULL,
+      quantitySold REAL,
+      price REAL,
+      canBeSold INTEGER NOT NULL,
+      measurementUnit TEXT NOT NULL
+    )''');
+    await db.execute('''
+    CREATE TABLE recipeIngredients (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parentRecipeId INTEGER NOT NULL,
+      recipeIngredientId INTEGER NOT NULL,
+      type TEXT NOT NULL
     )''');
   }
 
@@ -72,5 +90,22 @@ class SQLiteDatabase {
     final rows = await database
         .rawQuery('select 1 from $table where $idColumn = ?', [id]);
     return rows.isNotEmpty;
+  }
+
+  Future<List<Map<String, dynamic>>> query(
+      {required String table,
+      required List<String> columns,
+      Map<String, dynamic>? where}) {
+    var whereStr = '';
+    final whereArgs = [];
+    where?.forEach((key, value) {
+      if (whereStr.isNotEmpty) {
+        whereStr += ' AND ';
+      }
+      whereStr += '$key = ?';
+      whereArgs.add(value);
+    });
+    return database.query(table,
+        columns: columns, where: whereStr, whereArgs: whereArgs);
   }
 }

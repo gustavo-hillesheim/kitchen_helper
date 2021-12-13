@@ -16,9 +16,19 @@ class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
 class RecipeRepositoryMock extends Mock implements RecipeRepository {}
 
+class RecipeIngredientRepositoryMock extends Mock
+    implements RecipeIngredientRepository {}
+
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
 class FakeIngredient extends Fake implements Ingredient {}
+
+class FakeRecipe extends Fake implements Recipe {}
+
+class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
+
+class FakeRecipeIngredientEntity extends Fake
+    implements RecipeIngredientEntity {}
 
 class FakeFailure extends Failure {
   FakeFailure(String message) : super(message);
@@ -63,8 +73,7 @@ const orangeJuice = Ingredient(
   price: 2.25,
 );
 
-final sugarWithEggRecipe = Recipe(
-  id: 1,
+final sugarWithEggRecipeWithoutId = Recipe(
   name: 'Sugar with egg',
   measurementUnit: MeasurementUnit.milliliters,
   quantityProduced: 100,
@@ -75,6 +84,8 @@ final sugarWithEggRecipe = Recipe(
   ],
 );
 
+final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
+
 final cakeRecipe = Recipe(
   id: 2,
   name: 'Cake',
@@ -84,7 +95,7 @@ final cakeRecipe = Recipe(
   canBeSold: true,
   ingredients: [
     RecipeIngredient.ingredient(flour.id!, quantity: 1),
-    RecipeIngredient.recipe(sugarWithEggRecipe.id!, quantity: 5),
+    RecipeIngredient.recipe(sugarWithEggRecipeWithId.id!, quantity: 5),
   ],
 );
 

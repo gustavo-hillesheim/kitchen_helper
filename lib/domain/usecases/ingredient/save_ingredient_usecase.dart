@@ -13,6 +13,6 @@ class SaveIngredientUseCase extends UseCase<Ingredient, Ingredient> {
   Future<Either<Failure, Ingredient>> execute(Ingredient ingredient) async {
     return repository
         .save(ingredient)
-        .thenEither((id) => ingredient.copyWith(id: id));
+        .onRightThen((id) => Right(ingredient.copyWith(id: id)));
   }
 }
