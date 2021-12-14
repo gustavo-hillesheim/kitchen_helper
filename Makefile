@@ -7,10 +7,14 @@ code_coverage:
 	-e data\\\\repository\\\\sqlite_ingredient_repository.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
+	-e presenter\\\\presenter.dart \
+	-e presenter\\\\utils\\\\utils.dart \
+	-e presenter\\\\widgets\\\\widgets.dart \
+	-e presenter\\\\screens\\\\screens.dart \
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
-	-i core\\\\sqlite\\\\sqlite_repository.dart
+	-i core\\\\sqlite
 
 code_coverage_ci:
 	flutter pub run code_coverage \

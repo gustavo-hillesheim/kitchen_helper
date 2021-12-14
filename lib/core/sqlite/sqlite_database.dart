@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/core/core.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:synchronized/synchronized.dart';
 
 typedef TransactionCallback<T> = FutureOr<T> Function();
 
@@ -11,15 +12,14 @@ class SQLiteDatabase {
   static SQLiteDatabase? _instance;
   static const _databaseName = 'KitchenHelper.db';
   static const _databaseVersion = 1;
-  static final lock = Lock();
 
   final Database _database;
   DatabaseExecutor _executor;
 
-  SQLiteDatabase._(this._database) : _executor = _database;
+  SQLiteDatabase(this._database) : _executor = _database;
 
   static Future<SQLiteDatabase> getInstance() async {
-    _instance ??= SQLiteDatabase._(await _initDatabase());
+    _instance ??= SQLiteDatabase(await _initDatabase());
     return _instance!;
   }
 
@@ -64,7 +64,19 @@ class SQLiteDatabase {
       _executor = txn;
       final result = await action();
       _executor = _database;
+      // We need to throw an exception in order to rollback the transaction
+      // but the result must be returned to the caller nevertheless
+      if (result is Either &&
+          result.isLeft() &&
+          result.getLeft().toNullable() is Failure) {
+        throw _TransactionException(result);
+      }
       return result;
+    }).catchError((error) {
+      // Returns the result of the action as though nothing happened
+      if (error is _TransactionException) {
+        return error.either as T;
+      }
     });
   }
 
@@ -119,7 +131,17 @@ class SQLiteDatabase {
       whereStr += '$key = ?';
       whereArgs.add(value);
     });
-    return _executor.query(table,
-        columns: columns, where: whereStr, whereArgs: whereArgs);
+    return _executor.query(
+      table,
+      columns: columns,
+      where: whereStr.isEmpty ? null : whereStr,
+      whereArgs: whereStr.isEmpty ? null : whereArgs,
+    );
   }
+}
+
+class _TransactionException<T> implements Exception {
+  final Either either;
+
+  _TransactionException(this.either);
 }
