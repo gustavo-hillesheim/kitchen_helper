@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kitchen_helper/core/core.dart';
 
+import 'recipe.dart';
+
 part 'recipe_ingredient.g.dart';
 
 @JsonSerializable()
@@ -48,4 +50,59 @@ class RecipeIngredient extends Equatable implements Entity<int> {
   List<Object?> get props => [id, quantity, type];
 }
 
+@JsonSerializable()
+class RecipeIngredientEntity extends Equatable implements Entity<int> {
+  @override
+  final int? id;
+  final int parentRecipeId;
+  final int recipeIngredientId;
+  final RecipeIngredientType type;
+
+  const RecipeIngredientEntity({
+    this.id,
+    required this.parentRecipeId,
+    required this.recipeIngredientId,
+    required this.type,
+  });
+
+  RecipeIngredientEntity.fromModels(
+    Recipe recipe,
+    RecipeIngredient recipeIngredient, {
+    int? id,
+  }) : this(
+          id: id,
+          parentRecipeId: recipe.id!,
+          recipeIngredientId: recipeIngredient.id,
+          type: recipeIngredient.type,
+        );
+
+  factory RecipeIngredientEntity.fromJson(Map<String, dynamic> json) =>
+      _$RecipeIngredientEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeIngredientEntityToJson(this);
+
+  RecipeIngredientEntity copyWith({
+    int? id,
+    int? parentRecipeId,
+    int? recipeIngredientId,
+    RecipeIngredientType? type,
+  }) {
+    return RecipeIngredientEntity(
+      id: id ?? this.id,
+      parentRecipeId: parentRecipeId ?? this.parentRecipeId,
+      recipeIngredientId: recipeIngredientId ?? this.recipeIngredientId,
+      type: type ?? this.type,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, parentRecipeId, recipeIngredientId, type];
+}
+
 enum RecipeIngredientType { ingredient, recipe }
+
+extension RecipeIngredientTypeExtension on RecipeIngredientType {
+  String? getName() {
+    return _$RecipeIngredientTypeEnumMap[this];
+  }
+}
