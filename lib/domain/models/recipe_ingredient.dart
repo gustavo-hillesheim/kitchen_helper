@@ -56,12 +56,14 @@ class RecipeIngredientEntity extends Equatable implements Entity<int> {
   final int? id;
   final int parentRecipeId;
   final int recipeIngredientId;
+  final double quantity;
   final RecipeIngredientType type;
 
   const RecipeIngredientEntity({
     this.id,
     required this.parentRecipeId,
     required this.recipeIngredientId,
+    required this.quantity,
     required this.type,
   });
 
@@ -73,6 +75,7 @@ class RecipeIngredientEntity extends Equatable implements Entity<int> {
           id: id,
           parentRecipeId: recipe.id!,
           recipeIngredientId: recipeIngredient.id,
+          quantity: recipeIngredient.quantity,
           type: recipeIngredient.type,
         );
 
@@ -81,22 +84,31 @@ class RecipeIngredientEntity extends Equatable implements Entity<int> {
 
   Map<String, dynamic> toJson() => _$RecipeIngredientEntityToJson(this);
 
+  RecipeIngredient toRecipeIngredient() => RecipeIngredient(
+        id: recipeIngredientId,
+        type: type,
+        quantity: quantity,
+      );
+
   RecipeIngredientEntity copyWith({
     int? id,
     int? parentRecipeId,
     int? recipeIngredientId,
+    double? quantity,
     RecipeIngredientType? type,
   }) {
     return RecipeIngredientEntity(
       id: id ?? this.id,
       parentRecipeId: parentRecipeId ?? this.parentRecipeId,
       recipeIngredientId: recipeIngredientId ?? this.recipeIngredientId,
+      quantity: quantity ?? this.quantity,
       type: type ?? this.type,
     );
   }
 
   @override
-  List<Object?> get props => [id, parentRecipeId, recipeIngredientId, type];
+  List<Object?> get props =>
+      [id, parentRecipeId, recipeIngredientId, quantity, type];
 }
 
 enum RecipeIngredientType { ingredient, recipe }

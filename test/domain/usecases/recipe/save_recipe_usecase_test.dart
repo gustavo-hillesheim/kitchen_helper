@@ -116,6 +116,7 @@ void main() {
       verify(() => recipeIngredientRepository.save(RecipeIngredientEntity(
             parentRecipeId: savedRecipe.id!,
             recipeIngredientId: ingredient.id,
+            quantity: ingredient.quantity,
             type: ingredient.type,
           )));
     }

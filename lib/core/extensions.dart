@@ -19,11 +19,21 @@ extension EitherExtension<L, R> on Either<L, R> {
     final newEither = fold(leftFn, rightFn);
     return newEither;
   }
+
+  Either<L, NR> asLeftOf<NR>() {
+    return Left<L, NR>(getLeft().toNullable()!);
+  }
 }
 
-extension EitherFuture<L, R> on Future<Either<L, R>> {
+extension FutureEitherExtension<L, R> on Future<Either<L, R>> {
   Future<Either<NL, NR>> onRightThen<NL, NR>(
       FutureOr<Either<NL, NR>> Function(R) thenFn) {
     return then((result) => result.asyncFlatMap(thenFn));
+  }
+}
+
+extension ListExtension<T> on List<T> {
+  Future<Iterable<NT>> asyncMap<NT>(Future<NT> Function(T) mapFn) {
+    return Future.wait(map(mapFn));
   }
 }

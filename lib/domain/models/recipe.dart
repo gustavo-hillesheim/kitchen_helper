@@ -74,6 +74,6 @@ class Recipe extends Equatable implements Entity<int> {
         price,
         canBeSold,
         measurementUnit,
-        ingredients
+        ingredients,
       ];
 }

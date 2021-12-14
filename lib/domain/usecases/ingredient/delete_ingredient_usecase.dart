@@ -15,7 +15,7 @@ class DeleteIngredientUseCase extends UseCase<Ingredient, void> {
   @override
   Future<Either<Failure, void>> execute(Ingredient ingredient) async {
     if (ingredient.id == null) {
-      return Left(BusinessFailure(cantDeleteIngredientWithoutIdMessage));
+      return const Left(BusinessFailure(cantDeleteIngredientWithoutIdMessage));
     }
     return repository.deleteById(ingredient.id!);
   }
