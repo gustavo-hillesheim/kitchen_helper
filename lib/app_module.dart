@@ -1,5 +1,4 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/domain/domain.dart';
 
 import 'app_guard.dart';
 import 'core/core.dart';

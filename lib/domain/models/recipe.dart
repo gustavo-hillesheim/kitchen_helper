@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/domain/models/recipe_ingredient.dart';
 
 import '../../core/core.dart';
 import 'models.dart';
+import 'recipe_ingredient.dart';
 
 part 'recipe.g.dart';
 

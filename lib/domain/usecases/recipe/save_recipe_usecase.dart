@@ -1,8 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/domain/domain.dart';
 
 import '../../../core/core.dart';
-import '../../models/models.dart';
+import '../../domain.dart';
 
 class SaveRecipeUseCase extends UseCase<Recipe, Recipe> {
   static const allIngredientsMustExistMessage = "É necessário salvar os "

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/core/core.dart';
 
+import '../../core/core.dart';
 import 'recipe.dart';
 
 part 'recipe_ingredient.g.dart';
