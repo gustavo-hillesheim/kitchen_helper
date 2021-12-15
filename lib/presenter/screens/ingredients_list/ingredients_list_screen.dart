@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:kitchen_helper/presenter/widgets/screen_state_builder.dart';
 
 import '../../../domain/domain.dart';
 import '../../constants.dart';
@@ -52,19 +53,9 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     );
   }
 
-  Widget _buildIngredientsList() => StreamBuilder<IngredientListState>(
-        stream: bloc.stream,
-        builder: (_, snapshot) {
-          if (!snapshot.hasData || snapshot.data is LoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final state = snapshot.data;
-          if (state is FailureState) {
-            return _buildErrorState(state.failure.message);
-          }
-          final ingredients = (state as SuccessState).ingredients;
+  Widget _buildIngredientsList() => ScreenStateBuilder<List<Ingredient>>(
+        stateStream: bloc.stream,
+        successBuilder: (_, ingredients) {
           if (ingredients.isEmpty) {
             return _buildEmptyState();
           }
@@ -74,6 +65,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
             itemBuilder: (_, index) => _buildTile(ingredients[index]),
           );
         },
+        errorBuilder: (_, failure) => _buildErrorState(failure.message),
       );
 
   Widget _buildErrorState(String message) => Empty(

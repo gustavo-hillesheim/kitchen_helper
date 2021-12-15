@@ -3,16 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
+import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
 
 void main() {
   late IngredientsListBloc bloc;
-  late StreamController<IngredientListState> streamController;
+  late StreamController<ScreenState<List<Ingredient>>> streamController;
 
   setUp(() {
     bloc = IngredientsListBlocMock();
@@ -58,8 +60,8 @@ void main() {
   );
 
   testWidgets('Should show loader while in LoadingState', (tester) async {
-    when(() => bloc.loadIngredients())
-        .thenAnswer((_) async => streamController.sink.add(LoadingState()));
+    when(() => bloc.loadIngredients()).thenAnswer(
+        (_) async => streamController.sink.add(const LoadingState()));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -73,7 +75,7 @@ void main() {
     when(() => navigator.pushNamed('/edit-ingredient'))
         .thenAnswer((_) async => false);
     when(() => bloc.loadIngredients()).thenAnswer(
-        (_) async => streamController.sink.add(SuccessState(const [])));
+        (_) async => streamController.sink.add(const SuccessState([])));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -120,7 +122,7 @@ void main() {
       when(() => navigator.pushNamed(any(), arguments: egg))
           .thenAnswer((_) async => false);
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -137,9 +139,9 @@ void main() {
     'Should be able to delete and undelete ingredient',
     (tester) async {
       when(() => bloc.delete(egg)).thenAnswer((_) async => const Right(null));
-      when(() => bloc.save(egg)).thenAnswer((_) async => Right(egg));
+      when(() => bloc.save(egg)).thenAnswer((_) async => const Right(egg));
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -167,7 +169,7 @@ void main() {
     'If delete or undelete fail the user should be able to retry',
     (tester) async {
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -198,7 +200,7 @@ void main() {
       await tap(undoActionFinder, tester);
       verify(() => bloc.save(egg));
 
-      when(() => bloc.save(egg)).thenAnswer((_) async => Right(egg));
+      when(() => bloc.save(egg)).thenAnswer((_) async => const Right(egg));
       await tester.pumpAndSettle();
       await tap(retryActionFinder, tester);
       verify(() => bloc.save(egg));

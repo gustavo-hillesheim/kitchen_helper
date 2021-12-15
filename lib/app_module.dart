@@ -38,5 +38,10 @@ class AppModule extends Module {
           },
           guards: [AppGuard()],
         ),
+        ChildRoute(
+          '/recipes',
+          child: (_, __) => const RecipesListScreen(),
+          guards: [AppGuard()],
+        ),
       ];
 }

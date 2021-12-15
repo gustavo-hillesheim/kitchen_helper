@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_bloc.dart';
+import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
@@ -21,7 +22,7 @@ void main() {
     bloc = IngredientsListBloc(getUseCase, saveUseCase, deleteUseCase);
   }
 
-  blocTest<IngredientsListBloc, IngredientListState>(
+  blocTest<IngredientsListBloc, ScreenState<List<Ingredient>>>(
       'Should call usecases according to method calls',
       build: () {
         createInstances();
@@ -35,16 +36,16 @@ void main() {
         when(() => deleteUseCase.execute(orangeJuice))
             .thenAnswer((_) async => const Right(null));
         when(() => saveUseCase.execute(orangeJuice))
-            .thenAnswer((_) async => Right(orangeJuice));
+            .thenAnswer((_) async => const Right(orangeJuice));
         return bloc;
       },
       expect: () => [
-            LoadingState(),
-            SuccessState([flour, egg, orangeJuice]),
-            LoadingState(),
-            SuccessState([flour, egg]),
-            LoadingState(),
-            SuccessState([flour, egg, orangeJuice]),
+            const LoadingState<List<Ingredient>>(),
+            const SuccessState<List<Ingredient>>([flour, egg, orangeJuice]),
+            const LoadingState<List<Ingredient>>(),
+            const SuccessState<List<Ingredient>>([flour, egg]),
+            const LoadingState<List<Ingredient>>(),
+            const SuccessState<List<Ingredient>>([flour, egg, orangeJuice]),
           ],
       act: (bloc) async {
         await bloc.loadIngredients();
@@ -57,7 +58,7 @@ void main() {
         verify(() => saveUseCase.execute(orangeJuice));
       });
 
-  blocTest<IngredientsListBloc, IngredientListState>(
+  blocTest<IngredientsListBloc, ScreenState<List<Ingredient>>>(
     'Should emit FailureState if loadIngredients fail',
     build: () {
       createInstances();
@@ -66,8 +67,8 @@ void main() {
       return bloc;
     },
     expect: () => [
-      LoadingState(),
-      FailureState(FakeFailure('Some error on load')),
+      const LoadingState<List<Ingredient>>(),
+      FailureState<List<Ingredient>>(FakeFailure('Some error on load')),
     ],
     act: (bloc) async => await bloc.loadIngredients(),
   );
