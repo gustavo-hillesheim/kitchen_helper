@@ -50,7 +50,7 @@ void main() {
         'WHEN there is a recipe '
         'SHOULD fill ingredients using recipeIngredientRepository', () async {
       when(() => database.findById(any(), any(), any())).thenAnswer(
-          (_) async => cakeRecipe.copyWith(ingredients: []).toJson());
+          (_) async => repository.toMap(cakeRecipe.copyWith(ingredients: [])));
       mockFindIngredients([Right(getIngredientEntities(cakeRecipe))]);
 
       final result = await repository.findById(1);
@@ -82,8 +82,9 @@ void main() {
   group('findAll', () {
     test('WHEN there are recipes SHOULD fill their ingredients', () async {
       when(() => database.findAll(any())).thenAnswer((_) async => [
-            cakeRecipe.copyWith(ingredients: []).toJson(),
-            sugarWithEggRecipeWithId.copyWith(ingredients: []).toJson(),
+            repository.toMap(cakeRecipe.copyWith(ingredients: [])),
+            repository
+                .toMap(sugarWithEggRecipeWithId.copyWith(ingredients: [])),
           ]);
       mockFindIngredients([
         Right(getIngredientEntities(cakeRecipe)),
@@ -158,7 +159,7 @@ void main() {
         final ingredientEntities =
             getIngredientEntities(sugarWithEggRecipeWithId);
         verify(() => database.insert(repository.tableName,
-            sugarWithEggRecipeWithoutId.toJson()..remove('ingredients')));
+            repository.toMap(sugarWithEggRecipeWithoutId)));
         verify(() => recipeIngredientRepository.create(ingredientEntities[0]));
         verify(() => recipeIngredientRepository.create(ingredientEntities[1]));
       });
@@ -179,7 +180,7 @@ void main() {
       final exception = FakeDatabaseException('error on insert');
       mockTransaction<Either<Failure, int>>(verify: () {
         verify(() => database.insert(repository.tableName,
-            sugarWithEggRecipeWithoutId.toJson()..remove('ingredients')));
+            repository.toMap(sugarWithEggRecipeWithoutId)));
       });
       when(() => database.insert(any(), any())).thenThrow(exception);
 
@@ -210,7 +211,7 @@ void main() {
         final ingredientEntities = getIngredientEntities(cakeRecipe);
         verify(() => database.update(
               repository.tableName,
-              cakeRecipe.toJson()..remove('ingredients'),
+              repository.toMap(cakeRecipe),
               repository.idColumn,
               cakeRecipe.id!,
             ));
@@ -238,7 +239,7 @@ void main() {
       mockTransaction<Either<Failure, void>>(verify: () {
         verify(() => database.update(
               repository.tableName,
-              cakeRecipe.toJson()..remove('ingredients'),
+              repository.toMap(cakeRecipe),
               repository.idColumn,
               cakeRecipe.id!,
             ));
@@ -266,6 +267,55 @@ void main() {
       },
       cakeRecipe,
     );
+  });
+
+  group('converters', () {
+    test(
+        'WHEN toMap is called '
+        'SHOULD remove ingredients and convert canBeSold to integer', () {
+      const recipe = Recipe(
+        name: 'Cake',
+        quantityProduced: 1,
+        canBeSold: false,
+        measurementUnit: MeasurementUnit.units,
+        ingredients: [
+          RecipeIngredient.recipe(1, quantity: 2),
+        ],
+      );
+
+      var result = repository.toMap(recipe);
+
+      expect(result.containsKey('ingredients'), false);
+      expect(result['canBeSold'], 0);
+
+      result = repository.toMap(recipe.copyWith(canBeSold: true));
+
+      expect(result['canBeSold'], 1);
+    });
+
+    test(
+        'WHEN fromMap is called '
+        'SHOULD add empty ingredients and convert canBeSold to bool', () {
+      final json = {
+        'name': 'Cake',
+        'quantityProduced': 1,
+        'canBeSold': 0,
+        'measurementUnit': 'units',
+        'ingredients': [
+          {'id': 1, 'quantity': 2, 'type': 'recipe'},
+        ],
+      };
+
+      var result = repository.fromMap(json);
+
+      expect(result.canBeSold, false);
+      expect(result.ingredients, []);
+
+      json['canBeSold'] = 1;
+      result = repository.fromMap(json);
+
+      expect(result.canBeSold, true);
+    });
   });
 }
 

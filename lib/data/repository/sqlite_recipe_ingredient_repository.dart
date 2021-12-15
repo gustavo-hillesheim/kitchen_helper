@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../core/core.dart';
 import '../../domain/domain.dart';
@@ -11,42 +12,56 @@ class SQLiteRecipeIngredientRepository
           'recipe_ingredients',
           'id',
           database,
-          fromMap: (map) {
-            // This is necessary since SQFLite doesn't support boolean types
-            map['canBeSold'] = map['canBeSold'] == 1;
-            return RecipeIngredientEntity.fromJson(map);
-          },
-          toMap: (ri) {
-            final map = ri.toJson();
-            map['canBeSold'] = map['canBeSold'] == true ? 1 : 0;
-            return map;
-          },
+          fromMap: (map) => RecipeIngredientEntity.fromJson(map),
+          toMap: (ri) => ri.toJson(),
         );
 
   @override
   Future<Either<Failure, int?>> findId(
-      Recipe recipe, RecipeIngredient recipeIngredient) async {
-    final result = await database.query(table: tableName, columns: [
-      idColumn
-    ], where: {
-      'parentRecipeId': recipe.id,
-      'recipeIngredientId': recipeIngredient.id,
-      'type': recipeIngredient.type.getName(),
-    });
-    if (result.isNotEmpty) {
-      return Right(result[0][idColumn]);
+      int recipeId, RecipeIngredient recipeIngredient) async {
+    try {
+      final result = await database.query(table: tableName, columns: [
+        idColumn
+      ], where: {
+        'parentRecipeId': recipeId,
+        'recipeIngredientId': recipeIngredient.id,
+        'type': recipeIngredient.type.getName(),
+      });
+      if (result.isNotEmpty) {
+        return Right(result[0][idColumn]);
+      }
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
     }
-    return const Right(null);
   }
 
   @override
-  Future<Either<Failure, void>> deleteByRecipe(int recipeId) {
-    throw UnimplementedError();
+  Future<Either<Failure, void>> deleteByRecipe(int recipeId) async {
+    try {
+      await database.delete(table: tableName, where: {
+        'parentRecipeId': recipeId,
+      });
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, e));
+    }
   }
 
   @override
   Future<Either<Failure, List<RecipeIngredientEntity>>> findByRecipe(
-      int recipeId) {
-    throw UnimplementedError();
+      int recipeId) async {
+    try {
+      final queryResult = await database.query(
+        table: tableName,
+        columns: ['id', 'parentRecipeId', 'recipeIngredientId', 'type'],
+        where: {'parentRecipeId': recipeId},
+      );
+      final ingredientEntities =
+          queryResult.map(fromMap).toList(growable: false);
+      return Right(ingredientEntities);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
   }
 }

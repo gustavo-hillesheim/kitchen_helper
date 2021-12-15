@@ -66,15 +66,15 @@ class SaveRecipeUseCase extends UseCase<Recipe, Recipe> {
 
   Future<Either<Failure, void>> _saveIngredients(Recipe recipe) async {
     for (final ingredient in recipe.ingredients) {
-      final idResult =
+      /*final idResult =
           await recipeIngredientRepository.findId(recipe, ingredient);
       if (idResult.isLeft()) {
         return idResult;
-      }
+      }*/
       final ingredientEntity = RecipeIngredientEntity.fromModels(
         recipe,
         ingredient,
-        id: idResult.getOrElse((_) => null),
+        id: 1,
       );
       final saveResult =
           await recipeIngredientRepository.save(ingredientEntity);

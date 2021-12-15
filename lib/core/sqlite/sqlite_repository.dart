@@ -17,6 +17,7 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
       'registro que não esteja salvo';
   static const couldNotVerifyExistenceMessage = 'Não foi possível verificar '
       'se o registro existe';
+  static const couldNotQueryMessage = 'Não foi possível realizar a consulta';
 
   final String tableName;
   final String idColumn;
