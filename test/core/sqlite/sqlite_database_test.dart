@@ -248,6 +248,17 @@ void main() {
 
     expect(result, Left(FakeFailure('fake error')));
   });
+
+  test('WHEN delete is called SHOULD delete the registers', () async {
+    when(() => sqfliteDatabase.delete(any(),
+        where: any(named: 'where'),
+        whereArgs: any(named: 'whereArgs'))).thenAnswer((_) async => 1);
+
+    await database.delete(table: 'people', where: {'age': 20});
+
+    verify(() =>
+        sqfliteDatabase.delete('people', where: 'age = ?', whereArgs: [20]));
+  });
 }
 
 class DatabaseMock extends Mock implements Database {}

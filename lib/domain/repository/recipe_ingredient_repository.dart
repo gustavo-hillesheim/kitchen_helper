@@ -10,4 +10,6 @@ abstract class RecipeIngredientRepository
 
   Future<Either<Failure, List<RecipeIngredientEntity>>> findByRecipe(
       int recipeId);
+
+  Future<Either<Failure, void>> deleteByRecipe(int recipeId);
 }

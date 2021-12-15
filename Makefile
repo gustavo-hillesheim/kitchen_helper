@@ -4,7 +4,6 @@ code_coverage:
 	-e domain \
 	-e core \
 	-e main.dart \
-	-e data\\\\repository \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
 	-e presenter\\\\presenter.dart \
@@ -14,8 +13,7 @@ code_coverage:
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
-	-i core\\\\sqlite \
-	-i data\\\\repository\\\\sqlite_recipe_ingredient_repository.dart
+	-i core\\\\sqlite
 
 code_coverage_ci:
 	flutter pub run code_coverage \

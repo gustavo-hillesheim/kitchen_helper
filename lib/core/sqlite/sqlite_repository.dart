@@ -9,7 +9,8 @@ import 'sqlite_database.dart';
 class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   static const couldNotInsertMessage = 'Não foi possível salvar o registro';
   static const couldNotUpdateMessage = 'Não foi possível atualizar o registro';
-  static const couldNotDeleteMessage = 'Não foi possível deletar o registro';
+  static const couldNotDeleteMessage =
+      'Não foi possível deletar o(s) registro(s)';
   static const couldNotFindAllMessage = 'Não foi possível encontrar registros';
   static const couldNotFindMessage = 'Não foi possível encontrar o registro';
   static const canNotUpdateWithIdMessage = 'Não é possível atualizar um '
@@ -103,6 +104,15 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
       return Right(await database.exists(tableName, idColumn, id));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotVerifyExistenceMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteWhere(Map<String, dynamic> where) async {
+    try {
+      return Right(await database.delete(table: tableName, where: where));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotDeleteMessage, e));
     }
   }
 }

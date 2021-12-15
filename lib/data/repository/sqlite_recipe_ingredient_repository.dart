@@ -4,7 +4,8 @@ import '../../core/core.dart';
 import '../../domain/domain.dart';
 
 class SQLiteRecipeIngredientRepository
-    extends SQLiteRepository<RecipeIngredientEntity> {
+    extends SQLiteRepository<RecipeIngredientEntity>
+    implements RecipeIngredientRepository {
   SQLiteRecipeIngredientRepository(SQLiteDatabase database)
       : super(
           'recipe_ingredients',
@@ -12,20 +13,17 @@ class SQLiteRecipeIngredientRepository
           database,
           fromMap: (map) {
             // This is necessary since SQFLite doesn't support boolean types
-            if (map.containsKey('canBeSold')) {
-              map['canBeSold'] = map['canBeSold'] == 1;
-            }
+            map['canBeSold'] = map['canBeSold'] == 1;
             return RecipeIngredientEntity.fromJson(map);
           },
           toMap: (ri) {
             final map = ri.toJson();
-            if (map.containsKey('canBeSold')) {
-              map['canBeSold'] = map['canBeSold'] == true ? 1 : 0;
-            }
+            map['canBeSold'] = map['canBeSold'] == true ? 1 : 0;
             return map;
           },
         );
 
+  @override
   Future<Either<Failure, int?>> findId(
       Recipe recipe, RecipeIngredient recipeIngredient) async {
     final result = await database.query(table: tableName, columns: [
@@ -39,5 +37,16 @@ class SQLiteRecipeIngredientRepository
       return Right(result[0][idColumn]);
     }
     return const Right(null);
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteByRecipe(int recipeId) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, List<RecipeIngredientEntity>>> findByRecipe(
+      int recipeId) {
+    throw UnimplementedError();
   }
 }

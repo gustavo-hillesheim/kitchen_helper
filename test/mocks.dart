@@ -1,7 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ModularNavigateMock extends Mock implements IModularNavigator {}
 
@@ -32,6 +34,20 @@ class FakeRecipeIngredientEntity extends Fake
 
 class FakeFailure extends Failure {
   FakeFailure(String message) : super(message);
+}
+
+class FakeDatabaseException extends DatabaseException with EquatableMixin {
+  final String message;
+
+  FakeDatabaseException(this.message) : super(message);
+
+  @override
+  int? getResultCode() {
+    throw UnimplementedError();
+  }
+
+  @override
+  List<Object?> get props => [message];
 }
 
 const sugarWithId = Ingredient(

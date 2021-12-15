@@ -32,8 +32,22 @@ extension FutureEitherExtension<L, R> on Future<Either<L, R>> {
   }
 }
 
-extension ListExtension<T> on List<T> {
+extension IterableExtension<T> on Iterable<T> {
   Future<Iterable<NT>> asyncMap<NT>(Future<NT> Function(T) mapFn) {
     return Future.wait(map(mapFn));
+  }
+}
+
+extension IterableEitherExtension<L, R> on Iterable<Either<L, R>> {
+  Either<L, List<R>> asEitherList() {
+    final elements = <R>[];
+    for (var i = 0; i < length; i++) {
+      final element = elementAt(i);
+      if (element.isLeft()) {
+        return element.asLeftOf();
+      }
+      elements.add(element.getRight().toNullable()!);
+    }
+    return Right(elements);
   }
 }

@@ -123,20 +123,47 @@ class SQLiteDatabase {
       {required String table,
       required List<String> columns,
       Map<String, dynamic>? where}) {
+    final whereObj = _Where.fromMap(where ?? {});
+    return _executor.query(
+      table,
+      columns: columns,
+      where: whereObj.where,
+      whereArgs: whereObj.whereArgs,
+    );
+  }
+
+  Future<void> delete({
+    required String table,
+    required Map<String, dynamic> where,
+  }) {
+    final whereObj = _Where.fromMap(where);
+    return _executor.delete(
+      table,
+      where: whereObj.where,
+      whereArgs: whereObj.whereArgs,
+    );
+  }
+}
+
+class _Where {
+  final String? where;
+  final List<dynamic>? whereArgs;
+
+  _Where(this.where, this.whereArgs);
+
+  factory _Where.fromMap(Map<String, dynamic> map) {
     var whereStr = '';
     final whereArgs = [];
-    where?.forEach((key, value) {
+    map.forEach((key, value) {
       if (whereStr.isNotEmpty) {
         whereStr += ' AND ';
       }
       whereStr += '$key = ?';
       whereArgs.add(value);
     });
-    return _executor.query(
-      table,
-      columns: columns,
-      where: whereStr.isEmpty ? null : whereStr,
-      whereArgs: whereStr.isEmpty ? null : whereArgs,
+    return _Where(
+      whereStr.isEmpty ? null : whereStr,
+      whereStr.isEmpty ? null : whereArgs,
     );
   }
 }

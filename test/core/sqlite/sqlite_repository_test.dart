@@ -7,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../mocks.dart';
+import '../../sqlite_repository_tests.dart';
 
 void main() {
   const idColumn = 'id';
@@ -33,7 +34,7 @@ void main() {
     );
   });
 
-  group('insert', () {
+  group('create', () {
     test(
       'WHEN creating an entity '
       'SHOULD call the database with correct table and data',
@@ -47,34 +48,7 @@ void main() {
       },
     );
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return a Failure', () async {
-      when(() => database.insert(any(), any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.create(theRock);
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()!.message,
-          SQLiteRepository.couldNotInsertMessage);
-      verify(() => database.insert(any(), any()));
-    });
-
-    test(
-        'WHEN an unknown exception is thrown while creating an entity '
-        'SHOULD throw exception', () async {
-      when(() => database.insert(any(), any()))
-          .thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.create(mike);
-        fail('Should have thrown exception');
-      } catch (e) {
-        expect(e, isA<Exception>());
-        verify(() => database.insert(any(), any()));
-      }
-    });
+    testExceptionsOnCreate(() => repository, () => database, theRock);
   });
 
   group('update', () {
@@ -98,37 +72,13 @@ void main() {
 
         expect(
           result,
-          Left(RepositoryFailure(SQLiteRepository.canNotUpdateWithIdMessage)),
+          const Left(
+              RepositoryFailure(SQLiteRepository.canNotUpdateWithIdMessage)),
         );
       },
     );
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return a Failure', () async {
-      when(() => database.update(any(), any(), any(), any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.update(morpheus);
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()?.message,
-          SQLiteRepository.couldNotUpdateMessage);
-    });
-
-    test(
-        'WHEN an unknown Exception is thrown '
-        'THEN should throw Exception', () async {
-      when(() => database.update(any(), any(), any(), any()))
-          .thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.update(sullivan);
-        fail('Should have thrown exception');
-      } catch (e) {
-        verify(() => database.update(any(), any(), any(), any()));
-      }
-    });
+    testExceptionsOnUpdate(() => repository, () => database, morpheus);
   });
 
   group('deleteById', () {
@@ -145,33 +95,12 @@ void main() {
       },
     );
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return Failure', () async {
-      when(() => database.deleteById(any(), any(), any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.deleteById(1);
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()?.message,
-          SQLiteRepository.couldNotDeleteMessage);
-      verify(() => database.deleteById(tableName, idColumn, 1));
-    });
-
-    test(
-        'WHEN an unknown Exception is thrown '
-        'SHOULD throw Exception', () async {
-      when(() => database.deleteById(any(), any(), any()))
-          .thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.deleteById(1);
-        fail('Should have thrown exception');
-      } catch (e) {
-        verify(() => database.deleteById(any(), any(), any()));
-      }
-    });
+    testExceptionsOnDeleteById(
+      () => repository,
+      () => database,
+      tableName,
+      idColumn,
+    );
   });
 
   group('findAll', () {
@@ -189,33 +118,7 @@ void main() {
       verify(() => database.findAll(tableName));
     });
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return a Failure', () async {
-      when(() => database.findAll(any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.findAll();
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()?.message,
-          SQLiteRepository.couldNotFindAllMessage);
-      verify(() => database.findAll(tableName));
-    });
-
-    test(
-        'WHEN an unknown Exception is thrown '
-        'SHOULD throw Exception', () async {
-      when(() => database.findAll(any())).thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.findAll();
-        fail('Should have thrown exception');
-      } catch (e) {
-        expect(e, isA<Exception>());
-        verify(() => database.findAll(tableName));
-      }
-    });
+    testExceptionsOnFindAll(() => repository, () => database, tableName);
   });
 
   group('findById', () {
@@ -229,34 +132,7 @@ void main() {
       verify(() => database.findById(tableName, idColumn, neo.id!));
     });
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return a Failure', () async {
-      when(() => database.findById(any(), any(), any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.findById(neo.id!);
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()?.message,
-          SQLiteRepository.couldNotFindMessage);
-      verify(() => database.findById(tableName, idColumn, neo.id!));
-    });
-
-    test(
-        'WHEN an unknown Exception is thrown '
-        'SHOULD throw Exception', () async {
-      when(() => database.findById(any(), any(), any()))
-          .thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.findById(neo.id!);
-        fail('Should have thrown exception');
-      } catch (e) {
-        expect(e, isA<Exception>());
-        verify(() => database.findById(tableName, idColumn, neo.id!));
-      }
-    });
+    testExceptionsOnFindById(() => repository, () => database);
   });
 
   group('exists', () {
@@ -270,34 +146,13 @@ void main() {
       verify(() => database.exists(tableName, idColumn, neo.id!));
     });
 
-    test(
-        'WHEN a DatabaseException is thrown '
-        'SHOULD return a Failure', () async {
-      when(() => database.exists(any(), any(), any()))
-          .thenThrow(FakeDatabaseException('Database error'));
-
-      final result = await repository.exists(neo.id!);
-
-      expect(result.getLeft().toNullable(), isA<DatabaseFailure>());
-      expect(result.getLeft().toNullable()?.message,
-          SQLiteRepository.couldNotVerifyExistenceMessage);
-      verify(() => database.exists(tableName, idColumn, neo.id!));
-    });
-
-    test(
-        'WHEN an unknown Exception is thrown '
-        'SHOULD throw Exception', () async {
-      when(() => database.exists(any(), any(), any()))
-          .thenThrow(Exception('Unknown error'));
-
-      try {
-        await repository.exists(neo.id!);
-        fail('Should have thrown exception');
-      } catch (e) {
-        expect(e, isA<Exception>());
-        verify(() => database.exists(tableName, idColumn, neo.id!));
-      }
-    });
+    testExceptionsOnExists(
+      () => repository,
+      () => database,
+      tableName,
+      idColumn,
+      neo.id!,
+    );
   });
 
   group('save', () {
@@ -351,60 +206,28 @@ void main() {
       },
     );
 
-    test(
-      'WHEN the database throws an Exception on insert '
-      'THEN the repository should return a Failure',
-      () async {
-        final exception = FakeDatabaseException('insert error');
-        when(() => database.insert(any(), any())).thenThrow(exception);
+    testExceptionsOnSave(
+        () => repository, () => database, tableName, idColumn, neo);
+  });
 
-        final result = await repository.save(mike);
+  group('deleteWhere', () {
+    test('WHEN called SHOULD delete using the query', () async {
+      when(() => database.delete(
+          table: any(named: 'table'),
+          where: any(named: 'where'))).thenAnswer((_) async {});
 
-        expect(result.isLeft(), true);
-        final failure = result.getLeft().toNullable()! as DatabaseFailure;
-        expect(failure.message, SQLiteRepository.couldNotInsertMessage);
-        expect(failure.exception, exception);
-        verify(() => database.insert(tableName, mike.toJson()));
-      },
-    );
+      final result = await repository.deleteWhere({'name': neo.name});
 
-    test(
-      'WHEN the database throws an Exception on update '
-      'THEN the repository should return a Failure',
-      () async {
-        final exception = FakeDatabaseException('update error');
-        when(() => database.exists(any(), any(), any()))
-            .thenAnswer((_) async => true);
-        when(() => database.update(any(), any(), any(), any()))
-            .thenThrow(exception);
+      expect(result.isRight(), true);
+      verify(
+          () => database.delete(table: tableName, where: {'name': neo.name}));
+    });
 
-        final result = await repository.save(neo);
-
-        expect(result.isLeft(), true);
-        final failure = result.getLeft().toNullable()! as DatabaseFailure;
-        expect(failure.message, SQLiteRepository.couldNotUpdateMessage);
-        expect(failure.exception, exception);
-        verify(
-            () => database.update(tableName, neo.toJson(), idColumn, neo.id!));
-      },
-    );
-
-    test(
-      'WHEN the repository throws an Exception on exists '
-      'THEN the usecase should return a Failure',
-      () async {
-        final exception = FakeDatabaseException('exists error');
-        when(() => database.exists(any(), any(), any())).thenThrow(exception);
-
-        final result = await repository.save(neo);
-
-        expect(result.isLeft(), true);
-        final failure = result.getLeft().toNullable()! as DatabaseFailure;
-        expect(
-            failure.message, SQLiteRepository.couldNotVerifyExistenceMessage);
-        expect(failure.exception, exception);
-        verify(() => database.exists(tableName, idColumn, neo.id!));
-      },
+    testExceptionsOnDeleteWhere(
+      () => repository,
+      () => database,
+      tableName,
+      {'name': neo.name},
     );
   });
 }
@@ -432,17 +255,3 @@ class Person extends Entity<int> with EquatableMixin {
 }
 
 class TransactionMock extends Mock implements Transaction {}
-
-class FakeDatabaseException extends DatabaseException with EquatableMixin {
-  final String message;
-
-  FakeDatabaseException(this.message) : super(message);
-
-  @override
-  int? getResultCode() {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Object?> get props => [message];
-}

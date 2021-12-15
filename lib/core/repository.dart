@@ -16,6 +16,8 @@ abstract class Repository<T extends Entity<ID>, ID> {
   Future<Either<Failure, List<T>>> findAll();
 
   Future<Either<Failure, bool>> exists(ID id);
+
+  Future<Either<Failure, void>> deleteWhere(Map<String, dynamic> where);
 }
 
 abstract class Entity<ID> {
