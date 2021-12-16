@@ -8,7 +8,9 @@ import 'recipes_list_bloc.dart';
 import 'widgets/recipe_list_tile.dart';
 
 class RecipesListScreen extends StatefulWidget {
-  const RecipesListScreen({Key? key}) : super(key: key);
+  final RecipesListBloc? bloc;
+
+  const RecipesListScreen({Key? key, this.bloc}) : super(key: key);
 
   @override
   State<RecipesListScreen> createState() => _RecipesListScreenState();
@@ -20,7 +22,8 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
   @override
   void initState() {
     super.initState();
-    bloc = RecipesListBloc(Modular.get(), Modular.get(), Modular.get());
+    bloc = widget.bloc ??
+        RecipesListBloc(Modular.get(), Modular.get(), Modular.get());
     bloc.loadRecipes();
   }
 

@@ -14,6 +14,12 @@ class SaveIngredientUseCaseMock extends Mock implements SaveIngredientUseCase {}
 class DeleteIngredientUseCaseMock extends Mock
     implements DeleteIngredientUseCase {}
 
+class GetRecipesUseCaseMock extends Mock implements GetRecipesUseCase {}
+
+class SaveRecipeUseCaseMock extends Mock implements SaveRecipeUseCase {}
+
+class DeleteRecipeUseCaseMock extends Mock implements DeleteRecipeUseCase {}
+
 class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
 class RecipeRepositoryMock extends Mock implements RecipeRepository {}
@@ -109,6 +115,7 @@ final cakeRecipe = Recipe(
   quantityProduced: 1,
   quantitySold: 1,
   canBeSold: true,
+  price: 10,
   ingredients: [
     RecipeIngredient.ingredient(flour.id!, quantity: 1),
     RecipeIngredient.recipe(sugarWithEggRecipeWithId.id!, quantity: 5),
