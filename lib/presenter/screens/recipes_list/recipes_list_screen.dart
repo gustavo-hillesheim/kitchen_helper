@@ -95,12 +95,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
         ),
       );
 
-  void _goToEditRecipeScreen([Recipe? recipe]) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        'Indo pra edição/criação de ' + (recipe?.name ?? 'nova receita'),
-      ),
-    ));
+  void _goToEditRecipeScreen([Recipe? recipe]) async {
+    final reload = await EditRecipeScreen.navigate(recipe);
+    print(reload);
+    if (reload ?? false) {
+      bloc.loadRecipes();
+    }
   }
 
   void _tryDelete(Recipe recipe) async {

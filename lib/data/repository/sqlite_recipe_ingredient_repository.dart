@@ -9,7 +9,7 @@ class SQLiteRecipeIngredientRepository
     implements RecipeIngredientRepository {
   SQLiteRecipeIngredientRepository(SQLiteDatabase database)
       : super(
-          'recipe_ingredients',
+          'recipeIngredients',
           'id',
           database,
           fromMap: (map) => RecipeIngredientEntity.fromJson(map),
@@ -54,7 +54,13 @@ class SQLiteRecipeIngredientRepository
     try {
       final queryResult = await database.query(
         table: tableName,
-        columns: ['id', 'parentRecipeId', 'recipeIngredientId', 'type'],
+        columns: [
+          'id',
+          'parentRecipeId',
+          'recipeIngredientId',
+          'type',
+          'quantity',
+        ],
         where: {'parentRecipeId': recipeId},
       );
       final ingredientEntities =

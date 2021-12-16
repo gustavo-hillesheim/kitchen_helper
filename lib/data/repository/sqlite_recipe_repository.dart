@@ -14,6 +14,7 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
           'id',
           database,
           fromMap: (map) {
+            map = Map.from(map);
             map['ingredients'] = [];
             // This is necessary since SQFLite doesn't support boolean types
             map['canBeSold'] = map['canBeSold'] == 1;

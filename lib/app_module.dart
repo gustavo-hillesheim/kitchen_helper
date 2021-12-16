@@ -58,8 +58,8 @@ class AppModule extends Module {
                 ' of type Recipe? as argument');
           }
           return EditRecipeScreen(
-              //initialValue: route.data as Recipe?,
-              );
+            initialValue: route.data as Recipe?,
+          );
         }),
       ];
 }

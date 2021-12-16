@@ -56,7 +56,8 @@ class SQLiteDatabase {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       parentRecipeId INTEGER NOT NULL,
       recipeIngredientId INTEGER NOT NULL,
-      type TEXT NOT NULL
+      type TEXT NOT NULL,
+      quantity REAL NOT NULL
     )''');
   }
 

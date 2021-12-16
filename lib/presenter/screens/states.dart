@@ -7,6 +7,13 @@ abstract class ScreenState<T> extends Equatable {
   const ScreenState();
 }
 
+class EmptyState<T> extends ScreenState<T> {
+  const EmptyState();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class LoadingState<T> extends ScreenState<T> {
   const LoadingState();
 

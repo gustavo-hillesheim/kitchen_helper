@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/widgets/secondary_button.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
 import '../../../utils/utils.dart';
+import '../../../widgets/secondary_button.dart';
 import '../../../widgets/widgets.dart';
+import '../models/editing_recipe_ingredient.dart';
 
 class IngredientsList extends StatelessWidget {
-  final List<Ingredient> ingredients;
+  final List<EditingRecipeIngredient> ingredients;
 
   const IngredientsList(this.ingredients, {Key? key}) : super(key: key);
 
@@ -43,7 +44,7 @@ class IngredientsList extends StatelessWidget {
 }
 
 class _IngredientListTile extends StatelessWidget {
-  final Ingredient ingredient;
+  final EditingRecipeIngredient ingredient;
   final VoidCallback? onTap;
 
   const _IngredientListTile(

@@ -15,7 +15,7 @@ class RecipesListBloc extends AppCubit<List<Recipe>> {
     this.saveRecipeUseCase,
   ) : super(const LoadingState());
 
-  Future<void> loadRecipes() {
+  Future<void> loadRecipes() async {
     return runEither(() => getRecipesUseCase.execute(const NoParams()));
   }
 

@@ -1,41 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/ingredients_list.dart';
 
 import '../../../domain/domain.dart';
 import '../../presenter.dart';
+import '../states.dart';
+import 'edit_recipe_bloc.dart';
+import 'models/editing_recipe_ingredient.dart';
 import 'widgets/general_information_form.dart';
-
-const cake = Recipe(
-    id: 1,
-    name: 'Bolo de chocolate',
-    measurementUnit: MeasurementUnit.units,
-    canBeSold: true,
-    quantityProduced: 5,
-    quantitySold: 1,
-    price: 15,
-    ingredients: [
-      RecipeIngredient.ingredient(1, quantity: 100),
-      RecipeIngredient.ingredient(2, quantity: 2),
-      RecipeIngredient.ingredient(3, quantity: 500),
-    ],
-    notes: '''Modo de preparo:
-1. Junte a farinha e o ovo
-2. Bata bem
-3. Adicione o chocolate
-3. Bata mais
-4. Bom apetite''');
+import 'widgets/ingredients_list.dart';
 
 class EditRecipeScreen extends StatefulWidget {
   final Recipe? initialValue;
 
   const EditRecipeScreen({
     Key? key,
-    this.initialValue = cake,
+    this.initialValue,
   }) : super(key: key);
 
-  static Future navigate([Recipe? recipe]) {
-    return Modular.to.pushNamed('/edit-recipe', arguments: recipe);
+  static Future<bool?> navigate([Recipe? recipe]) {
+    return Modular.to.pushNamed<bool?>('/edit-recipe', arguments: recipe);
   }
 
   @override
@@ -44,6 +27,7 @@ class EditRecipeScreen extends StatefulWidget {
 
 class _EditRecipeScreenState extends State<EditRecipeScreen>
     with SingleTickerProviderStateMixin {
+  late final EditRecipeBloc bloc;
   final _formKey = GlobalKey<FormState>();
   late final _tabsController = TabController(length: 2, vsync: this);
   final _nameController = TextEditingController();
@@ -53,32 +37,20 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   final _notesController = TextEditingController();
   final _canBeSoldNotifier = ValueNotifier<bool>(false);
   final _measurementUnitNotifier = ValueNotifier<MeasurementUnit?>(null);
-  final _ingredients = const <Ingredient>[
-    Ingredient(
-      name: 'Chocolate',
-      measurementUnit: MeasurementUnit.grams,
-      quantity: 100,
-      cost: 5,
-    ),
-    Ingredient(
-      name: 'Eggs',
-      measurementUnit: MeasurementUnit.units,
-      quantity: 2,
-      cost: 1,
-    ),
-    Ingredient(
-      name: 'Farinha',
-      measurementUnit: MeasurementUnit.grams,
-      quantity: 500,
-      cost: 15,
-    ),
-  ];
+  final _ingredients = <EditingRecipeIngredient>[];
 
   @override
   void initState() {
     super.initState();
+    bloc = EditRecipeBloc(Modular.get(), Modular.get(), Modular.get());
     if (widget.initialValue != null) {
       final recipe = widget.initialValue!;
+      bloc.getEditingRecipeIngredients(recipe).then((result) {
+        result.fold(
+          (f) => print(f.message),
+          (i) => _ingredients.addAll(i),
+        );
+      });
       _nameController.text = recipe.name;
       _quantityProducedController.text =
           Formatter.simple(recipe.quantityProduced);
@@ -183,9 +155,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
             ),
             Padding(
               padding: kMediumEdgeInsets,
-              child: PrimaryButton(
-                onPressed: _save,
-                child: const Text('Salvar'),
+              child: StreamBuilder<ScreenState>(
+                stream: bloc.stream,
+                builder: (_, snapshot) => PrimaryButton(
+                  onPressed: _save,
+                  child: const Text('Salvar'),
+                  isLoading: snapshot.data is LoadingState,
+                ),
               ),
             ),
           ],
@@ -194,9 +170,41 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
     );
   }
 
-  void _save() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Saving...'),
-    ));
+  void _save() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final recipe = _createRecipe();
+      final state = await bloc.save(recipe);
+      if (state is SuccessState) {
+        Modular.to.pop(true);
+      } else if (state is FailureState) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.failure.message)),
+        );
+      }
+    }
+  }
+
+  Recipe _createRecipe() {
+    final ingredients = _ingredients
+        .map((eri) => RecipeIngredient(
+              type: eri.type,
+              id: eri.id,
+              quantity: eri.quantity,
+            ))
+        .toList();
+
+    return Recipe(
+      id: widget.initialValue?.id,
+      name: _nameController.text,
+      notes: _notesController.text,
+      measurementUnit: _measurementUnitNotifier.value!,
+      canBeSold: _canBeSoldNotifier.value,
+      quantityProduced:
+          double.parse(_quantityProducedController.text.replaceAll(',', '.')),
+      quantitySold:
+          double.tryParse(_quantitySoldController.text.replaceAll(',', '.')),
+      price: double.tryParse(_priceController.text.replaceAll(',', '.')),
+      ingredients: ingredients,
+    );
   }
 }
