@@ -15,4 +15,19 @@ extension MeasurementUnitExtension on MeasurementUnit {
         return 'unidades';
     }
   }
+
+  String get abbreviation {
+    switch (this) {
+      case MeasurementUnit.kilograms:
+        return 'Kg';
+      case MeasurementUnit.grams:
+        return 'g';
+      case MeasurementUnit.liters:
+        return 'L';
+      case MeasurementUnit.milliliters:
+        return 'ml';
+      case MeasurementUnit.units:
+        return 'un';
+    }
+  }
 }

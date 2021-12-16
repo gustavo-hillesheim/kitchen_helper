@@ -9,6 +9,7 @@ class AppTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? prefixText;
   final String? example;
+  final bool? multiline;
 
   const AppTextFormField({
     Key? key,
@@ -18,6 +19,7 @@ class AppTextFormField extends StatelessWidget {
     this.keyboardType,
     this.prefixText,
     this.example,
+    this.multiline,
   }) : super(key: key);
 
   const AppTextFormField.number({
@@ -27,6 +29,7 @@ class AppTextFormField extends StatelessWidget {
     this.controller,
     this.prefixText,
     this.example = '10',
+    this.multiline,
   })  : keyboardType = TextInputType.number,
         super(key: key);
 
@@ -36,6 +39,7 @@ class AppTextFormField extends StatelessWidget {
     this.required = true,
     this.controller,
     this.example = '9.90',
+    this.multiline,
   })  : keyboardType = TextInputType.number,
         prefixText = 'R\$',
         super(key: key);
@@ -46,6 +50,7 @@ class AppTextFormField extends StatelessWidget {
       validator: required ? Validator.required : null,
       keyboardType: keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      maxLines: multiline ?? false ? null : 1,
       decoration: InputDecoration(
         label: Text(name),
         border: const OutlineInputBorder(),

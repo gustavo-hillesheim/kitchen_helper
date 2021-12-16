@@ -19,7 +19,7 @@ void main() {
     ));
 
     expect(find.text(egg.name), findsOneWidget);
-    expect(find.text(Formatter.price(egg.price)), findsOneWidget);
+    expect(find.text(Formatter.price(egg.cost)), findsOneWidget);
     expect(
       find.text(
           '${Formatter.simple(egg.quantity)} ${egg.measurementUnit.label}'),

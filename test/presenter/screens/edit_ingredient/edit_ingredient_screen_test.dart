@@ -68,7 +68,7 @@ void main() {
           name: 'Custo',
           type: TextInputType.number,
           prefix: 'R\$',
-          value: egg.price.toStringAsFixed(2),
+          value: egg.cost.toStringAsFixed(2),
         ),
         findsOneWidget,
       );
@@ -133,7 +133,7 @@ void main() {
       name: 'egg',
       quantity: 12,
       measurementUnit: MeasurementUnit.units,
-      price: 10.5,
+      cost: 10.5,
     );
     when(() => bloc.save(expectedIngredient))
         .thenAnswer((_) async => SuccessState(egg));

@@ -30,7 +30,7 @@ class IngredientListTile extends StatelessWidget {
       style: textTheme.subtitle2,
     );
     final priceText = Text(
-      Formatter.price(ingredient.price),
+      Formatter.price(ingredient.cost),
       style: textTheme.headline5!.copyWith(
         fontWeight: FontWeight.w300,
       ),

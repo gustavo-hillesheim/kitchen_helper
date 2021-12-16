@@ -38,7 +38,7 @@ class SQLiteDatabase {
       name TEXT NOT NULL,
       quantity REAL NOT NULL,
       measurementUnit TEXT NOT NULL,
-      price REAL NOT NULL
+      cost REAL NOT NULL
     )''');
     await db.execute('''
     CREATE TABLE recipes (

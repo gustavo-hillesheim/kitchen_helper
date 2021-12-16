@@ -61,14 +61,14 @@ const sugarWithId = Ingredient(
   name: 'Sugar',
   quantity: 100,
   measurementUnit: MeasurementUnit.grams,
-  price: 10,
+  cost: 10,
 );
 
 const sugarWithoutId = Ingredient(
   name: 'Sugar',
   quantity: 100,
   measurementUnit: MeasurementUnit.grams,
-  price: 10,
+  cost: 10,
 );
 
 const flour = Ingredient(
@@ -76,7 +76,7 @@ const flour = Ingredient(
   name: 'Flour',
   quantity: 1,
   measurementUnit: MeasurementUnit.kilograms,
-  price: 15.75,
+  cost: 15.75,
 );
 
 const egg = Ingredient(
@@ -84,7 +84,7 @@ const egg = Ingredient(
   name: 'egg',
   quantity: 12,
   measurementUnit: MeasurementUnit.units,
-  price: 10,
+  cost: 10,
 );
 
 const orangeJuice = Ingredient(
@@ -92,7 +92,7 @@ const orangeJuice = Ingredient(
   name: 'orange juice',
   quantity: 250,
   measurementUnit: MeasurementUnit.milliliters,
-  price: 2.25,
+  cost: 2.25,
 );
 
 final sugarWithEggRecipeWithoutId = Recipe(

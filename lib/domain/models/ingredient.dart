@@ -13,13 +13,13 @@ class Ingredient extends Equatable implements Entity<int> {
   final String name;
   final double quantity;
   final MeasurementUnit measurementUnit;
-  final double price;
+  final double cost;
 
   const Ingredient({
     required this.name,
     required this.quantity,
     required this.measurementUnit,
-    required this.price,
+    required this.cost,
     this.id,
   });
 
@@ -33,17 +33,17 @@ class Ingredient extends Equatable implements Entity<int> {
     String? name,
     double? quantity,
     MeasurementUnit? measurementUnit,
-    double? price,
+    double? cost,
   }) {
     return Ingredient(
       id: id ?? this.id,
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       measurementUnit: measurementUnit ?? this.measurementUnit,
-      price: price ?? this.price,
+      cost: cost ?? this.cost,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, quantity, measurementUnit, price];
+  List<Object?> get props => [id, name, quantity, measurementUnit, cost];
 }

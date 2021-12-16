@@ -52,5 +52,14 @@ class AppModule extends Module {
           child: (_, __) => const RecipesListScreen(),
           guards: [AppGuard()],
         ),
+        ChildRoute('/edit-recipe', child: (_, route) {
+          if (route.data is! Recipe?) {
+            throw Exception('The route /edit-recipe only accepts values'
+                ' of type Recipe? as argument');
+          }
+          return EditRecipeScreen(
+              //initialValue: route.data as Recipe?,
+              );
+        }),
       ];
 }

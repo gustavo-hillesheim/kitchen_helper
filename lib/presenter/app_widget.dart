@@ -10,6 +10,7 @@ class AppWidget extends StatelessWidget {
       title: 'Kitchen Helper',
       debugShowCheckedModeBanner: false,
       theme: createTheme(),
+      initialRoute: '/edit-recipe',
     ).modular();
   }
 
