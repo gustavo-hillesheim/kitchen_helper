@@ -15,20 +15,21 @@ class ActionsSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Slidable(
       closeOnScroll: true,
-      endActionPane: ActionPane(
-        extentRatio: 0.25,
-        motion: const DrawerMotion(),
-        children: [
-          if (onDelete != null)
-            SlidableAction(
-              onPressed: (_) => onDelete!(),
-              icon: Icons.delete,
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              label: 'Excluir',
-            ),
-        ],
-      ),
+      endActionPane: onDelete != null
+          ? ActionPane(
+              extentRatio: 0.25,
+              motion: const DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (_) => onDelete!(),
+                  icon: Icons.delete,
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  label: 'Excluir',
+                ),
+              ],
+            )
+          : null,
       child: child,
     );
   }
