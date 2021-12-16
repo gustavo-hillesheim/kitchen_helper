@@ -8,83 +8,36 @@ import '../../../mocks.dart';
 
 void main() {
   late GetRecipesUseCase usecase;
-  late RecipeRepository recipeRepository;
-  late RecipeIngredientRepository recipeIngredientRepository;
+  late RecipeRepository repository;
 
   setUp(() {
-    recipeRepository = RecipeRepositoryMock();
-    recipeIngredientRepository = RecipeIngredientRepositoryMock();
-    usecase = GetRecipesUseCase(recipeRepository, recipeIngredientRepository);
+    repository = RecipeRepositoryMock();
+    usecase = GetRecipesUseCase(repository);
   });
-
-  void mockFindIngredients(
-      List<Either<Failure, List<RecipeIngredientEntity>>> responses) {
-    var index = 0;
-    when(() => recipeIngredientRepository.findByRecipe(any()))
-        .thenAnswer((_) async => responses[index++]);
-  }
 
   void mockFindRecipes(Either<Failure, List<Recipe>> response) {
-    when(() => recipeRepository.findAll()).thenAnswer((_) async => response);
+    when(() => repository.findAll()).thenAnswer((_) async => response);
   }
 
-  List<RecipeIngredientEntity> getIngredientEntities(Recipe recipe) {
-    return recipe.ingredients
-        .map((i) => RecipeIngredientEntity.fromModels(recipe, i))
-        .toList(growable: false);
-  }
-
-  test(
-    'WHEN use case is called '
-    'SHOULD return all recipes with their ingredients',
-    () async {
-      mockFindIngredients([
-        Right(getIngredientEntities(sugarWithEggRecipeWithId)),
-        Right(getIngredientEntities(cakeRecipe)),
-      ]);
-      mockFindRecipes(Right([
-        sugarWithEggRecipeWithId.copyWith(ingredients: []),
-        cakeRecipe.copyWith(ingredients: []),
-      ]));
-
-      final result = await usecase.execute(const NoParams());
-
-      expect(result.getRight().toNullable(),
-          [sugarWithEggRecipeWithId, cakeRecipe]);
-
-      verify(() => recipeRepository.findAll());
-    },
-  );
-
-  test(
-      'WHEN a Failure is returned from recipeIngredientsRepository '
-      'THEN usecase should return it too', () async {
-    mockFindIngredients([
-      Right(getIngredientEntities(cakeRecipe)),
-      Left(FakeFailure('an error')),
-    ]);
-    mockFindRecipes(Right([
-      cakeRecipe.copyWith(ingredients: []),
-      sugarWithEggRecipeWithId.copyWith(ingredients: []),
-    ]));
+  test('WHEN called SHOULD get recipes', () async {
+    mockFindRecipes(Right([cakeRecipe, sugarWithEggRecipeWithId]));
 
     final result = await usecase.execute(const NoParams());
 
-    expect(result.getLeft().toNullable(), FakeFailure('an error'));
-    verify(() => recipeRepository.findAll());
-    verify(() => recipeIngredientRepository.findByRecipe(cakeRecipe.id!));
-    verify(() =>
-        recipeIngredientRepository.findByRecipe(sugarWithEggRecipeWithId.id!));
+    expect(
+      result.getRight().toNullable(),
+      [cakeRecipe, sugarWithEggRecipeWithId],
+    );
+    verify(() => repository.findAll());
   });
 
-  test(
-      'WHEN a Failure is returned from recipeRepository '
-      'THEN usecase SHOULD return it too', () async {
-    mockFindRecipes(Left(FakeFailure('some error')));
+  test('WHEN repository returns Failure SHOULD return Failure', () async {
+    final failure = FakeFailure('error');
+    mockFindRecipes(Left(failure));
 
     final result = await usecase.execute(const NoParams());
 
-    expect(result.getLeft().toNullable(), FakeFailure('some error'));
-    verify(() => recipeRepository.findAll());
+    expect(result.getLeft().toNullable(), failure);
+    verify(() => repository.findAll());
   });
 }

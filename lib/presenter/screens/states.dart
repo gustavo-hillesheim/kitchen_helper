@@ -1,4 +1,6 @@
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 
 abstract class ScreenState<T> extends Equatable {
@@ -28,4 +30,17 @@ class FailureState<T> extends ScreenState<T> {
 
   @override
   List<Object?> get props => [failure];
+}
+
+abstract class AppCubit<T> extends Cubit<ScreenState<T>> {
+  AppCubit(ScreenState<T> initialState) : super(initialState);
+
+  Future<void> runEither(Future<Either<Failure, T>> Function() fn) async {
+    emit(LoadingState<T>());
+    final result = await fn();
+    result.fold(
+      (failure) => emit(FailureState<T>(failure)),
+      (value) => emit(SuccessState<T>(value)),
+    );
+  }
 }
