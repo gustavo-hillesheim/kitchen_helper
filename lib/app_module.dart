@@ -24,6 +24,7 @@ class AppModule extends Module {
         Bind<GetRecipesUseCase>((i) => GetRecipesUseCase(i())),
         Bind((i) => GetRecipeUseCase(i())),
         Bind((i) => DeleteRecipeUseCase(i())),
+        Bind((i) => GetRecipeCostUseCase(i(), i())),
       ];
 
   @override

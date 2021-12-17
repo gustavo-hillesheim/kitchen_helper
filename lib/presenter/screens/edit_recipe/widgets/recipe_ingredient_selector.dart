@@ -26,7 +26,7 @@ class RecipeIngredientSelector extends StatefulWidget {
 
 class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   late final RecipeIngredientSelectorService service;
-  late final SelectorItem? initialValue;
+  SelectorItem? initialValue;
 
   @override
   void initState() {

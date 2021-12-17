@@ -1,19 +1,21 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
 
 import '../../../core/core.dart';
 import '../../../domain/domain.dart';
 import '../states.dart';
+import 'models/editing_recipe_ingredient.dart';
 
 class EditRecipeBloc extends AppCubit<void> {
   final SaveRecipeUseCase usecase;
   final GetIngredientUseCase getIngredientUseCase;
   final GetRecipeUseCase getRecipeUseCase;
+  final GetRecipeCostUseCase getRecipeCostUseCase;
 
   EditRecipeBloc(
     this.usecase,
     this.getIngredientUseCase,
     this.getRecipeUseCase,
+    this.getRecipeCostUseCase,
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(Recipe recipe) async {
@@ -43,13 +45,15 @@ class EditRecipeBloc extends AppCubit<void> {
       _createEditingRecipeIngredientFromRecipe(
           RecipeIngredient recipeIngredient) {
     return getRecipeUseCase.execute(recipeIngredient.id).onRightThen(
-          (recipe) => Right(
-            EditingRecipeIngredient.fromModels(
-              recipeIngredient,
-              recipe: recipe,
-              recipeCost: 5,
-            ),
-          ),
+          (recipe) => getRecipeCostUseCase.execute(recipe!.id!).onRightThen(
+                (recipeCost) => Right(
+                  EditingRecipeIngredient.fromModels(
+                    recipeIngredient,
+                    recipe: recipe,
+                    recipeCost: recipeCost,
+                  ),
+                ),
+              ),
         );
   }
 

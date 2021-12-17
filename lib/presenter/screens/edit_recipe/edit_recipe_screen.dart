@@ -44,7 +44,12 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   @override
   void initState() {
     super.initState();
-    bloc = EditRecipeBloc(Modular.get(), Modular.get(), Modular.get());
+    bloc = EditRecipeBloc(
+      Modular.get(),
+      Modular.get(),
+      Modular.get(),
+      Modular.get(),
+    );
     if (widget.initialValue != null) {
       final recipe = widget.initialValue!;
       bloc.getEditingRecipeIngredients(recipe).then((result) {
