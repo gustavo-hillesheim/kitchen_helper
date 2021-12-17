@@ -76,6 +76,7 @@ class GeneralInformationForm extends StatelessWidget {
                       children: [
                         Expanded(
                           child: AppTextFormField.number(
+                            required: canBeSold,
                             name: 'Quantidade vendida',
                             controller: quantitySoldController,
                           ),
@@ -83,6 +84,7 @@ class GeneralInformationForm extends StatelessWidget {
                         kSmallSpacerHorizontal,
                         Expanded(
                           child: AppTextFormField.money(
+                            required: canBeSold,
                             name: 'Preço de venda',
                             controller: priceController,
                           ),

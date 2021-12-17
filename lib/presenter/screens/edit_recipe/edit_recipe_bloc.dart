@@ -25,15 +25,18 @@ class EditRecipeBloc extends AppCubit<void> {
       getEditingRecipeIngredients(
     Recipe recipe,
   ) async {
-    final futures = recipe.ingredients.map((recipeIngredient) async {
-      if (recipeIngredient.type == RecipeIngredientType.recipe) {
-        return _createEditingRecipeIngredientFromRecipe(recipeIngredient);
-      } else {
-        return _createEditingRecipeIngredientFromIngredient(recipeIngredient);
-      }
-    });
+    final futures = recipe.ingredients.map(getEditingRecipeIngredient);
     final results = await Future.wait(futures);
     return results.asEitherList();
+  }
+
+  Future<Either<Failure, EditingRecipeIngredient>> getEditingRecipeIngredient(
+      RecipeIngredient recipeIngredient) {
+    if (recipeIngredient.type == RecipeIngredientType.recipe) {
+      return _createEditingRecipeIngredientFromRecipe(recipeIngredient);
+    } else {
+      return _createEditingRecipeIngredientFromIngredient(recipeIngredient);
+    }
   }
 
   Future<Either<Failure, EditingRecipeIngredient>>

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 
+import 'core.dart';
+
 extension EitherExtension<L, R> on Either<L, R> {
   Future<Either<NL, NR>> asyncFlatMap<NL, NR>(
       FutureOr<Either<NL, NR>> Function(R) mapFn) async {
@@ -22,6 +24,33 @@ extension EitherExtension<L, R> on Either<L, R> {
 
   Either<L, NR> asLeftOf<NR>() {
     return Left<L, NR>(getLeft().toNullable()!);
+  }
+
+  Either<L, NR> combine<NR, OR>(
+    Either<L, OR> other,
+    NR Function(R, OR) combiner,
+  ) {
+    if (isLeft()) {
+      return asLeftOf();
+    }
+    if (other.isLeft()) {
+      return other.asLeftOf();
+    }
+    return Right(combiner(
+      getRight().toNullable()!,
+      other.getRight().toNullable()!,
+    ));
+  }
+}
+
+extension FutureEitherFailureExtension<R> on Future<Either<Failure, R>> {
+  Future<R> throwOnFailure() {
+    return then((either) {
+      return either.fold(
+        (failure) => throw failure,
+        (r) => r,
+      );
+    });
   }
 }
 

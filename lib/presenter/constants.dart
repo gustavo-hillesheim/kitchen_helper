@@ -11,6 +11,7 @@ const kLargeFontSize = 32.0;
 
 const kSmallEdgeInsets = EdgeInsets.all(kSmallSpace);
 const kMediumEdgeInsets = EdgeInsets.all(kMediumSpace);
+const kLargeEdgeInsets = EdgeInsets.all(kLargeSpace);
 
 const kSmallSpacerVertical = SizedBox(height: kSmallSpace);
 const kMediumSpacerVertical = SizedBox(height: kMediumSpace);

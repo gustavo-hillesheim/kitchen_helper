@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/edit_recipe_ingredient_form.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
@@ -7,21 +8,31 @@ import '../../../widgets/secondary_button.dart';
 import '../../../widgets/widgets.dart';
 import '../models/editing_recipe_ingredient.dart';
 
-class IngredientsList extends StatelessWidget {
+class IngredientsList extends StatefulWidget {
+  final ValueChanged<RecipeIngredient> onAddIngredient;
   final List<EditingRecipeIngredient> ingredients;
 
-  const IngredientsList(this.ingredients, {Key? key}) : super(key: key);
+  const IngredientsList(
+    this.ingredients, {
+    Key? key,
+    required this.onAddIngredient,
+  }) : super(key: key);
 
+  @override
+  State<IngredientsList> createState() => _IngredientsListState();
+}
+
+class _IngredientsListState extends State<IngredientsList> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListView.builder(
           shrinkWrap: true,
-          itemCount: ingredients.length,
+          itemCount: widget.ingredients.length,
           padding: kMediumEdgeInsets.copyWith(bottom: kSmallSpace),
           itemBuilder: (_, i) {
-            final ingredient = ingredients[i];
+            final ingredient = widget.ingredients[i];
             return Padding(
               padding: const EdgeInsets.only(bottom: kSmallSpace),
               child: ActionsSlider(
@@ -36,9 +47,27 @@ class IngredientsList extends StatelessWidget {
         ),
         SecondaryButton(
           child: Text('Adicionar ingrediente'),
-          onPressed: () {},
+          onPressed: () => showRecipeIngredientForm(context),
         ),
       ],
+    );
+  }
+
+  void showRecipeIngredientForm(
+    BuildContext context, [
+    RecipeIngredient? recipeIngredient,
+  ]) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return EditRecipeIngredientForm(
+          initialValue: recipeIngredient,
+          onSave: (recipeIngredient) => setState(() {
+            widget.onAddIngredient(recipeIngredient);
+            Navigator.of(context).pop();
+          }),
+        );
+      },
     );
   }
 }

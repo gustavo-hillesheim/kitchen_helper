@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fpdart/fpdart.dart' show Right;
 
+import '../../../core/core.dart';
 import '../../../domain/domain.dart';
 import '../../presenter.dart';
 import '../states.dart';
@@ -138,7 +140,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                           ValueListenableBuilder<bool>(
                             valueListenable: _canBeSoldNotifier,
                             builder: (_, canBeSold, __) => canBeSold
-                                ? Padding(
+                                ? const Padding(
                                     padding:
                                         const EdgeInsets.only(top: kSmallSpace),
                                     child: Text('Lucro total: R\$25.00'),
@@ -149,7 +151,19 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                       ),
                     ),
                   ),
-                  IngredientsList(_ingredients),
+                  IngredientsList(
+                    _ingredients,
+                    onAddIngredient: (recipeIngredient) async {
+                      bloc
+                          .getEditingRecipeIngredient(recipeIngredient)
+                          .onRightThen((eri) {
+                        setState(() {
+                          _ingredients.add(eri);
+                        });
+                        return const Right(null);
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
