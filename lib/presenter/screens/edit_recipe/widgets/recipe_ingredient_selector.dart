@@ -45,6 +45,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   @override
   Widget build(BuildContext context) {
     return DropdownSearch<SelectorItem>(
+      selectedItem: initialValue,
       showSearchBox: true,
       onFind: (_) => service.getItems().throwOnFailure(),
       validator: Validator.required,

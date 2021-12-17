@@ -49,4 +49,22 @@ class EditingRecipeIngredient {
       id: id,
     );
   }
+
+  EditingRecipeIngredient copyWith({
+    String? name,
+    double? quantity,
+    MeasurementUnit? measurementUnit,
+    double? cost,
+    RecipeIngredientType? type,
+    int? id,
+  }) {
+    return EditingRecipeIngredient(
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      measurementUnit: measurementUnit ?? this.measurementUnit,
+      cost: cost ?? this.cost,
+      type: type ?? this.type,
+      id: id ?? this.id,
+    );
+  }
 }

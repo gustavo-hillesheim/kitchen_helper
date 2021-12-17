@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/edit_recipe_ingredient_form.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
@@ -7,15 +6,25 @@ import '../../../utils/utils.dart';
 import '../../../widgets/secondary_button.dart';
 import '../../../widgets/widgets.dart';
 import '../models/editing_recipe_ingredient.dart';
+import 'edit_recipe_ingredient_form.dart';
+
+typedef OnEditIngredient = void Function(
+    EditingRecipeIngredient, RecipeIngredient);
+typedef OnAddIngredient = ValueChanged<RecipeIngredient>;
+typedef OnDeleteIngredient = ValueChanged<EditingRecipeIngredient>;
 
 class IngredientsList extends StatefulWidget {
-  final ValueChanged<RecipeIngredient> onAddIngredient;
+  final OnAddIngredient onAdd;
+  final OnEditIngredient onEdit;
+  final OnDeleteIngredient onDelete;
   final List<EditingRecipeIngredient> ingredients;
 
   const IngredientsList(
     this.ingredients, {
     Key? key,
-    required this.onAddIngredient,
+    required this.onAdd,
+    required this.onEdit,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -36,10 +45,10 @@ class _IngredientsListState extends State<IngredientsList> {
             return Padding(
               padding: const EdgeInsets.only(bottom: kSmallSpace),
               child: ActionsSlider(
-                onDelete: () {},
+                onDelete: () => widget.onDelete(ingredient),
                 child: _IngredientListTile(
                   ingredient,
-                  onTap: () {},
+                  onTap: () => showRecipeIngredientForm(context, ingredient),
                 ),
               ),
             );
@@ -55,15 +64,19 @@ class _IngredientsListState extends State<IngredientsList> {
 
   void showRecipeIngredientForm(
     BuildContext context, [
-    RecipeIngredient? recipeIngredient,
+    EditingRecipeIngredient? initialValue,
   ]) {
     showDialog(
       context: context,
       builder: (_) {
         return EditRecipeIngredientForm(
-          initialValue: recipeIngredient,
+          initialValue: initialValue,
           onSave: (recipeIngredient) => setState(() {
-            widget.onAddIngredient(recipeIngredient);
+            if (initialValue != null) {
+              widget.onEdit(initialValue, recipeIngredient);
+            } else {
+              widget.onAdd(recipeIngredient);
+            }
             Navigator.of(context).pop();
           }),
         );

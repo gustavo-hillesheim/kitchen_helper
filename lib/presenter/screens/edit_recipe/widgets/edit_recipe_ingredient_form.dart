@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
 import '../../../widgets/widgets.dart';
+import '../models/editing_recipe_ingredient.dart';
 import 'recipe_ingredient_selector.dart';
 
 class EditRecipeIngredientForm extends StatefulWidget {
   final ValueChanged<RecipeIngredient> onSave;
-  final RecipeIngredient? initialValue;
+  final EditingRecipeIngredient? initialValue;
 
   const EditRecipeIngredientForm({
     Key? key,
@@ -24,6 +25,21 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
   final _formKey = GlobalKey<FormState>();
   final _quantityController = TextEditingController();
   SelectorItem? _selectedRecipeIngredient;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialValue != null) {
+      final initialValue = widget.initialValue!;
+      _quantityController.text = initialValue.quantity.toStringAsFixed(2);
+      _selectedRecipeIngredient = SelectorItem(
+        id: initialValue.id,
+        name: initialValue.name,
+        measurementUnit: initialValue.measurementUnit,
+        type: initialValue.type,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +67,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       RecipeIngredientSelector(
+                        initialValue: widget.initialValue,
                         onChanged: (item) => setState(() {
                           _selectedRecipeIngredient = item;
                         }),
@@ -66,7 +83,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                   ),
                   kMediumSpacerVertical,
                   PrimaryButton(
-                    child: Text('Salvar'),
+                    child: const Text('Salvar'),
                     onPressed: _save,
                   ),
                 ],

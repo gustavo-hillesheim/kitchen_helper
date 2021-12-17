@@ -151,19 +151,31 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                       ),
                     ),
                   ),
-                  IngredientsList(
-                    _ingredients,
-                    onAddIngredient: (recipeIngredient) async {
-                      bloc
-                          .getEditingRecipeIngredient(recipeIngredient)
-                          .onRightThen((eri) {
-                        setState(() {
-                          _ingredients.add(eri);
-                        });
-                        return const Right(null);
+                  IngredientsList(_ingredients,
+                      onAdd: (recipeIngredient) async {
+                    bloc
+                        .getEditingRecipeIngredient(recipeIngredient)
+                        .onRightThen((eri) {
+                      setState(() {
+                        _ingredients.add(eri);
                       });
-                    },
-                  ),
+                      return const Right(null);
+                    });
+                  }, onEdit: (oldValue, recipeIngredient) {
+                    bloc
+                        .getEditingRecipeIngredient(recipeIngredient)
+                        .onRightThen((newValue) {
+                      final index = _ingredients.indexOf(oldValue);
+                      setState(() {
+                        _ingredients[index] = newValue;
+                      });
+                      return const Right(null);
+                    });
+                  }, onDelete: (ingredient) {
+                    setState(() {
+                      _ingredients.remove(ingredient);
+                    });
+                  }),
                 ],
               ),
             ),
