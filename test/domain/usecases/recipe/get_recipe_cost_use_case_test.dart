@@ -44,7 +44,7 @@ void main() {
     mockFindRecipes();
     mockFindIngredients();
 
-    final result = await usecase.execute(1);
+    final result = await usecase.execute(recipeWithIngredients);
 
     // 2 from ingredient one and 5 from ingredient two
     expect(result.getRight().toNullable(), 7);
@@ -56,7 +56,7 @@ void main() {
     mockFindRecipes();
     mockFindIngredients();
 
-    final result = await usecase.execute(2);
+    final result = await usecase.execute(recipeWithRecipeAndIngredients);
 
     // 35 from recipe and 37.5 from ingredient three
     expect(result.getRight().toNullable(), 72.5);

@@ -170,7 +170,13 @@ void main() {
       expect(result.getRight().toNullable(), getIngredientEntities(cakeRecipe));
       verify(() => database.query(
             table: repository.tableName,
-            columns: ['id', 'parentRecipeId', 'recipeIngredientId', 'type'],
+            columns: [
+              'id',
+              'parentRecipeId',
+              'recipeIngredientId',
+              'type',
+              'quantity',
+            ],
             where: {'parentRecipeId': cakeRecipe.id!},
           ));
     });
@@ -189,7 +195,13 @@ void main() {
       );
       verify(() => database.query(
             table: repository.tableName,
-            columns: ['id', 'parentRecipeId', 'recipeIngredientId', 'type'],
+            columns: [
+              'id',
+              'parentRecipeId',
+              'recipeIngredientId',
+              'type',
+              'quantity',
+            ],
             where: {'parentRecipeId': cakeRecipe.id!},
           ));
     });
@@ -209,7 +221,13 @@ void main() {
 
       verify(() => database.query(
             table: repository.tableName,
-            columns: ['id', 'parentRecipeId', 'recipeIngredientId', 'type'],
+            columns: [
+              'id',
+              'parentRecipeId',
+              'recipeIngredientId',
+              'type',
+              'quantity',
+            ],
             where: {'parentRecipeId': cakeRecipe.id!},
           ));
     });

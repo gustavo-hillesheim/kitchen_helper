@@ -3,17 +3,15 @@ import 'package:fpdart/fpdart.dart';
 import '../../../core/core.dart';
 import '../../domain.dart';
 
-class GetRecipeCostUseCase extends UseCase<int, double> {
+class GetRecipeCostUseCase extends UseCase<Recipe, double> {
   final RecipeRepository recipeRepository;
   final IngredientRepository ingredientRepository;
 
   GetRecipeCostUseCase(this.recipeRepository, this.ingredientRepository);
 
   @override
-  Future<Either<Failure, double>> execute(int recipeId) {
-    return recipeRepository.findById(recipeId).onRightThen((recipe) {
-      return _calculateCostOfRecipe(recipe!);
-    });
+  Future<Either<Failure, double>> execute(Recipe recipe) {
+    return _calculateCostOfRecipe(recipe);
   }
 
   Future<Either<Failure, double>> _calculateCostOfRecipe(Recipe recipe) async {

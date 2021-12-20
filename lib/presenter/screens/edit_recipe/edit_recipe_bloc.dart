@@ -45,7 +45,7 @@ class EditRecipeBloc extends AppCubit<void> {
       _createEditingRecipeIngredientFromRecipe(
           RecipeIngredient recipeIngredient) {
     return getRecipeUseCase.execute(recipeIngredient.id).onRightThen(
-          (recipe) => getRecipeCostUseCase.execute(recipe!.id!).onRightThen(
+          (recipe) => getRecipeCostUseCase.execute(recipe!).onRightThen(
                 (recipeCost) => Right(
                   EditingRecipeIngredient.fromModels(
                     recipeIngredient,
