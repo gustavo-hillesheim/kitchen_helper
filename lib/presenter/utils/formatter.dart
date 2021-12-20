@@ -1,5 +1,5 @@
 class Formatter {
-  static String price(double price) {
+  static String money(double price) {
     return 'R\$${price.toStringAsFixed(2)}';
   }
 

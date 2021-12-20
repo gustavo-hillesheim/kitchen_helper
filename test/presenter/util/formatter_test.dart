@@ -3,10 +3,10 @@ import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
   test('Should format price correctly', () {
-    expect(Formatter.price(1.50), 'R\$1.50');
-    expect(Formatter.price(1), 'R\$1.00');
-    expect(Formatter.price(0), 'R\$0.00');
-    expect(Formatter.price(100.99), 'R\$100.99');
+    expect(Formatter.money(1.50), 'R\$1.50');
+    expect(Formatter.money(1), 'R\$1.00');
+    expect(Formatter.money(0), 'R\$0.00');
+    expect(Formatter.money(100.99), 'R\$100.99');
   });
 
   test('Should format simple correctly', () {

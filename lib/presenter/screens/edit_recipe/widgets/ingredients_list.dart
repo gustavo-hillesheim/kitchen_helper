@@ -112,7 +112,7 @@ class _IngredientListTile extends StatelessWidget {
       ),
     );
     final priceText = Text(
-      Formatter.price(ingredient.cost),
+      Formatter.money(ingredient.cost),
       style: textTheme.subtitle2,
     );
     final ingredientInfo = Row(

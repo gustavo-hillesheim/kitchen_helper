@@ -58,6 +58,6 @@ void main() {
     // Measurement unit, one for quantity produced and another for quantity sold
     expect(find.textContaining(recipe.measurementUnit.label), findsNWidgets(2));
     // Price
-    expect(find.textContaining(Formatter.price(recipe.price!)), findsOneWidget);
+    expect(find.textContaining(Formatter.money(recipe.price!)), findsOneWidget);
   });
 }

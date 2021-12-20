@@ -38,7 +38,7 @@ class RecipeListTile extends StatelessWidget {
       final quantitySoldText = Text(
         'Vende ${Formatter.simple(quantitySold)} '
         '${recipe.measurementUnit.label} '
-        'por ${Formatter.price(price)}',
+        'por ${Formatter.money(price)}',
         style: textTheme.subtitle2,
       );
       widgets.add(kSmallSpacerVertical);

@@ -40,6 +40,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   final _canBeSoldNotifier = ValueNotifier<bool>(false);
   final _measurementUnitNotifier = ValueNotifier<MeasurementUnit?>(null);
   final _ingredients = <EditingRecipeIngredient>[];
+  var _cost = 0.0;
 
   @override
   void initState() {
@@ -52,30 +53,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
     );
     if (widget.initialValue != null) {
       final recipe = widget.initialValue!;
-      bloc.getEditingRecipeIngredients(recipe).then((result) {
-        result.fold(
-          (f) => print(f.message),
-          (i) => _ingredients.addAll(i),
-        );
-      });
-      _nameController.text = recipe.name;
-      _quantityProducedController.text =
-          Formatter.simple(recipe.quantityProduced);
-      _measurementUnitNotifier.value = recipe.measurementUnit;
-      _canBeSoldNotifier.value = recipe.canBeSold;
-      if (recipe.notes != null) {
-        _notesController.text = recipe.notes!;
-      }
-      if (recipe.canBeSold) {
-        final quantitySold = recipe.quantitySold;
-        final price = recipe.price;
-        if (quantitySold != null) {
-          _quantitySoldController.text = Formatter.simple(quantitySold);
-        }
-        if (price != null) {
-          _priceController.text = price.toStringAsFixed(2);
-        }
-      }
+      _fillControllers(recipe);
+      _fillCost(recipe);
     }
   }
 
@@ -90,6 +69,46 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
     _canBeSoldNotifier.dispose();
     _measurementUnitNotifier.dispose();
     super.dispose();
+  }
+
+  Future<void> _fillControllers(Recipe recipe) async {
+    final ingredientsResult = await bloc.getEditingRecipeIngredients(recipe);
+    ingredientsResult.fold(
+      (f) => print('Ingredients failure: ${f.message}'),
+      (i) => _ingredients.addAll(i),
+    );
+    _nameController.text = recipe.name;
+    _quantityProducedController.text =
+        Formatter.simple(recipe.quantityProduced);
+    _measurementUnitNotifier.value = recipe.measurementUnit;
+    _canBeSoldNotifier.value = recipe.canBeSold;
+    if (recipe.notes != null) {
+      _notesController.text = recipe.notes!;
+    }
+    if (recipe.canBeSold) {
+      final quantitySold = recipe.quantitySold;
+      final price = recipe.price;
+      if (quantitySold != null) {
+        _quantitySoldController.text = Formatter.simple(quantitySold);
+      }
+      if (price != null) {
+        _priceController.text = price.toStringAsFixed(2);
+      }
+    }
+  }
+
+  Future<void> _fillCost(Recipe recipe) async {
+    final result = await bloc.getCost(recipe);
+    result.fold(
+      (failure) => print('Cost failure: ${failure.message}'),
+      (cost) {
+        if (mounted) {
+          setState(() {
+            _cost = cost;
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -141,17 +160,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                             canBeSoldNotifier: _canBeSoldNotifier,
                           ),
                           kMediumSpacerVertical,
-                          Text('Custo total: R\$50.00'),
-                          ValueListenableBuilder<bool>(
-                            valueListenable: _canBeSoldNotifier,
-                            builder: (_, canBeSold, __) => canBeSold
-                                ? const Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: kSmallSpace),
-                                    child: Text('Lucro total: R\$25.00'),
-                                  )
-                                : const SizedBox.shrink(),
-                          ),
+                          Text('Custo total: ${Formatter.money(_cost)}'),
+                          _buildProfitIndicators(),
                         ],
                       ),
                     ),
@@ -163,6 +173,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                         .onRightThen((eri) {
                       setState(() {
                         _ingredients.add(eri);
+                        _cost += eri.cost;
                       });
                       return const Right(null);
                     });
@@ -173,6 +184,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                       final index = _ingredients.indexOf(oldValue);
                       setState(() {
                         _ingredients[index] = newValue;
+                        _cost = _cost - oldValue.cost + newValue.cost;
                       });
                       return const Right(null);
                     });
@@ -230,12 +242,68 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
       notes: _notesController.text,
       measurementUnit: _measurementUnitNotifier.value!,
       canBeSold: _canBeSoldNotifier.value,
-      quantityProduced:
-          double.parse(_quantityProducedController.text.replaceAll(',', '.')),
-      quantitySold:
-          double.tryParse(_quantitySoldController.text.replaceAll(',', '.')),
-      price: double.tryParse(_priceController.text.replaceAll(',', '.')),
+      quantityProduced: Parser.money(_quantityProducedController.text)!,
+      quantitySold: Parser.money(_quantitySoldController.text)!,
+      price: Parser.money(_priceController.text)!,
       ingredients: ingredients,
     );
+  }
+
+  Widget _buildProfitIndicators() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _canBeSoldNotifier,
+      builder: (_, canBeSold, __) {
+        if (!canBeSold) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            kSmallSpacerVertical,
+            Text(_getProfitPerQuantitySoldLabel()),
+            kSmallSpacerVertical,
+            Text(_getTotalProfitLabel()),
+          ],
+        );
+      },
+    );
+  }
+
+  String _getProfitPerQuantitySoldLabel() {
+    final quantityProduced = Parser.money(_quantityProducedController.text);
+    final quantitySold = Parser.money(_quantitySoldController.text);
+    final sellingPricePerQuantitySold = Parser.money(_priceController.text);
+    final measurementUnit = _measurementUnitNotifier.value;
+    if (quantityProduced != null &&
+        quantitySold != null &&
+        sellingPricePerQuantitySold != null &&
+        measurementUnit != null) {
+      final quantitySoldRatio = quantityProduced / quantitySold;
+      final costPerQuantitySold = _cost / quantitySoldRatio;
+      final profitPerQuantitySold =
+          sellingPricePerQuantitySold - costPerQuantitySold;
+      return 'Lucro por '
+          '${Formatter.simple(quantitySold)} '
+          '${measurementUnit.label}: '
+          '${Formatter.money(profitPerQuantitySold)}';
+    }
+    return 'Lucro não calculado';
+  }
+
+  String _getTotalProfitLabel() {
+    final quantityProduced = Parser.money(_quantityProducedController.text);
+    final quantitySold = Parser.money(_quantitySoldController.text);
+    final sellingPricePerQuantitySold = Parser.money(_priceController.text);
+    if (quantityProduced != null &&
+        quantitySold != null &&
+        sellingPricePerQuantitySold != null) {
+      final quantitySoldRatio = quantityProduced / quantitySold;
+      final totalRecipeSellingPrice =
+          sellingPricePerQuantitySold * quantitySoldRatio;
+      final profit = totalRecipeSellingPrice - _cost;
+      return 'Lucro total: ${Formatter.money(profit)}';
+    }
+    return 'Lucro não calculado';
   }
 }

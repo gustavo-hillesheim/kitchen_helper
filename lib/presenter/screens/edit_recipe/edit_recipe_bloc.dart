@@ -23,6 +23,10 @@ class EditRecipeBloc extends AppCubit<void> {
     return state;
   }
 
+  Future<Either<Failure, double>> getCost(Recipe recipe) {
+    return getRecipeCostUseCase.execute(recipe);
+  }
+
   Future<Either<Failure, List<EditingRecipeIngredient>>>
       getEditingRecipeIngredients(
     Recipe recipe,
