@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' show Right;
+import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../core/core.dart';
 import '../../../domain/domain.dart';
@@ -250,60 +251,82 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   }
 
   Widget _buildProfitIndicators() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _canBeSoldNotifier,
-      builder: (_, canBeSold, __) {
-        if (!canBeSold) {
+    return MultiValueListenableBuilder(
+      valueListenables: [
+        _canBeSoldNotifier,
+        _quantityProducedController,
+        _quantitySoldController,
+        _priceController,
+        _measurementUnitNotifier,
+      ],
+      builder: (_, values, __) {
+        if (!values.elementAt(0)) {
           return const SizedBox.shrink();
         }
+        final quantityProduced = Parser.money(values.elementAt(1).text);
+        final quantitySold = Parser.money(values.elementAt(2).text);
+        final pricePerQuantitySold = Parser.money(values.elementAt(3).text);
+        final MeasurementUnit? measurementUnit = values.elementAt(4);
+
+        if (quantityProduced == null ||
+            quantitySold == null ||
+            pricePerQuantitySold == null ||
+            measurementUnit == null) {
+          return const Text('Informe todos os dados para calcular o lucro');
+        }
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             kSmallSpacerVertical,
-            Text(_getProfitPerQuantitySoldLabel()),
+            Text(_getProfitPerQuantitySoldLabel(
+              quantityProduced: quantityProduced,
+              quantitySold: quantitySold,
+              pricePerQuantitySold: pricePerQuantitySold,
+              measurementUnit: measurementUnit,
+            )),
             kSmallSpacerVertical,
-            Text(_getTotalProfitLabel()),
+            Text(_getTotalProfitLabel(
+              quantityProduced: quantityProduced,
+              quantitySold: quantitySold,
+              pricePerQuantitySold: pricePerQuantitySold,
+            )),
           ],
         );
       },
     );
   }
 
-  String _getProfitPerQuantitySoldLabel() {
-    final quantityProduced = Parser.money(_quantityProducedController.text);
-    final quantitySold = Parser.money(_quantitySoldController.text);
-    final sellingPricePerQuantitySold = Parser.money(_priceController.text);
-    final measurementUnit = _measurementUnitNotifier.value;
-    if (quantityProduced != null &&
-        quantitySold != null &&
-        sellingPricePerQuantitySold != null &&
-        measurementUnit != null) {
-      final quantitySoldRatio = quantityProduced / quantitySold;
-      final costPerQuantitySold = _cost / quantitySoldRatio;
-      final profitPerQuantitySold =
-          sellingPricePerQuantitySold - costPerQuantitySold;
-      return 'Lucro por '
-          '${Formatter.simple(quantitySold)} '
-          '${measurementUnit.label}: '
-          '${Formatter.money(profitPerQuantitySold)}';
-    }
-    return 'Lucro não calculado';
+  String _getProfitPerQuantitySoldLabel({
+    required double quantityProduced,
+    required double quantitySold,
+    required double pricePerQuantitySold,
+    required MeasurementUnit measurementUnit,
+  }) {
+    final profitPerQuantitySold = bloc.calculateProfitPerQuantitySold(
+      quantityProduced: quantityProduced,
+      quantitySold: quantitySold,
+      pricePerQuantitySold: pricePerQuantitySold,
+      totalCost: _cost,
+    );
+    return 'Lucro por '
+        '${Formatter.simple(quantitySold)} '
+        '${measurementUnit.label}: '
+        '${Formatter.money(profitPerQuantitySold)}';
   }
 
-  String _getTotalProfitLabel() {
-    final quantityProduced = Parser.money(_quantityProducedController.text);
-    final quantitySold = Parser.money(_quantitySoldController.text);
-    final sellingPricePerQuantitySold = Parser.money(_priceController.text);
-    if (quantityProduced != null &&
-        quantitySold != null &&
-        sellingPricePerQuantitySold != null) {
-      final quantitySoldRatio = quantityProduced / quantitySold;
-      final totalRecipeSellingPrice =
-          sellingPricePerQuantitySold * quantitySoldRatio;
-      final profit = totalRecipeSellingPrice - _cost;
-      return 'Lucro total: ${Formatter.money(profit)}';
-    }
-    return 'Lucro não calculado';
+  String _getTotalProfitLabel({
+    required double quantityProduced,
+    required double quantitySold,
+    required double pricePerQuantitySold,
+  }) {
+    final profit = bloc.calculateTotalProfit(
+      quantityProduced: quantityProduced,
+      quantitySold: quantitySold,
+      pricePerQuantitySold: pricePerQuantitySold,
+      totalCost: _cost,
+    );
+    return 'Lucro total: ${Formatter.money(profit)}';
   }
 }

@@ -27,6 +27,7 @@ class GeneralInformationForm extends StatelessWidget {
     return Column(
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: AppTextFormField.number(
@@ -73,6 +74,7 @@ class GeneralInformationForm extends StatelessWidget {
                   children: [
                     kSmallSpacerVertical,
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: AppTextFormField.number(
