@@ -1,9 +1,9 @@
 class Formatter {
-  static String money(double price) {
-    return 'R\$${price.toStringAsFixed(2)}';
+  static String money(num number) {
+    return 'R\$${number.toStringAsFixed(2)}';
   }
 
-  static String simple(double number) {
+  static String simple(num number) {
     var numStr = number.toString();
     while (numStr.contains('.') &&
         (numStr.endsWith('0') || numStr.endsWith('.'))) {

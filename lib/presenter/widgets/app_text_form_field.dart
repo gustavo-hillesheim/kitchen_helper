@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 import '../utils/validator.dart';
 
-class AppTextFormField extends StatelessWidget {
+class AppTextFormField extends StatefulWidget {
   final String name;
   final bool required;
   final TextEditingController? controller;
@@ -10,6 +11,7 @@ class AppTextFormField extends StatelessWidget {
   final String? prefixText;
   final String? example;
   final bool? multiline;
+  final String? initialValue;
 
   const AppTextFormField({
     Key? key,
@@ -20,9 +22,10 @@ class AppTextFormField extends StatelessWidget {
     this.prefixText,
     this.example,
     this.multiline,
+    this.initialValue,
   }) : super(key: key);
 
-  const AppTextFormField.number({
+  AppTextFormField.number({
     Key? key,
     required this.name,
     this.required = true,
@@ -30,32 +33,54 @@ class AppTextFormField extends StatelessWidget {
     this.prefixText,
     this.example = '10',
     this.multiline,
+    num? initialValue,
   })  : keyboardType = TextInputType.number,
+        initialValue =
+            initialValue != null ? Formatter.simple(initialValue) : null,
         super(key: key);
 
-  const AppTextFormField.money({
+  AppTextFormField.money({
     Key? key,
     required this.name,
     this.required = true,
     this.controller,
     this.example = '9.90',
     this.multiline,
+    num? initialValue,
   })  : keyboardType = TextInputType.number,
         prefixText = 'R\$',
+        initialValue = initialValue?.toStringAsFixed(2),
         super(key: key);
+
+  @override
+  State<AppTextFormField> createState() => _AppTextFormFieldState();
+}
+
+class _AppTextFormFieldState extends State<AppTextFormField> {
+  late final TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialValue = widget.initialValue;
+    controller = widget.controller ?? TextEditingController();
+    if (controller.text.isEmpty && initialValue != null) {
+      controller.text = initialValue;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: required ? Validator.required : null,
-      keyboardType: keyboardType,
+      validator: widget.required ? Validator.required : null,
+      keyboardType: widget.keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      maxLines: multiline ?? false ? null : 1,
+      maxLines: widget.multiline ?? false ? null : 1,
       decoration: InputDecoration(
-        label: Text(name),
+        label: Text(widget.name),
         border: const OutlineInputBorder(),
-        prefixText: prefixText,
-        hintText: example != null ? 'Ex.: $example' : null,
+        prefixText: widget.prefixText,
+        hintText: widget.example != null ? 'Ex.: ${widget.example}' : null,
       ),
       controller: controller,
     );

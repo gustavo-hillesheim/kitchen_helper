@@ -34,8 +34,7 @@ void main() {
 
   testWidgets('Should render default number AppTextFormField correctly',
       (tester) async {
-    await pumpWidget(
-        const AppTextFormField.number(name: 'Number field'), tester);
+    await pumpWidget(AppTextFormField.number(name: 'Number field'), tester);
 
     verifyTextFormField();
     verifyTextField(type: TextInputType.number);
@@ -45,7 +44,7 @@ void main() {
 
   testWidgets('Should render default money AppTextFormField correctly',
       (tester) async {
-    await pumpWidget(const AppTextFormField.money(name: 'Money field'), tester);
+    await pumpWidget(AppTextFormField.money(name: 'Money field'), tester);
 
     verifyTextFormField();
     verifyTextField(type: TextInputType.number);
