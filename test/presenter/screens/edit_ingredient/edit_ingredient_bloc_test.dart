@@ -19,7 +19,8 @@ void main() {
     'When save is successful SHOULD emit SuccessState',
     build: () {
       createInstances();
-      when(() => saveUseCase.execute(egg)).thenAnswer((_) async => Right(egg));
+      when(() => saveUseCase.execute(egg))
+          .thenAnswer((_) async => const Right(egg));
       return bloc;
     },
     expect: () => [
@@ -34,12 +35,12 @@ void main() {
     build: () {
       createInstances();
       when(() => saveUseCase.execute(egg))
-          .thenAnswer((_) async => Left(FakeFailure('Error on save')));
+          .thenAnswer((_) async => const Left(FakeFailure('Error on save')));
       return bloc;
     },
     expect: () => [
       LoadingState(),
-      FailureState(FakeFailure('Error on save')),
+      FailureState(const FakeFailure('Error on save')),
     ],
     act: (bloc) => bloc.save(egg),
   );

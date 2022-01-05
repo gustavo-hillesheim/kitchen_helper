@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/presenter/screens/states.dart';
 
 import '../../mocks.dart';

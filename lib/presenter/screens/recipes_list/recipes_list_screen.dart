@@ -97,7 +97,6 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
 
   void _goToEditRecipeScreen([Recipe? recipe]) async {
     final reload = await EditRecipeScreen.navigate(recipe);
-    print(reload);
     if (reload ?? false) {
       bloc.loadRecipes();
     }

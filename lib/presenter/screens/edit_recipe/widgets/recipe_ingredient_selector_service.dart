@@ -18,19 +18,20 @@ class RecipeIngredientSelectorService {
     final ingredients = await getIngredientsUseCase.execute(const NoParams());
     return recipes.combine(
       ingredients,
-      (r, List<Ingredient> i) => _combineAndFilterRecipesAndIngredients(r, i),
+      (r, List<Ingredient> i) => _combineRecipesAndIngredients(r, i),
     );
   }
 
-  List<SelectorItem> _combineAndFilterRecipesAndIngredients(
+  List<SelectorItem> _combineRecipesAndIngredients(
     List<Recipe> recipes,
     List<Ingredient> ingredients,
   ) {
     final recipeItems = _recipesAsSelectorItems(recipes);
     final ingredientItems = _ingredientsAsSelectorItems(ingredients);
-    final items = recipeItems.toList();
-    items.addAll(ingredientItems);
-    items.sort((i1, i2) => i1.name.compareTo(i2.name));
+    final items = [...recipeItems, ...ingredientItems];
+    items.sort(
+      (i1, i2) => i1.name.toLowerCase().compareTo(i2.name.toLowerCase()),
+    );
     return items;
   }
 

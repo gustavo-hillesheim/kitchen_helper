@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -29,6 +30,15 @@ class RecipeIngredientRepositoryMock extends Mock
 
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
+class RecipeIngredientSelectorServiceMock extends Mock
+    implements RecipeIngredientSelectorService {}
+
+class GetRecipeUseCaseMock extends Mock implements GetRecipeUseCase {}
+
+class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
+
+class GetRecipeCostUseCaseMock extends Mock implements GetRecipeCostUseCase {}
+
 class FakeIngredient extends Fake implements Ingredient {}
 
 class FakeRecipe extends Fake implements Recipe {}
@@ -39,7 +49,7 @@ class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
 
 class FakeFailure extends Failure {
-  FakeFailure(String message) : super(message);
+  const FakeFailure(String message) : super(message);
 }
 
 class FakeDatabaseException extends DatabaseException with EquatableMixin {

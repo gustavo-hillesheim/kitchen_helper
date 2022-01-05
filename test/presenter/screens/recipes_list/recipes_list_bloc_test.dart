@@ -44,7 +44,7 @@ void main() {
       const LoadingState(),
       const SuccessState([]),
       const LoadingState(),
-      FailureState(FakeFailure('get error')),
+      const FailureState(FakeFailure('get error')),
     ],
     act: (bloc) async {
       await bloc.loadRecipes();

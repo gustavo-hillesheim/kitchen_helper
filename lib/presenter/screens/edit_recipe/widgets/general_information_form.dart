@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
-import '../../../constants.dart';
 import '../../../presenter.dart';
-import '../../../widgets/widgets.dart';
 import '../edit_recipe_bloc.dart';
 
 class GeneralInformationForm extends StatelessWidget {
+  static const unableToCalculateProfitText = 'Não é possível calcular o lucro'
+      ' ainda';
+
   final TextEditingController quantityProducedController;
   final TextEditingController notesController;
   final TextEditingController quantitySoldController;
@@ -150,7 +151,7 @@ class GeneralInformationForm extends StatelessWidget {
             quantitySold == null ||
             pricePerQuantitySold == null ||
             measurementUnit == null) {
-          return const Text('Informe todos os dados para calcular o lucro');
+          return const Text(GeneralInformationForm.unableToCalculateProfitText);
         }
 
         return Column(

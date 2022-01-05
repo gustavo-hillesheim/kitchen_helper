@@ -25,3 +25,34 @@ class EmptyFinder extends MatchFinder {
     return false;
   }
 }
+
+class AppTextFormFieldFinder extends MatchFinder {
+  final String name;
+  final TextInputType? type;
+  final String? prefix;
+  final String value;
+
+  AppTextFormFieldFinder({
+    required this.name,
+    this.type,
+    this.prefix,
+    this.value = '',
+    bool skipOffstage = true,
+  }) : super(skipOffstage: skipOffstage);
+
+  @override
+  String get description => 'AppTextFormField(name: $name, type: $type, '
+      'prefix: $prefix, value: $value)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is AppTextFormField) {
+      final field = candidate.widget as AppTextFormField;
+      return field.name == name &&
+          field.keyboardType == type &&
+          field.prefixText == prefix &&
+          field.controller?.text == value;
+    }
+    return false;
+  }
+}

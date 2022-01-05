@@ -170,6 +170,45 @@ void main() {
       await retryUndoDelete(tester, cakeRecipe, result: Right(cakeRecipe));
     },
   );
+
+  testWidgets('WHEN tap on addNewRecipe SHOULD go to EditRecipeScreen',
+      (tester) async {
+    final navigator = mockNavigator();
+    when(() => navigator.pushNamed(
+          '/edit-recipe',
+          arguments: any(named: 'arguments'),
+        )).thenAnswer((_) async => false);
+    when(() => bloc.loadRecipes()).thenAnswer(
+      (_) async => streamController.sink.add(const SuccessState([])),
+    );
+
+    await tester.pumpWidget(MaterialApp(home: RecipesListScreen(bloc: bloc)));
+    await tester.pump();
+
+    await tap(find.text('Adicionar receita'), tester);
+    verify(() => navigator.pushNamed('/edit-recipe', arguments: null));
+  });
+
+  testWidgets('WHEN tap on RecipeListTipe SHOULD go to EditRecipeScreen',
+      (tester) async {
+    final navigator = mockNavigator();
+    when(() => navigator.pushNamed(
+          '/edit-recipe',
+          arguments: any(named: 'arguments'),
+        )).thenAnswer((_) async => true);
+    when(() => bloc.loadRecipes()).thenAnswer(
+      (_) async => streamController.sink.add(SuccessState([cakeRecipe])),
+    );
+
+    await tester.pumpWidget(MaterialApp(home: RecipesListScreen(bloc: bloc)));
+    await tester.pump();
+
+    await tap(find.byType(RecipeListTile), tester);
+    await tester.pumpAndSettle();
+
+    verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe));
+    verify(() => bloc.loadRecipes()).called(2);
+  });
 }
 
 Future<void> tap(Finder finder, WidgetTester tester) async {

@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import '../../../../domain/domain.dart';
 
-class EditingRecipeIngredient {
+class EditingRecipeIngredient extends Equatable {
   final String name;
   final double quantity;
   final MeasurementUnit measurementUnit;
@@ -67,4 +69,7 @@ class EditingRecipeIngredient {
       id: id ?? this.id,
     );
   }
+
+  @override
+  List<Object?> get props => [id, name, quantity, measurementUnit, cost, type];
 }

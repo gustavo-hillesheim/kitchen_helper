@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
@@ -31,7 +32,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
     super.initState();
     if (widget.initialValue != null) {
       final initialValue = widget.initialValue!;
-      _quantityController.text = initialValue.quantity.toStringAsFixed(2);
+      _quantityController.text = Formatter.simple(initialValue.quantity);
       _selectedRecipeIngredient = SelectorItem(
         id: initialValue.id,
         name: initialValue.name,

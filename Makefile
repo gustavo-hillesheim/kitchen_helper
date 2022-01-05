@@ -21,21 +21,24 @@ code_coverage_ci:
 	-e domain \
 	-e core \
 	-e main.dart \
-	-e data\\\\repository\\\\sqlite_ingredient_repository.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
+	-e presenter\\\\presenter.dart \
+	-e presenter\\\\utils\\\\utils.dart \
+	-e presenter\\\\widgets\\\\widgets.dart \
+	-e presenter\\\\screens\\\\screens.dart \
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
-	-i core\\\\sqlite\\\\sqlite_repository.dart
+	-i core\\\\sqlite
 
-test_run:
+run_tests:
 	fvm flutter test --reporter expanded
 
-test_watch:
+watch_tests:
 	fvm dart scripts/watcher.dart fvm flutter test --reporter expanded
 
-watch_test_file:
+watch_test:
 	fvm dart scripts/watch_test_file.dart $(filter-out $@, $(MAKECMDGOALS))
 
 build_runner:

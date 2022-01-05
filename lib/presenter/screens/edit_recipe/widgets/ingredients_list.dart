@@ -46,7 +46,7 @@ class _IngredientsListState extends State<IngredientsList> {
               padding: const EdgeInsets.only(bottom: kSmallSpace),
               child: ActionsSlider(
                 onDelete: () => widget.onDelete(ingredient),
-                child: _IngredientListTile(
+                child: IngredientListTile(
                   ingredient,
                   onTap: () => showRecipeIngredientForm(context, ingredient),
                 ),
@@ -55,7 +55,7 @@ class _IngredientsListState extends State<IngredientsList> {
           },
         ),
         SecondaryButton(
-          child: Text('Adicionar ingrediente'),
+          child: const Text('Adicionar ingrediente'),
           onPressed: () => showRecipeIngredientForm(context),
         ),
       ],
@@ -85,11 +85,11 @@ class _IngredientsListState extends State<IngredientsList> {
   }
 }
 
-class _IngredientListTile extends StatelessWidget {
+class IngredientListTile extends StatelessWidget {
   final EditingRecipeIngredient ingredient;
   final VoidCallback? onTap;
 
-  const _IngredientListTile(
+  const IngredientListTile(
     this.ingredient, {
     this.onTap,
     Key? key,

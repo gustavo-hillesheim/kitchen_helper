@@ -6,20 +6,20 @@ import '../states.dart';
 import 'models/editing_recipe_ingredient.dart';
 
 class EditRecipeBloc extends AppCubit<void> {
-  final SaveRecipeUseCase usecase;
+  final SaveRecipeUseCase saveRecipeUseCase;
   final GetIngredientUseCase getIngredientUseCase;
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
 
   EditRecipeBloc(
-    this.usecase,
+    this.saveRecipeUseCase,
     this.getIngredientUseCase,
     this.getRecipeUseCase,
     this.getRecipeCostUseCase,
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(Recipe recipe) async {
-    await runEither(() => usecase.execute(recipe));
+    await runEither(() => saveRecipeUseCase.execute(recipe));
     return state;
   }
 

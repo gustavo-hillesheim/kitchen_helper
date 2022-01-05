@@ -8,6 +8,7 @@ import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
+import '../../finders.dart';
 
 void main() {
   final emptyNameFieldFinder = AppTextFormFieldFinder(name: 'Nome');
@@ -129,7 +130,7 @@ void main() {
 
   testWidgets('Should call bloc.save if input values are valid',
       (tester) async {
-    final expectedIngredient = Ingredient(
+    final expectedIngredient = const Ingredient(
       name: 'egg',
       quantity: 12,
       measurementUnit: MeasurementUnit.units,
@@ -219,37 +220,6 @@ class MeasurementUnitSelectorFinder extends MatchFinder {
     if (candidate.widget is MeasurementUnitSelector) {
       final field = candidate.widget as MeasurementUnitSelector;
       return field.value == value;
-    }
-    return false;
-  }
-}
-
-class AppTextFormFieldFinder extends MatchFinder {
-  final String name;
-  final TextInputType? type;
-  final String? prefix;
-  final String value;
-
-  AppTextFormFieldFinder({
-    required this.name,
-    this.type,
-    this.prefix,
-    this.value = '',
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
-
-  @override
-  String get description => 'AppTextFormField(name: $name, type: $type, '
-      'prefix: $prefix, value: $value)';
-
-  @override
-  bool matches(Element candidate) {
-    if (candidate.widget is AppTextFormField) {
-      final field = candidate.widget as AppTextFormField;
-      return field.name == name &&
-          field.keyboardType == type &&
-          field.prefixText == prefix &&
-          field.controller?.text == value;
     }
     return false;
   }
