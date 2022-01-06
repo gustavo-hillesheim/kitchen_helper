@@ -3,6 +3,7 @@ code_coverage:
 	-m 80 -u \
 	-e domain \
 	-e core \
+	-e database \
 	-e main.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
@@ -13,13 +14,14 @@ code_coverage:
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
-	-i core\\\\sqlite
+	-i database\\\\sqlite
 
 code_coverage_ci:
 	flutter pub run code_coverage \
 	-m 80 -u \
 	-e domain \
 	-e core \
+	-e database \
 	-e main.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
@@ -30,7 +32,7 @@ code_coverage_ci:
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
-	-i core\\\\sqlite
+	-i database\\\\sqlite
 
 run_tests:
 	fvm flutter test --reporter expanded
