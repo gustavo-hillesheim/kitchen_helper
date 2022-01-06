@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
-import 'failure.dart';
+import '../core/failure.dart';
+import 'entity.dart';
 
 abstract class Repository<T extends Entity<ID>, ID> {
   Future<Either<Failure, ID>> save(T entity);
@@ -18,8 +19,4 @@ abstract class Repository<T extends Entity<ID>, ID> {
   Future<Either<Failure, bool>> exists(ID id);
 
   Future<Either<Failure, void>> deleteWhere(Map<String, dynamic> where);
-}
-
-abstract class Entity<ID> {
-  ID? get id;
 }

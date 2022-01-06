@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../extensions.dart';
-import '../failure.dart';
-import '../repository.dart';
+import '../../core/core.dart';
+import '../../extensions.dart';
+import '../database.dart';
 import 'sqlite_database.dart';
 
 class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {

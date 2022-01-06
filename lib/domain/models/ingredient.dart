@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../core/core.dart';
+import '../../database/database.dart';
 import 'measurement_unit.dart';
 
 part 'ingredient.g.dart';

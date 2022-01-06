@@ -3,8 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../core/core.dart';
 import '../../../../domain/domain.dart';
+import '../../../../extensions.dart';
 import '../../../presenter.dart';
 import '../models/editing_recipe_ingredient.dart';
 import 'recipe_ingredient_selector_service.dart';

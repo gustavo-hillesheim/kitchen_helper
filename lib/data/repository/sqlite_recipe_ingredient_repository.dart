@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../core/core.dart';
+import '../../database/sqlite/sqlite.dart';
 import '../../domain/domain.dart';
 
 class SQLiteRecipeIngredientRepository

@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../core/core.dart';
+import '../../../extensions.dart';
 import '../../models/ingredient.dart';
 import '../../repository/ingredient_repository.dart';
 

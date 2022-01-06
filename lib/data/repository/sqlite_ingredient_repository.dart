@@ -1,4 +1,4 @@
-import '../../core/core.dart';
+import '../../database/sqlite/sqlite.dart';
 import '../../domain/domain.dart';
 
 class SQLiteIngredientRepository extends SQLiteRepository<Ingredient>
