@@ -1,32 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/edit_recipe_ingredient_form.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../mocks.dart';
 import '../../../finders.dart';
+import '../helpers.dart';
 
 void main() {
-  late GetIngredientsUseCase getIngredientsUseCase;
-  late GetRecipesUseCase getRecipesUseCase;
-
   setUp(() {
-    registerFallbackValue(const NoParams());
-    getRecipesUseCase = GetRecipesUseCaseMock();
-    getIngredientsUseCase = GetIngredientsUseCaseMock();
-    when(() => getIngredientsUseCase.execute(any()))
-        .thenAnswer((_) async => const Right([egg]));
-    when(() => getRecipesUseCase.execute(any()))
-        .thenAnswer((_) async => const Right([]));
-    initModule(FakeModule(getRecipesUseCase, getIngredientsUseCase));
+    mockRecipeIngredientsSelectorService();
   });
 
   testWidgets('SHOULD render main elements', (tester) async {
@@ -124,17 +110,4 @@ void main() {
       ),
     );
   });
-}
-
-class FakeModule extends Module {
-  final GetRecipesUseCase getRecipesUseCase;
-  final GetIngredientsUseCase getIngredientsUseCase;
-
-  FakeModule(this.getRecipesUseCase, this.getIngredientsUseCase);
-
-  @override
-  List<Bind<Object>> get binds => [
-        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
-        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
-      ];
 }

@@ -110,23 +110,36 @@ Future<void> addIngredient(
 
 void mockRecipeIngredientsSelectorService() {
   registerFallbackValue(const NoParams());
+  final getRecipeUseCase = GetRecipeUseCaseMock();
   final getRecipesUseCase = GetRecipesUseCaseMock();
   final getIngredientsUseCase = GetIngredientsUseCaseMock();
+  when(() => getRecipeUseCase.execute(any()))
+      .thenAnswer((_) async => const Right(null));
   when(() => getIngredientsUseCase.execute(any()))
       .thenAnswer((_) async => const Right([egg]));
   when(() => getRecipesUseCase.execute(any()))
       .thenAnswer((_) async => const Right([]));
-  initModule(FakeModule(getRecipesUseCase, getIngredientsUseCase));
+  initModule(FakeModule(
+    getRecipeUseCase,
+    getRecipesUseCase,
+    getIngredientsUseCase,
+  ));
 }
 
 class FakeModule extends Module {
+  final GetRecipeUseCase getRecipeUseCase;
   final GetRecipesUseCase getRecipesUseCase;
   final GetIngredientsUseCase getIngredientsUseCase;
 
-  FakeModule(this.getRecipesUseCase, this.getIngredientsUseCase);
+  FakeModule(
+    this.getRecipeUseCase,
+    this.getRecipesUseCase,
+    this.getIngredientsUseCase,
+  );
 
   @override
   List<Bind<Object>> get binds => [
+        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
         Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
         Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
       ];

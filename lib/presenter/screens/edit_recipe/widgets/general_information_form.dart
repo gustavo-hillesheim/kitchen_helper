@@ -75,6 +75,7 @@ class GeneralInformationForm extends StatelessWidget {
                     initialValue: initialValue?.notes,
                     multiline: true,
                     controller: notesController,
+                    required: false,
                   ),
                 ),
                 kSmallSpacerVertical,

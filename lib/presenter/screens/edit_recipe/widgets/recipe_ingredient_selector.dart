@@ -20,12 +20,14 @@ class RecipeIngredientSelector extends StatefulWidget {
   final EditingRecipeIngredient? initialValue;
   final ValueChanged<SelectorItem?> onChanged;
   final RecipeIngredientSelectorService? service;
+  final int? recipeToIgnore;
 
   const RecipeIngredientSelector({
     Key? key,
     required this.onChanged,
     this.initialValue,
     this.service,
+    this.recipeToIgnore,
   }) : super(key: key);
 
   @override
@@ -41,7 +43,11 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   void initState() {
     super.initState();
     service = widget.service ??
-        RecipeIngredientSelectorService(Modular.get(), Modular.get());
+        RecipeIngredientSelectorService(
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
     if (widget.initialValue != null) {
       initialValue = SelectorItem(
         id: widget.initialValue!.id,
@@ -57,7 +63,9 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
     return DropdownSearch<SelectorItem>(
       selectedItem: initialValue,
       showSearchBox: true,
-      onFind: (_) => service.getItems().throwOnFailure(),
+      onFind: (_) => service
+          .getItems(recipeToIgnore: widget.recipeToIgnore)
+          .throwOnFailure(),
       validator: Validator.required,
       autoValidateMode: AutovalidateMode.onUserInteraction,
       filterFn: _filterFn,

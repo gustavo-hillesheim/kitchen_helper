@@ -51,7 +51,7 @@ class _PageTemplateState extends State<PageTemplate> {
       children: [
         SizedBox.expand(
           child: Padding(
-            padding: EdgeInsets.only(top: headerHeight),
+            padding: EdgeInsets.only(top: headerHeight - 1),
             child: PrimaryScrollController(
               child: widget.body,
               controller: scrollController,

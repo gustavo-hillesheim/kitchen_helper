@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 
 import '../../../../domain/domain.dart';
-import '../../../constants.dart';
-import '../../../widgets/widgets.dart';
 import '../models/editing_recipe_ingredient.dart';
 import 'recipe_ingredient_selector.dart';
 
 class EditRecipeIngredientForm extends StatefulWidget {
   final ValueChanged<RecipeIngredient> onSave;
   final EditingRecipeIngredient? initialValue;
+  final int? recipeToIgnore;
 
   const EditRecipeIngredientForm({
     Key? key,
     required this.onSave,
+    this.recipeToIgnore,
     this.initialValue,
   }) : super(key: key);
 
@@ -69,6 +69,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     children: [
                       RecipeIngredientSelector(
                         initialValue: widget.initialValue,
+                        recipeToIgnore: widget.recipeToIgnore,
                         onChanged: (item) => setState(() {
                           _selectedRecipeIngredient = item;
                         }),

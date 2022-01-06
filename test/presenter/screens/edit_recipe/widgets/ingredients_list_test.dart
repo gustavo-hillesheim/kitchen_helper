@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
@@ -88,17 +87,4 @@ void main() {
       expect(find.text('R\$500.00'), findsOneWidget);
     });
   });
-}
-
-class FakeModule extends Module {
-  final GetRecipesUseCase getRecipesUseCase;
-  final GetIngredientsUseCase getIngredientsUseCase;
-
-  FakeModule(this.getRecipesUseCase, this.getIngredientsUseCase);
-
-  @override
-  List<Bind<Object>> get binds => [
-        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
-        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
-      ];
 }

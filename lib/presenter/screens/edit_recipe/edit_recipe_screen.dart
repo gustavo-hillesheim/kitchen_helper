@@ -148,6 +148,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                     onAdd: _onAddIngredient,
                     onEdit: _onEditIngredient,
                     onDelete: _onDeleteIngredient,
+                    recipeId: widget.initialValue?.id,
                   ),
                 ],
               ),
@@ -199,8 +200,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
       measurementUnit: _measurementUnitNotifier.value!,
       canBeSold: _canBeSoldNotifier.value,
       quantityProduced: Parser.money(_quantityProducedController.text)!,
-      quantitySold: Parser.money(_quantitySoldController.text)!,
-      price: Parser.money(_priceController.text)!,
+      quantitySold: Parser.money(_quantitySoldController.text) ?? 0,
+      price: Parser.money(_priceController.text) ?? 0,
       ingredients: ingredients,
     );
   }

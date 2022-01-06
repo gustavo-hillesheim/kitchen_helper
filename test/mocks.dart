@@ -135,12 +135,67 @@ final cakeRecipe = Recipe(
   ],
 );
 
+const recipeWithRecipeAndIngredients = Recipe(
+  id: 2,
+  name: 'Complex recipe',
+  quantityProduced: 10,
+  canBeSold: false,
+  measurementUnit: MeasurementUnit.units,
+  ingredients: [
+    RecipeIngredient.recipe(1, quantity: 5),
+    RecipeIngredient.ingredient(3, quantity: 1.5),
+  ],
+);
+
+const recipeWithIngredients = Recipe(
+  id: 1,
+  name: 'Recipe With Ingredients',
+  quantityProduced: 1,
+  canBeSold: false,
+  measurementUnit: MeasurementUnit.units,
+  ingredients: [
+    RecipeIngredient.ingredient(1, quantity: 100),
+    RecipeIngredient.ingredient(2, quantity: 200),
+  ],
+);
+
+const ingredientOne = Ingredient(
+  id: 1,
+  name: 'Ingredient One',
+  measurementUnit: MeasurementUnit.grams,
+  quantity: 500,
+  cost: 10,
+);
+
+const ingredientTwo = Ingredient(
+  id: 2,
+  name: 'Ingredient Two',
+  measurementUnit: MeasurementUnit.milliliters,
+  quantity: 2000,
+  cost: 50,
+);
+
+const ingredientThree = Ingredient(
+  id: 3,
+  name: 'Ingredient Three',
+  measurementUnit: MeasurementUnit.kilograms,
+  quantity: 1,
+  cost: 25,
+);
+
 final ingredientList = [flour, egg, orangeJuice];
 final ingredientsMap = {
   flour.id: flour,
   egg.id: egg,
   orangeJuice.id: orangeJuice,
   sugarWithId.id: sugarWithId,
+};
+
+final recipesMap = {
+  cakeRecipe.id: cakeRecipe,
+  sugarWithEggRecipeWithId.id: sugarWithEggRecipeWithId,
+  recipeWithIngredients.id: recipeWithIngredients,
+  recipeWithRecipeAndIngredients.id: recipeWithRecipeAndIngredients,
 };
 
 IModularNavigator mockNavigator() {

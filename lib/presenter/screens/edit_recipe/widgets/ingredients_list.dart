@@ -18,6 +18,7 @@ class IngredientsList extends StatefulWidget {
   final OnEditIngredient onEdit;
   final OnDeleteIngredient onDelete;
   final List<EditingRecipeIngredient> ingredients;
+  final int? recipeId;
 
   const IngredientsList(
     this.ingredients, {
@@ -25,6 +26,7 @@ class IngredientsList extends StatefulWidget {
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
+    this.recipeId,
   }) : super(key: key);
 
   @override
@@ -71,6 +73,7 @@ class _IngredientsListState extends State<IngredientsList> {
       builder: (_) {
         return EditRecipeIngredientForm(
           initialValue: initialValue,
+          recipeToIgnore: widget.recipeId,
           onSave: (recipeIngredient) => setState(() {
             if (initialValue != null) {
               widget.onEdit(initialValue, recipeIngredient);
