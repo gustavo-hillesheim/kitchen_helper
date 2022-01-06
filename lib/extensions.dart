@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 
-import 'core.dart';
+import 'core/core.dart';
 
 extension EitherExtension<L, R> on Either<L, R> {
   Future<Either<NL, NR>> asyncFlatMap<NL, NR>(

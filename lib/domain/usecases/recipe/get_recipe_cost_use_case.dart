@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../core/core.dart';
+import '../../../extensions.dart';
 import '../../domain.dart';
 
 class GetRecipeCostUseCase extends UseCase<Recipe, double> {

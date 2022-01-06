@@ -1,7 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../core/core.dart';
+import '../../database/sqlite/sqlite.dart';
 import '../../domain/domain.dart';
+import '../../extensions.dart';
 
 class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
     implements RecipeRepository {

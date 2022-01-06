@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' show Right;
 
-import '../../../core/core.dart';
 import '../../../domain/domain.dart';
+import '../../../extensions.dart';
 import '../../presenter.dart';
 import '../states.dart';
 import 'edit_recipe_bloc.dart';

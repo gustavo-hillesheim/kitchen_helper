@@ -3,8 +3,8 @@ import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_reposito
 import 'package:kitchen_helper/data/repository/sqlite_recipe_repository.dart';
 
 import 'app_guard.dart';
-import 'core/core.dart';
 import 'data/repository/sqlite_ingredient_repository.dart';
+import 'database/sqlite/sqlite.dart';
 import 'domain/domain.dart';
 import 'presenter/presenter.dart';
 
