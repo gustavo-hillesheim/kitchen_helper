@@ -2,16 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/models/ingredient.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_screen.dart';
-import 'package:kitchen_helper/presenter/utils/formatter.dart';
-import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
-import 'package:kitchen_helper/presenter/widgets/measurement_unit_selector.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
+import '../../finders.dart';
 
 void main() {
   final emptyNameFieldFinder = AppTextFormFieldFinder(name: 'Nome');
@@ -72,7 +69,7 @@ void main() {
           name: 'Custo',
           type: TextInputType.number,
           prefix: 'R\$',
-          value: egg.price.toStringAsFixed(2),
+          value: egg.cost.toStringAsFixed(2),
         ),
         findsOneWidget,
       );
@@ -133,11 +130,11 @@ void main() {
 
   testWidgets('Should call bloc.save if input values are valid',
       (tester) async {
-    final expectedIngredient = Ingredient(
+    final expectedIngredient = const Ingredient(
       name: 'egg',
       quantity: 12,
       measurementUnit: MeasurementUnit.units,
-      price: 10.5,
+      cost: 10.5,
     );
     when(() => bloc.save(expectedIngredient))
         .thenAnswer((_) async => SuccessState(egg));
@@ -223,37 +220,6 @@ class MeasurementUnitSelectorFinder extends MatchFinder {
     if (candidate.widget is MeasurementUnitSelector) {
       final field = candidate.widget as MeasurementUnitSelector;
       return field.value == value;
-    }
-    return false;
-  }
-}
-
-class AppTextFormFieldFinder extends MatchFinder {
-  final String name;
-  final TextInputType? type;
-  final String? prefix;
-  final String value;
-
-  AppTextFormFieldFinder({
-    required this.name,
-    this.type,
-    this.prefix,
-    this.value = '',
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
-
-  @override
-  String get description => 'AppTextFormField(name: $name, type: $type, '
-      'prefix: $prefix, value: $value)';
-
-  @override
-  bool matches(Element candidate) {
-    if (candidate.widget is AppTextFormField) {
-      final field = candidate.widget as AppTextFormField;
-      return field.name == name &&
-          field.keyboardType == type &&
-          field.prefixText == prefix &&
-          field.controller?.text == value;
     }
     return false;
   }

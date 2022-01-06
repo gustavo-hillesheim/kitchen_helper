@@ -11,11 +11,13 @@ const kLargeFontSize = 32.0;
 
 const kSmallEdgeInsets = EdgeInsets.all(kSmallSpace);
 const kMediumEdgeInsets = EdgeInsets.all(kMediumSpace);
+const kLargeEdgeInsets = EdgeInsets.all(kLargeSpace);
 
 const kSmallSpacerVertical = SizedBox(height: kSmallSpace);
 const kMediumSpacerVertical = SizedBox(height: kMediumSpace);
 const kLargeSpacerVertical = SizedBox(height: kLargeSpace);
 const kExtraLargeSpacerVertical = SizedBox(height: kExtraLargeSpace);
+const kSmallSpacerHorizontal = SizedBox(width: kSmallSpace);
 const kMediumSpacerHorizontal = SizedBox(width: kMediumSpace);
 
 const kExtraSmallRadius = Radius.circular(kExtraSmallSpace);

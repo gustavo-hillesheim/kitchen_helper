@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../extensions.dart';
 import '../failure.dart';
 import '../repository.dart';
 import 'sqlite_database.dart';
@@ -8,13 +9,15 @@ import 'sqlite_database.dart';
 class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   static const couldNotInsertMessage = 'Não foi possível salvar o registro';
   static const couldNotUpdateMessage = 'Não foi possível atualizar o registro';
-  static const couldNotDeleteMessage = 'Não foi possível deletar o registro';
+  static const couldNotDeleteMessage =
+      'Não foi possível deletar o(s) registro(s)';
   static const couldNotFindAllMessage = 'Não foi possível encontrar registros';
   static const couldNotFindMessage = 'Não foi possível encontrar o registro';
   static const canNotUpdateWithIdMessage = 'Não é possível atualizar um '
       'registro que não esteja salvo';
   static const couldNotVerifyExistenceMessage = 'Não foi possível verificar '
       'se o registro existe';
+  static const couldNotQueryMessage = 'Não foi possível realizar a consulta';
 
   final String tableName;
   final String idColumn;
@@ -31,6 +34,19 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   });
 
   @override
+  Future<Either<Failure, int>> save(T entity) async {
+    if (entity.id == null) {
+      return create(entity);
+    }
+    return exists(entity.id!).onRightThen((exists) {
+      if (exists) {
+        return update(entity).onRightThen((_) => Right(entity.id!));
+      }
+      return create(entity);
+    });
+  }
+
+  @override
   Future<Either<Failure, int>> create(T entity) async {
     try {
       final id = await database.insert(tableName, toMap(entity));
@@ -43,7 +59,7 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   @override
   Future<Either<Failure, void>> update(T entity) async {
     if (entity.id == null) {
-      return Left(RepositoryFailure(canNotUpdateWithIdMessage));
+      return const Left(RepositoryFailure(canNotUpdateWithIdMessage));
     }
     try {
       await database.update(tableName, toMap(entity), idColumn, entity.id!);
@@ -89,6 +105,15 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
       return Right(await database.exists(tableName, idColumn, id));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(couldNotVerifyExistenceMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteWhere(Map<String, dynamic> where) async {
+    try {
+      return Right(await database.delete(table: tableName, where: where));
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(couldNotDeleteMessage, e));
     }
   }
 }

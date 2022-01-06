@@ -3,17 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/ingredients_list/ingredients_list_screen.dart';
 import 'package:kitchen_helper/presenter/screens/ingredients_list/widgets/ingredient_list_tile.dart';
-import 'package:kitchen_helper/presenter/widgets/empty.dart';
+import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
+import '../../finders.dart';
 
 void main() {
   late IngredientsListBloc bloc;
-  late StreamController<IngredientListState> streamController;
+  late StreamController<ScreenState<List<Ingredient>>> streamController;
 
   setUp(() {
     bloc = IngredientsListBlocMock();
@@ -59,8 +62,8 @@ void main() {
   );
 
   testWidgets('Should show loader while in LoadingState', (tester) async {
-    when(() => bloc.loadIngredients())
-        .thenAnswer((_) async => streamController.sink.add(LoadingState()));
+    when(() => bloc.loadIngredients()).thenAnswer(
+        (_) async => streamController.sink.add(const LoadingState()));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -74,14 +77,14 @@ void main() {
     when(() => navigator.pushNamed('/edit-ingredient'))
         .thenAnswer((_) async => false);
     when(() => bloc.loadIngredients()).thenAnswer(
-        (_) async => streamController.sink.add(SuccessState(const [])));
+        (_) async => streamController.sink.add(const SuccessState([])));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
     );
     await tester.pump();
 
-    expect(find.byType(Empty), findsOneWidget);
+    expect(EmptyFinder(text: 'Sem ingredientes'), findsOneWidget);
     expect(find.byType(ElevatedButton), findsOneWidget);
 
     await tester.tap(find.byType(ElevatedButton));
@@ -121,7 +124,7 @@ void main() {
       when(() => navigator.pushNamed(any(), arguments: egg))
           .thenAnswer((_) async => false);
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -134,13 +137,62 @@ void main() {
     },
   );
 
+  Future<void> delete(
+    WidgetTester tester,
+    Ingredient ingredient, {
+    required Either<Failure, void> result,
+  }) async {
+    final deleteIconFinder = find.byIcon(Icons.delete);
+    expect(deleteIconFinder, findsOneWidget);
+    when(() => bloc.delete(ingredient)).thenAnswer((_) async => result);
+    await tester.tap(deleteIconFinder);
+    verify(() => bloc.delete(ingredient));
+  }
+
+  Future<void> retry(WidgetTester tester) async {
+    await tester.pump();
+    final retryActionFinder = find.text('Tentar novamente');
+    await tap(retryActionFinder, tester);
+  }
+
+  Future<void> retryDelete(
+    WidgetTester tester,
+    Ingredient ingredient, {
+    required Either<Failure, void> result,
+  }) async {
+    when(() => bloc.delete(ingredient)).thenAnswer((_) async => result);
+    await retry(tester);
+    verify(() => bloc.delete(ingredient));
+  }
+
+  Future<void> undoDelete(
+    WidgetTester tester,
+    Ingredient ingredient, {
+    required Either<Failure, Ingredient> result,
+  }) async {
+    when(() => bloc.save(ingredient)).thenAnswer((_) async => result);
+    await tester.pumpAndSettle();
+    final undoActionFinder = find.text('Desfazer');
+    await tap(undoActionFinder, tester);
+    verify(() => bloc.save(ingredient));
+  }
+
+  Future<void> retryUndoDelete(
+    WidgetTester tester,
+    Ingredient ingredient, {
+    required Either<Failure, Ingredient> result,
+  }) async {
+    when(() => bloc.save(ingredient)).thenAnswer((_) async => result);
+    await tester.pumpAndSettle();
+    await retry(tester);
+    verify(() => bloc.save(ingredient));
+  }
+
   testWidgets(
     'Should be able to delete and undelete ingredient',
     (tester) async {
-      when(() => bloc.delete(egg)).thenAnswer((_) async => const Right(null));
-      when(() => bloc.save(egg)).thenAnswer((_) async => Right(egg));
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -150,17 +202,8 @@ void main() {
       await tester.drag(find.byType(IngredientListTile), const Offset(-500, 0));
       await tester.pump();
 
-      final deleteIconFinder = find.byIcon(Icons.delete);
-      expect(deleteIconFinder, findsOneWidget);
-
-      await tester.tap(deleteIconFinder);
-      verify(() => bloc.delete(egg));
-
-      await tester.pump();
-      final undoActionFinder = find.text('Desfazer');
-      await tap(undoActionFinder, tester);
-
-      verify(() => bloc.save(egg));
+      await delete(tester, egg, result: const Right(null));
+      await undoDelete(tester, egg, result: const Right(egg));
     },
   );
 
@@ -168,7 +211,7 @@ void main() {
     'If delete or undelete fail the user should be able to retry',
     (tester) async {
       when(() => bloc.loadIngredients()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([egg])));
+          (_) async => streamController.sink.add(const SuccessState([egg])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -178,31 +221,10 @@ void main() {
       await tester.drag(find.byType(IngredientListTile), const Offset(-500, 0));
       await tester.pump();
 
-      final deleteIconFinder = find.byIcon(Icons.delete);
-      expect(deleteIconFinder, findsOneWidget);
-
-      when(() => bloc.delete(egg))
-          .thenAnswer((_) async => Left(FakeFailure('error')));
-      await tester.tap(deleteIconFinder);
-      verify(() => bloc.delete(egg));
-
-      when(() => bloc.delete(egg)).thenAnswer((_) async => const Right(null));
-      await tester.pump();
-      final retryActionFinder = find.text('Tentar novamente');
-      await tap(retryActionFinder, tester);
-      verify(() => bloc.delete(egg));
-
-      when(() => bloc.save(egg))
-          .thenAnswer((_) async => Left(FakeFailure('error')));
-      await tester.pumpAndSettle();
-      final undoActionFinder = find.text('Desfazer');
-      await tap(undoActionFinder, tester);
-      verify(() => bloc.save(egg));
-
-      when(() => bloc.save(egg)).thenAnswer((_) async => Right(egg));
-      await tester.pumpAndSettle();
-      await tap(retryActionFinder, tester);
-      verify(() => bloc.save(egg));
+      await delete(tester, egg, result: Left(FakeFailure('error')));
+      await retryDelete(tester, egg, result: const Right(null));
+      await undoDelete(tester, egg, result: Left(FakeFailure('error')));
+      await retryUndoDelete(tester, egg, result: const Right(egg));
     },
   );
 }
@@ -212,29 +234,6 @@ Future<void> tap(Finder finder, WidgetTester tester) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
-}
-
-class EmptyFinder extends MatchFinder {
-  final String text;
-  final String subtext;
-
-  EmptyFinder({
-    required this.text,
-    required this.subtext,
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
-
-  @override
-  String get description => 'Empty(text: $text, subtext: $subtext)';
-
-  @override
-  bool matches(Element candidate) {
-    if (candidate.widget is Empty) {
-      final empty = candidate.widget as Empty;
-      return empty.text == text && empty.subtext == subtext;
-    }
-    return false;
-  }
 }
 
 class IngredientsListBlocMock extends Mock implements IngredientsListBloc {}

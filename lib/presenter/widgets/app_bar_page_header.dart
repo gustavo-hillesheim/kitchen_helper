@@ -10,6 +10,7 @@ class AppBarPageHeader implements PageHeader {
   final double maxHeight = 250;
   @override
   final double minHeight;
+
   @override
   HeaderBuilder get builder => build;
 
@@ -67,8 +68,9 @@ class AppBarPageHeader implements PageHeader {
 
     return Padding(
       padding: EdgeInsets.only(
-          left: collapsedPadding +
-              (expandedPadding - collapsedPadding) * animationProgress),
+        left: collapsedPadding +
+            (expandedPadding - collapsedPadding) * animationProgress,
+      ),
       child: Text(
         title,
         style: Theme.of(context).textTheme.headline4!.copyWith(

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/utils/validator.dart';
-import 'package:kitchen_helper/presenter/widgets/app_text_form_field.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 void main() {
-  testWidgets('Should render default AppTextFormField correctly',
+  testWidgets('SHOULD render default AppTextFormField correctly',
       (tester) async {
     await pumpWidget(const AppTextFormField(name: 'Test field'), tester);
 
@@ -13,7 +12,7 @@ void main() {
     verifyDecoration();
     verifyLabel(data: 'Test field');
   });
-  testWidgets('Should render customized AppTextFormField correctly',
+  testWidgets('SHOULD render customized AppTextFormField correctly',
       (tester) async {
     final controller = TextEditingController();
     await pumpWidget(
@@ -33,10 +32,9 @@ void main() {
     verifyLabel(data: 'Test field');
   });
 
-  testWidgets('Should render default number AppTextFormField correctly',
+  testWidgets('SHOULD render default number AppTextFormField correctly',
       (tester) async {
-    await pumpWidget(
-        const AppTextFormField.number(name: 'Number field'), tester);
+    await pumpWidget(AppTextFormField.number(name: 'Number field'), tester);
 
     verifyTextFormField();
     verifyTextField(type: TextInputType.number);
@@ -44,14 +42,50 @@ void main() {
     verifyLabel(data: 'Number field');
   });
 
-  testWidgets('Should render default money AppTextFormField correctly',
+  testWidgets('SHOULD render default money AppTextFormField correctly',
       (tester) async {
-    await pumpWidget(const AppTextFormField.money(name: 'Money field'), tester);
+    await pumpWidget(AppTextFormField.money(name: 'Money field'), tester);
 
     verifyTextFormField();
     verifyTextField(type: TextInputType.number);
     verifyDecoration(hintText: 'Ex.: 9.90', prefixText: 'R\$');
     verifyLabel(data: 'Money field');
+  });
+
+  testWidgets('WHEN initialValue is informed SHOULD render it in text field',
+      (tester) async {
+    await pumpWidget(
+        const AppTextFormField(
+          name: 'Text with value',
+          initialValue: 'initial value',
+        ),
+        tester);
+
+    verifyTextFormField(value: 'initial value');
+  });
+
+  testWidgets('WHEN initialValue is informed SHOULD render it in number field',
+      (tester) async {
+    await pumpWidget(
+        AppTextFormField.number(
+          name: 'Number with value',
+          initialValue: 10,
+        ),
+        tester);
+
+    verifyTextFormField(value: '10');
+  });
+
+  testWidgets('WHEN initialValue is informed SHOULD render it in money field',
+      (tester) async {
+    await pumpWidget(
+        AppTextFormField.money(
+          name: 'Text with value',
+          initialValue: 7.5,
+        ),
+        tester);
+
+    verifyTextFormField(value: '7.50');
   });
 }
 
@@ -65,10 +99,14 @@ Future<void> pumpWidget(AppTextFormField field, WidgetTester tester) {
 
 void verifyTextFormField({
   String? Function(String?)? validator = Validator.required,
+  String? value,
 }) {
   final textFormField = getTextFormField();
   expect(textFormField.validator, validator);
   expect(textFormField.autovalidateMode, AutovalidateMode.onUserInteraction);
+  if (value != null) {
+    expect(textFormField.controller?.text, value);
+  }
 }
 
 void verifyTextField({

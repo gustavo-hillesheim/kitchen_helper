@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/models/ingredient.dart';
-import '../../../../domain/models/measurement_unit.dart';
+import '../../../../domain/domain.dart';
 import '../../../constants.dart';
 import '../../../utils/formatter.dart';
+import '../../../widgets/widgets.dart';
 
 class IngredientListTile extends StatelessWidget {
   final Ingredient ingredient;
@@ -30,7 +30,7 @@ class IngredientListTile extends StatelessWidget {
       style: textTheme.subtitle2,
     );
     final priceText = Text(
-      Formatter.price(ingredient.price),
+      Formatter.money(ingredient.cost),
       style: textTheme.headline5!.copyWith(
         fontWeight: FontWeight.w300,
       ),
@@ -51,20 +51,9 @@ class IngredientListTile extends StatelessWidget {
       ],
     );
 
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: kExtraSmallBorder,
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(kMediumSpace),
-            child: ingredientInfo,
-          ),
-        ),
-      ),
+    return FlatTile(
+      child: ingredientInfo,
+      onTap: onTap,
     );
   }
 }

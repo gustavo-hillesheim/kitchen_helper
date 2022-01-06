@@ -1,17 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/domain/repository/ingredient_repository.dart';
-import 'package:kitchen_helper/domain/usecases/delete_ingredient_usecase.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../mocks.dart';
+import '../../../mocks.dart';
 
 void main() {
   late DeleteIngredientUseCase usecase;
   late IngredientRepository repository;
 
   setUp(() {
-    repository = MockIngredientRepository();
+    repository = IngredientRepositoryMock();
     usecase = DeleteIngredientUseCase(repository);
   });
 

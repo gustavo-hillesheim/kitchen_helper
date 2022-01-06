@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:kitchen_helper/presenter/widgets/screen_state_builder.dart';
+import 'package:kitchen_helper/presenter/widgets/widgets.dart';
 
-import '../../../domain/models/ingredient.dart';
+import '../../../domain/domain.dart';
 import '../../constants.dart';
 import '../../widgets/app_bar_page_header.dart';
 import '../../widgets/bottom_card.dart';
@@ -52,28 +53,22 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
     );
   }
 
-  Widget _buildIngredientsList() => StreamBuilder<IngredientListState>(
-        stream: bloc.stream,
-        builder: (_, snapshot) {
-          if (!snapshot.hasData || snapshot.data is LoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final state = snapshot.data;
-          if (state is FailureState) {
-            return _buildErrorState(state.failure.message);
-          }
-          final ingredients = (state as SuccessState).ingredients;
+  Widget _buildIngredientsList() => ScreenStateBuilder<List<Ingredient>>(
+        stateStream: bloc.stream,
+        successBuilder: (_, ingredients) {
           if (ingredients.isEmpty) {
             return _buildEmptyState();
           }
-          return ListView.builder(
-            padding: kSmallEdgeInsets,
-            itemCount: ingredients.length,
-            itemBuilder: (_, index) => _buildTile(ingredients[index]),
+          return RefreshIndicator(
+            onRefresh: bloc.loadIngredients,
+            child: ListView.builder(
+              padding: kSmallEdgeInsets,
+              itemCount: ingredients.length,
+              itemBuilder: (_, index) => _buildTile(ingredients[index]),
+            ),
           );
         },
+        errorBuilder: (_, failure) => _buildErrorState(failure.message),
       );
 
   Widget _buildErrorState(String message) => Empty(
@@ -97,25 +92,12 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
 
   Widget _buildTile(Ingredient ingredient) => Padding(
         padding: const EdgeInsets.only(bottom: kSmallSpace),
-        child: Slidable(
-          closeOnScroll: true,
-          endActionPane: ActionPane(
-            extentRatio: 0.25,
-            motion: const DrawerMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (context) => _tryDelete(ingredient),
-                icon: Icons.delete,
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                label: 'Excluir',
-              ),
-            ],
-          ),
+        child: ActionsSlider(
           child: IngredientListTile(
             ingredient,
             onTap: () => _goToEditIngredientScreen(ingredient),
           ),
+          onDelete: () => _tryDelete(ingredient),
         ),
       );
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../domain/models/ingredient.dart';
-import '../../../domain/models/measurement_unit.dart';
+import '../../../domain/domain.dart';
 import '../../constants.dart';
 import '../../utils/formatter.dart';
 import '../../widgets/app_text_form_field.dart';
 import '../../widgets/measurement_unit_selector.dart';
+import '../../widgets/widgets.dart';
 import 'edit_ingredient_bloc.dart';
 
 class EditIngredientScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final quantityController = TextEditingController();
-  final priceController = TextEditingController();
+  final costController = TextEditingController();
   late final EditIngredientBloc bloc;
   MeasurementUnit? measurementUnit;
   int? id;
@@ -49,7 +49,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
       nameController.text = initialValue.name;
       quantityController.text = Formatter.simple(initialValue.quantity);
       measurementUnit = initialValue.measurementUnit;
-      priceController.text = initialValue.price.toStringAsFixed(2);
+      costController.text = initialValue.cost.toStringAsFixed(2);
     }
   }
 
@@ -104,7 +104,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
                       kMediumSpacerVertical,
                       AppTextFormField.money(
                         name: 'Custo',
-                        controller: priceController,
+                        controller: costController,
                       ),
                     ],
                   ),
@@ -116,24 +116,10 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
               child: StreamBuilder<EditIngredientState>(
                   stream: bloc.stream,
                   builder: (_, snapshot) {
-                    final buttonStyle = ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(
-                        const Size.fromHeight(48),
-                      ),
-                    );
-
-                    if (snapshot.data is LoadingState) {
-                      return ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: null,
-                        child: const Center(child: CircularProgressIndicator()),
-                      );
-                    }
-
-                    return ElevatedButton(
-                      style: buttonStyle,
+                    return PrimaryButton(
                       onPressed: _save,
                       child: const Text('Salvar'),
+                      isLoading: snapshot.data is LoadingState,
                     );
                   }),
             ),
@@ -150,7 +136,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
         name: nameController.text,
         quantity: double.parse(quantityController.text.replaceAll(',', '.')),
         measurementUnit: measurementUnit!,
-        price: double.parse(priceController.text.replaceAll(',', '.')),
+        cost: double.parse(costController.text.replaceAll(',', '.')),
       );
       final state = await bloc.save(ingredient);
       if (state is SuccessState) {

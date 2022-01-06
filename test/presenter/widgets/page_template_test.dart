@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/widgets/page_template.dart';
+import 'package:kitchen_helper/presenter/presenter.dart';
 
 const minHeight = 100.0;
 const maxHeight = 200.0;

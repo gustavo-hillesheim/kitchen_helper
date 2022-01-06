@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.14.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,6 +22,8 @@ dependencies:
   flutter_modular: ^4.2.0
   bloc: ^8.0.1
   flutter_slidable: ^1.1.0
+  dropdown_search: ^2.0.1
+  multi_value_listenable_builder: ^0.0.2
 
 dev_dependencies:
   flutter_test:

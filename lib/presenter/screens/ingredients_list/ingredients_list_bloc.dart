@@ -1,15 +1,10 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/presenter/screens/states.dart';
 
-import '../../../core/failure.dart';
-import '../../../core/usecase.dart';
-import '../../../domain/models/ingredient.dart';
-import '../../../domain/usecases/delete_ingredient_usecase.dart';
-import '../../../domain/usecases/get_ingredients_usecase.dart';
-import '../../../domain/usecases/save_ingredient_usecase.dart';
+import '../../../core/core.dart';
+import '../../../domain/domain.dart';
 
-class IngredientsListBloc extends Cubit<IngredientListState> {
+class IngredientsListBloc extends AppCubit<List<Ingredient>> {
   final GetIngredientsUseCase getIngredientsUseCase;
   final SaveIngredientUseCase saveIngredientUseCase;
   final DeleteIngredientUseCase deleteIngredientsUseCase;
@@ -18,15 +13,10 @@ class IngredientsListBloc extends Cubit<IngredientListState> {
     this.getIngredientsUseCase,
     this.saveIngredientUseCase,
     this.deleteIngredientsUseCase,
-  ) : super(LoadingState());
+  ) : super(const LoadingState());
 
-  Future<void> loadIngredients() async {
-    emit(LoadingState());
-    final result = await getIngredientsUseCase.execute(const NoParams());
-    result.fold(
-      (failure) => emit(FailureState(failure)),
-      (ingredients) => emit(SuccessState(ingredients)),
-    );
+  Future<void> loadIngredients() {
+    return runEither(() => getIngredientsUseCase.execute(const NoParams()));
   }
 
   Future<Either<Failure, void>> delete(Ingredient ingredient) async {
@@ -42,27 +32,4 @@ class IngredientsListBloc extends Cubit<IngredientListState> {
       return result;
     });
   }
-}
-
-abstract class IngredientListState extends Equatable {}
-
-class LoadingState extends IngredientListState {
-  @override
-  List<Object?> get props => [];
-}
-
-class SuccessState extends IngredientListState {
-  final List<Ingredient> ingredients;
-  SuccessState(this.ingredients);
-
-  @override
-  List<Object?> get props => [ingredients];
-}
-
-class FailureState extends IngredientListState {
-  final Failure failure;
-  FailureState(this.failure);
-
-  @override
-  List<Object?> get props => [failure];
 }
