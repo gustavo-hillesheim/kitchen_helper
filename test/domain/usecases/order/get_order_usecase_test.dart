@@ -5,17 +5,18 @@ import '../../../mocks.dart';
 import '../crud_usecase_tests.dart';
 
 void main() {
-  late GetIngredientsUseCase usecase;
-  late IngredientRepository repository;
+  late GetOrderUseCase usecase;
+  late OrderRepository repository;
 
   setUp(() {
-    repository = IngredientRepositoryMock();
-    usecase = GetIngredientsUseCase(repository);
+    repository = OrderRepositoryMock();
+    usecase = GetOrderUseCase(repository);
   });
 
-  getAllUseCaseTests(
+  getUseCaseTests(
     usecaseFn: () => usecase,
     repositoryFn: () => repository,
-    entities: ingredientList,
+    entity: cakeOrderWithId,
+    id: cakeOrderWithId.id,
   );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/domain/repository/order_repository.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
@@ -25,6 +26,8 @@ class DeleteRecipeUseCaseMock extends Mock implements DeleteRecipeUseCase {}
 
 class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
+class OrderRepositoryMock extends Mock implements OrderRepository {}
+
 class RecipeRepositoryMock extends Mock implements RecipeRepository {}
 
 class RecipeIngredientRepositoryMock extends Mock
@@ -46,6 +49,8 @@ class EditRecipeBlocMock extends Mock implements EditRecipeBloc {}
 class FakeIngredient extends Fake implements Ingredient {}
 
 class FakeRecipe extends Fake implements Recipe {}
+
+class FakeOrder extends Fake implements Order {}
 
 class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
 
@@ -198,6 +203,16 @@ final recipesMap = {
   recipeWithIngredients.id: recipeWithIngredients,
   recipeWithRecipeAndIngredients.id: recipeWithRecipeAndIngredients,
 };
+
+final cakeOrder = Order(
+  clientName: 'Test client',
+  clientAddress: 'Test street, 123',
+  orderDate: DateTime(2022, 1, 1),
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  products: [cakeRecipe],
+);
+final cakeOrderWithId = cakeOrder.copyWith(id: 1);
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();
