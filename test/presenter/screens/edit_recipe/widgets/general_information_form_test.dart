@@ -1,31 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/domain/domain.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/general_information_form.dart';
-import 'package:mocktail/mocktail.dart';
 
-import '../../../finders.dart';
+import '../../../../mocks.dart';
+import '../helpers.dart';
 
 void main() {
   late EditRecipeBloc bloc;
-  final quantityProducedFieldFinder = AppTextFormFieldFinder(
-    name: 'Quantidade produzida',
-    type: TextInputType.number,
-  );
-  final measurementUnitSelectorFinder = find.byType(MeasurementUnitSelector);
-  final notesFieldFinder = AppTextFormFieldFinder(name: 'Anotações');
-  final canBeSoldFieldFinder = find.byType(CheckboxListTile);
-  final quantitySoldFieldFinder = AppTextFormFieldFinder(
-    name: 'Quantidade vendida',
-    type: TextInputType.number,
-  );
-  final priceFieldFinder = AppTextFormFieldFinder(
-    name: 'Preço de venda',
-    type: TextInputType.number,
-    prefix: 'R\$',
-  );
 
   setUp(() {
     bloc = EditRecipeBlocMock();
@@ -75,18 +58,7 @@ void main() {
 
   testWidgets('WHEN quantities and price are informed SHOULD show profit info',
       (tester) async {
-    when(() => bloc.calculateProfitPerQuantitySold(
-          quantityProduced: any(named: 'quantityProduced'),
-          quantitySold: any(named: 'quantitySold'),
-          pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-          totalCost: any(named: 'totalCost'),
-        )).thenAnswer((_) => 9);
-    when(() => bloc.calculateTotalProfit(
-          quantityProduced: any(named: 'quantityProduced'),
-          quantitySold: any(named: 'quantitySold'),
-          pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-          totalCost: any(named: 'totalCost'),
-        )).thenAnswer((_) => 90);
+    mockProfitCalculation(bloc, 9, 90);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -97,7 +69,7 @@ void main() {
             quantitySoldController: TextEditingController(),
             priceController: TextEditingController(),
             // needs to be true to show quantity sold and price fields
-            canBeSoldNotifier: ValueNotifier(true),
+            canBeSoldNotifier: ValueNotifier(false),
             measurementUnitNotifier: ValueNotifier(null),
             cost: 10,
             bloc: bloc,
@@ -107,15 +79,14 @@ void main() {
       ),
     );
 
-    // Selects measurement unit
-    await tester.tap(measurementUnitSelectorFinder);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(MeasurementUnit.units.label).last);
-    await tester.pumpAndSettle();
-    // Fills production and selling information
-    await tester.enterText(quantityProducedFieldFinder, '100');
-    await tester.enterText(quantitySoldFieldFinder, '10');
-    await tester.enterText(priceFieldFinder, '10');
+    await fillGeneralInformationForm(
+      tester,
+      quantityProduced: 100,
+      quantitySold: 10,
+      price: 10,
+      canBeSold: true,
+      measurementUnit: MeasurementUnit.units,
+    );
     await tester.pump();
 
     expect(
@@ -127,18 +98,7 @@ void main() {
 
   testWidgets('WHEN values are informed SHOULD update controllers',
       (tester) async {
-    when(() => bloc.calculateProfitPerQuantitySold(
-          quantityProduced: any(named: 'quantityProduced'),
-          quantitySold: any(named: 'quantitySold'),
-          pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-          totalCost: any(named: 'totalCost'),
-        )).thenAnswer((_) => 9);
-    when(() => bloc.calculateTotalProfit(
-          quantityProduced: any(named: 'quantityProduced'),
-          quantitySold: any(named: 'quantitySold'),
-          pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-          totalCost: any(named: 'totalCost'),
-        )).thenAnswer((_) => 90);
+    mockProfitCalculation(bloc, 9, 90);
 
     final quantityProducedController = TextEditingController();
     final notesController = TextEditingController();
@@ -166,17 +126,15 @@ void main() {
       ),
     );
 
-    await tester.tap(canBeSoldFieldFinder);
-    await tester.pumpAndSettle();
-    await tester.enterText(quantityProducedFieldFinder, '100');
-    await tester.enterText(notesFieldFinder, 'Some notes');
-    await tester.enterText(quantitySoldFieldFinder, '10');
-    await tester.enterText(priceFieldFinder, '5');
-    // Selects measurement unit
-    await tester.tap(measurementUnitSelectorFinder);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(MeasurementUnit.units.label).last);
-    await tester.pumpAndSettle();
+    await fillGeneralInformationForm(
+      tester,
+      quantityProduced: 100,
+      quantitySold: 10,
+      price: 5,
+      canBeSold: true,
+      notes: 'Some notes',
+      measurementUnit: MeasurementUnit.units,
+    );
 
     expect(quantityProducedController.text, '100');
     expect(notesController.text, 'Some notes');
@@ -186,5 +144,3 @@ void main() {
     expect(measurementUnitNotifier.value, MeasurementUnit.units);
   });
 }
-
-class EditRecipeBlocMock extends Mock implements EditRecipeBloc {}

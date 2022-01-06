@@ -1,39 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/ingredients_list.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
 import 'package:kitchen_helper/presenter/widgets/secondary_button.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../mocks.dart';
-import '../../../finders.dart';
+import '../helpers.dart';
 
 void main() {
-  late GetIngredientsUseCase getIngredientsUseCase;
-  late GetRecipesUseCase getRecipesUseCase;
-
   setUp(() {
-    registerFallbackValue(const NoParams());
-    getRecipesUseCase = GetRecipesUseCaseMock();
-    getIngredientsUseCase = GetIngredientsUseCaseMock();
-    when(() => getIngredientsUseCase.execute(any()))
-        .thenAnswer((_) async => const Right([egg]));
-    when(() => getRecipesUseCase.execute(any()))
-        .thenAnswer((_) async => const Right([]));
-    initModule(FakeModule(getRecipesUseCase, getIngredientsUseCase));
+    mockRecipeIngredientsSelectorService();
   });
 
   testWidgets('WHEN have ingredients SHOULD render them', (tester) async {
     await tester.pumpWidget(MaterialApp(
       home: IngredientsList(
-        _editingRecipeIngredients(sugarWithEggRecipeWithId),
+        editingRecipeIngredients(sugarWithEggRecipeWithId),
         onAdd: (_) {},
         onEdit: (_, __) {},
         onDelete: (_) {},
@@ -59,19 +44,7 @@ void main() {
     await tester.tap(find.byType(SecondaryButton));
     await tester.pump();
 
-    // Inputting ingredient info
-    await tester.enterText(
-      AppTextFormFieldFinder(
-        name: 'Quantidade',
-        type: TextInputType.number,
-      ),
-      '10',
-    );
-    await tester.tap(find.byType(RecipeIngredientSelector));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(egg.name));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Salvar'));
+    await addIngredient(tester, quantity: 10, ingredientName: egg.name);
 
     expect(onAddedCalled, true);
   });
@@ -80,7 +53,7 @@ void main() {
     var onEditCalled = false;
     await tester.pumpWidget(MaterialApp(
       home: IngredientsList(
-        _editingRecipeIngredients(sugarWithEggRecipeWithId),
+        editingRecipeIngredients(sugarWithEggRecipeWithId),
         onAdd: (_) {},
         onEdit: (_, __) => onEditCalled = true,
         onDelete: (_) {},
@@ -115,18 +88,6 @@ void main() {
       expect(find.text('R\$500.00'), findsOneWidget);
     });
   });
-}
-
-List<EditingRecipeIngredient> _editingRecipeIngredients(Recipe recipe) {
-  return recipe.ingredients.map((ingredient) {
-    return EditingRecipeIngredient.fromModels(
-      ingredient,
-      ingredient: {
-        sugarWithId.id: sugarWithId,
-        egg.id: egg,
-      }[ingredient.id],
-    );
-  }).toList();
 }
 
 class FakeModule extends Module {

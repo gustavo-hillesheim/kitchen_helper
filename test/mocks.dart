@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
@@ -38,6 +39,8 @@ class GetRecipeUseCaseMock extends Mock implements GetRecipeUseCase {}
 class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
 
 class GetRecipeCostUseCaseMock extends Mock implements GetRecipeCostUseCase {}
+
+class EditRecipeBlocMock extends Mock implements EditRecipeBloc {}
 
 class FakeIngredient extends Fake implements Ingredient {}
 
@@ -133,6 +136,12 @@ final cakeRecipe = Recipe(
 );
 
 final ingredientList = [flour, egg, orangeJuice];
+final ingredientsMap = {
+  flour.id: flour,
+  egg.id: egg,
+  orangeJuice.id: orangeJuice,
+  sugarWithId.id: sugarWithId,
+};
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

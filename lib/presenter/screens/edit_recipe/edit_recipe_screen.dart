@@ -12,11 +12,13 @@ import 'widgets/general_information_form.dart';
 import 'widgets/ingredients_list.dart';
 
 class EditRecipeScreen extends StatefulWidget {
+  final EditRecipeBloc? bloc;
   final Recipe? initialValue;
 
   const EditRecipeScreen({
     Key? key,
     this.initialValue,
+    this.bloc,
   }) : super(key: key);
 
   static Future<bool?> navigate([Recipe? recipe]) {
@@ -45,12 +47,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   @override
   void initState() {
     super.initState();
-    bloc = EditRecipeBloc(
-      Modular.get(),
-      Modular.get(),
-      Modular.get(),
-      Modular.get(),
-    );
+    bloc = widget.bloc ??
+        EditRecipeBloc(
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
     if (widget.initialValue != null) {
       final recipe = widget.initialValue!;
       _fillControllers(recipe);
