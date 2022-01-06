@@ -23,6 +23,19 @@ All these layers are put together inside [app_module](./lib/app_module.dart), wh
 Testing is done mainly using [Test Driven Development](https://wikipedia.org/wiki/Test-driven_development), using the [code_coverage](https://pub.dev/packages/code_coverage) package to point what parts of the code are not tested yet.<br>
 The minimum coverage accepted is 80%, but I seek to achieve at least 95%, although files that don't have useful code are ignored (ex.: barrel files, files without runnable code).
 
+# Pipeline
+
+The project's pipeline was created using Github Actions and executes the following:
+
+- Installs dependencies;
+- Verifies formatting;
+- Runs build_runner;
+- Analyzes the code;
+- Runs tests;
+- Verifies if code coverage is above 80%.
+
+[See the Workflow file](.github/workflows/flutter.yml).
+
 # Commands
 
 Some commands were create using [Makefile](https://en.wikipedia.org/wiki/Make_(software)#Makefile) to simplify and store complex commands, they are:
