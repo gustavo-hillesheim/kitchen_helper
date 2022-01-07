@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/data/repository/sqlite_order_product_repository.dart';
 import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/domain/domain.dart';
@@ -32,6 +33,9 @@ class RecipeRepositoryMock extends Mock implements RecipeRepository {}
 
 class RecipeIngredientRepositoryMock extends Mock
     implements RecipeIngredientRepository {}
+
+class OrderProductRepositoryMock extends Mock
+    implements OrderProductRepository {}
 
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
@@ -141,6 +145,19 @@ final cakeRecipe = Recipe(
   ],
 );
 
+final iceCreamRecipe = Recipe(
+  id: 4,
+  name: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+  quantityProduced: 2,
+  quantitySold: 2,
+  canBeSold: true,
+  price: 20,
+  ingredients: [
+    RecipeIngredient.ingredient(sugarWithId.id!, quantity: 200),
+  ],
+);
+
 const recipeWithRecipeAndIngredients = Recipe(
   id: 2,
   name: 'Complex recipe',
@@ -204,17 +221,28 @@ final recipesMap = {
   recipeWithRecipeAndIngredients.id: recipeWithRecipeAndIngredients,
 };
 
-final cakeOrder = Order(
+final cakeOrderProduct = OrderProduct(id: cakeRecipe.id!, quantity: 1);
+final iceCreamOrderProduct = OrderProduct(id: iceCreamRecipe.id!, quantity: 2);
+
+final spidermanOrder = Order(
   clientName: 'Test client',
-  clientAddress: 'Test street, 123',
+  clientAddress: 'New York Street, 123',
   orderDate: DateTime(2022, 1, 1),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
-  products: [
-    OrderProduct(id: cakeRecipe.id!, quantity: 1),
-  ],
+  products: [cakeOrderProduct],
 );
-final cakeOrderWithId = cakeOrder.copyWith(id: 1);
+final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
+
+final batmanOrder = Order(
+  id: 2,
+  clientName: 'Batman',
+  clientAddress: 'Gotham',
+  orderDate: DateTime(2022, 1, 3),
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  products: [cakeOrderProduct, iceCreamOrderProduct],
+);
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

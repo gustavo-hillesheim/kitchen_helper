@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/fpdart.dart' as fp;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,11 +12,12 @@ part 'sqlite_order_product_repository.g.dart';
 
 abstract class OrderProductRepository
     extends Repository<OrderProductEntity, int> {
-  Future<Either<Failure, int?>> findId(int orderId, OrderProduct orderProduct);
+  Future<fp.Either<Failure, int?>> findId(
+      int orderId, OrderProduct orderProduct);
 
-  Future<Either<Failure, List<OrderProductEntity>>> findByOrder(int orderId);
+  Future<fp.Either<Failure, List<OrderProductEntity>>> findByOrder(int orderId);
 
-  Future<Either<Failure, void>> deleteByOrder(int orderId);
+  Future<fp.Either<Failure, void>> deleteByOrder(int orderId);
 }
 
 class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
@@ -31,17 +32,18 @@ class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
         );
 
   @override
-  Future<Either<Failure, void>> deleteByOrder(int orderId) async {
+  Future<fp.Either<Failure, void>> deleteByOrder(int orderId) async {
     try {
       await database.delete(table: tableName, where: {'orderId': orderId});
-      return const Right(null);
+      return const fp.Right(null);
     } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, e));
+      return fp.Left(
+          DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, e));
     }
   }
 
   @override
-  Future<Either<Failure, List<OrderProductEntity>>> findByOrder(
+  Future<fp.Either<Failure, List<OrderProductEntity>>> findByOrder(
       int orderId) async {
     try {
       final result = await database.query(table: tableName, columns: [
@@ -52,14 +54,14 @@ class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
       ], where: {
         'orderId': orderId,
       });
-      return Right(result.map(fromMap).toList());
+      return fp.Right(result.map(fromMap).toList());
     } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+      return fp.Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
     }
   }
 
   @override
-  Future<Either<Failure, int?>> findId(
+  Future<fp.Either<Failure, int?>> findId(
     int orderId,
     OrderProduct orderProduct,
   ) async {
@@ -71,11 +73,11 @@ class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
         'productId': orderProduct.id,
       });
       if (result.isNotEmpty) {
-        return Right(result[0]['id']);
+        return fp.Right(result[0]['id']);
       }
-      return const Right(null);
+      return const fp.Right(null);
     } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+      return fp.Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
     }
   }
 }
@@ -83,7 +85,7 @@ class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
 @JsonSerializable()
 class OrderProductEntity extends Equatable implements Entity<int> {
   @override
-  final int id;
+  final int? id;
   final int orderId;
   final int productId;
   final double quantity;
@@ -95,8 +97,26 @@ class OrderProductEntity extends Equatable implements Entity<int> {
     required this.quantity,
   });
 
+  factory OrderProductEntity.fromModels(
+    Order order,
+    OrderProduct orderProduct, {
+    int? id,
+  }) {
+    return OrderProductEntity(
+      id: id,
+      orderId: order.id!,
+      productId: orderProduct.id,
+      quantity: orderProduct.quantity,
+    );
+  }
+
   factory OrderProductEntity.fromJson(Map<String, dynamic> json) =>
       _$OrderProductEntityFromJson(json);
+
+  OrderProduct toOrderProduct() => OrderProduct(
+        id: productId,
+        quantity: quantity,
+      );
 
   Map<String, dynamic> toJson() => _$OrderProductEntityToJson(this);
 

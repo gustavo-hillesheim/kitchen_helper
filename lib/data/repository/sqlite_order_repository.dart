@@ -1,9 +1,16 @@
-import 'package:kitchen_helper/database/sqlite/sqlite.dart';
-import 'package:kitchen_helper/domain/domain.dart';
+import 'package:fpdart/fpdart.dart' as fp;
+
+import '../../core/core.dart';
+import '../../database/sqlite/sqlite.dart';
+import '../../domain/domain.dart';
+import '../../extensions.dart';
+import 'sqlite_order_product_repository.dart';
 
 class SQLiteOrderRepository extends SQLiteRepository<Order>
     implements OrderRepository {
-  SQLiteOrderRepository(SQLiteDatabase database)
+  final OrderProductRepository orderProductRepository;
+
+  SQLiteOrderRepository(SQLiteDatabase database, this.orderProductRepository)
       : super(
           'orders',
           'id',
@@ -19,4 +26,85 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
             return map;
           },
         );
+
+  @override
+  Future<fp.Either<Failure, Order?>> findById(int id) {
+    return super.findById(id).onRightThen((order) async {
+      if (order != null) {
+        return _withProducts(order);
+      }
+      return fp.Right(order);
+    });
+  }
+
+  @override
+  Future<fp.Either<Failure, List<Order>>> findAll() {
+    return super.findAll().onRightThen(
+          (orders) => orders
+              .asyncMap((order) => _withProducts(order))
+              .then((orders) => orders.asEitherList()),
+        );
+  }
+
+  @override
+  Future<fp.Either<Failure, void>> deleteById(int id) {
+    return database.insideTransaction(
+      () => super
+          .deleteById(id)
+          .onRightThen((_) => orderProductRepository.deleteByOrder(id)),
+    );
+  }
+
+  @override
+  Future<fp.Either<Failure, void>> update(Order order) {
+    return database.insideTransaction(
+      () => super
+          .update(order)
+          .onRightThen((_) => orderProductRepository.deleteByOrder(order.id!))
+          .onRightThen((_) => _createProducts(order))
+          .onRightThen((_) => const fp.Right(null)),
+    );
+  }
+
+  @override
+  Future<fp.Either<Failure, int>> create(Order order) {
+    return database.insideTransaction(
+      () => super.create(order).onRightThen((orderId) {
+        order = order.copyWith(id: orderId);
+        return _createProducts(order).onRightThen((_) => fp.Right(orderId));
+      }),
+    );
+  }
+
+  Future<fp.Either<Failure, List<int>>> _createProducts(Order order) async {
+    final productEntities = _createProductEntities(order);
+    final futures = productEntities
+        .map((product) => orderProductRepository.create(product));
+    final results = await Future.wait(futures);
+    return results.asEitherList();
+  }
+
+  List<OrderProductEntity> _createProductEntities(Order order) {
+    return order.products
+        .map((product) => OrderProductEntity.fromModels(order, product))
+        .toList(growable: false);
+  }
+
+  Future<fp.Either<Failure, Order>> _withProducts(Order order) async {
+    return _getProducts(order).onRightThen(
+      (products) => fp.Right(order.copyWith(products: products)),
+    );
+  }
+
+  Future<fp.Either<Failure, List<OrderProduct>>> _getProducts(
+      Order order) async {
+    return orderProductRepository
+        .findByOrder(order.id!)
+        .onRightThen((productsEntities) {
+      final products = productsEntities
+          .map((e) => e.toOrderProduct())
+          .toList(growable: false);
+      return fp.Right(products);
+    });
+  }
 }

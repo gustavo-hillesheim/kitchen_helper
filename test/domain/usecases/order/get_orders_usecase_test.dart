@@ -16,6 +16,6 @@ void main() {
   getAllUseCaseTests(
     usecaseFn: () => usecase,
     repositoryFn: () => repository,
-    entities: [cakeOrder],
+    entities: [spidermanOrder],
   );
 }

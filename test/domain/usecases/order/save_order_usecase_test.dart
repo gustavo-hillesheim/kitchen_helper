@@ -19,8 +19,8 @@ void main() {
   saveUseCaseTests(
     usecaseFn: () => usecase,
     repositoryFn: () => repository,
-    entityWithId: cakeOrderWithId,
-    entityWithoutId: cakeOrder,
-    id: cakeOrderWithId.id!,
+    entityWithId: spidermanOrderWithId,
+    entityWithoutId: spidermanOrder,
+    id: spidermanOrderWithId.id!,
   );
 }

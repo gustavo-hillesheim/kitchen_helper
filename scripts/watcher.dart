@@ -54,10 +54,10 @@ Future<void> runProcess(List<String> args) async {
   utf8.decoder
       .bind(newProcess.stdout)
       .takeWhile((_) => processMap[newProcess] ?? false)
-      .listen(print);
+      .listen(stdout.write);
   utf8.decoder
       .bind(newProcess.stderr)
       .takeWhile((_) => processMap[newProcess] ?? false)
-      .listen(print);
+      .listen(stdout.write);
   process = newProcess;
 }

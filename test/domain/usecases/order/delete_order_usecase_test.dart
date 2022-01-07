@@ -16,8 +16,8 @@ void main() {
   deleteUseCaseTests(
     usecaseFn: () => usecase,
     repositoryFn: () => repository,
-    entityWithId: cakeOrderWithId,
-    entityWithoutId: cakeOrder,
+    entityWithId: spidermanOrderWithId,
+    entityWithoutId: spidermanOrder,
     errorMessageWithoutId: DeleteOrderUseCase.cantDeleteOrderWithoutIdMessage,
   );
 }
