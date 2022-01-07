@@ -1,16 +1,12 @@
 code_coverage:
 	fvm flutter pub run code_coverage \
-	-m 80 -u \
+	-m 80 -u --ignoreBarrelFiles \
 	-e domain \
 	-e core \
 	-e database \
 	-e main.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
-	-e presenter\\\\presenter.dart \
-	-e presenter\\\\utils\\\\utils.dart \
-	-e presenter\\\\widgets\\\\widgets.dart \
-	-e presenter\\\\screens\\\\screens.dart \
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
@@ -25,10 +21,6 @@ code_coverage_ci:
 	-e main.dart \
 	-e presenter\\\\app_widget.dart \
 	-e presenter\\\\constants.dart \
-	-e presenter\\\\presenter.dart \
-	-e presenter\\\\utils\\\\utils.dart \
-	-e presenter\\\\widgets\\\\widgets.dart \
-	-e presenter\\\\screens\\\\screens.dart \
 	-e app_guard.dart \
 	-e app_module.dart \
 	-i domain\\\\usecases \
