@@ -4,6 +4,7 @@ import '../../core/core.dart';
 import '../../database/sqlite/sqlite.dart';
 import '../../domain/domain.dart';
 import '../../extensions.dart';
+import 'sqlite_recipe_ingredient_repository.dart';
 
 class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
     implements RecipeRepository {
