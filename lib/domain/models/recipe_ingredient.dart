@@ -1,13 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../database/database.dart';
-
 part 'recipe_ingredient.g.dart';
 
 @JsonSerializable()
-class RecipeIngredient extends Equatable implements Entity<int> {
-  @override
+class RecipeIngredient extends Equatable {
   final int id;
   final double quantity;
   final RecipeIngredientType type;

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/database/database.dart';
 
+import '../../database/database.dart';
 import 'models.dart';
 
 part 'order.g.dart';
@@ -15,7 +15,7 @@ class Order extends Equatable implements Entity<int> {
   final DateTime orderDate;
   final DateTime deliveryDate;
   final OrderStatus status;
-  final List<Recipe> products;
+  final List<OrderProduct> products;
 
   const Order({
     this.id,
@@ -38,7 +38,7 @@ class Order extends Equatable implements Entity<int> {
     DateTime? orderDate,
     DateTime? deliveryDate,
     OrderStatus? status,
-    List<Recipe>? products,
+    List<OrderProduct>? products,
   }) {
     return Order(
       id: id ?? this.id,

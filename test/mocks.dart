@@ -210,7 +210,9 @@ final cakeOrder = Order(
   orderDate: DateTime(2022, 1, 1),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
-  products: [cakeRecipe],
+  products: [
+    OrderProduct(id: cakeRecipe.id!, quantity: 1),
+  ],
 );
 final cakeOrderWithId = cakeOrder.copyWith(id: 1);
 
