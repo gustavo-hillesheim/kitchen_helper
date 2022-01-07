@@ -7,7 +7,7 @@ import 'package:kitchen_helper/database/database.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'mocks.dart';
+import '../../mocks.dart';
 
 void testExceptionsOnFindById(
   SQLiteRepository Function() repositoryFn,

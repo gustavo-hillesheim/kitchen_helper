@@ -8,7 +8,15 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
           'orders',
           'id',
           database,
-          fromMap: (map) => Order.fromJson(map),
-          toMap: (order) => order.toJson(),
+          fromMap: (map) {
+            map = Map.from(map);
+            map['products'] = [];
+            return Order.fromJson(map);
+          },
+          toMap: (order) {
+            final map = order.toJson();
+            map.remove('products');
+            return map;
+          },
         );
 }

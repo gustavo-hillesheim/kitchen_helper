@@ -129,22 +129,6 @@ class RecipeIngredientEntity extends Equatable implements Entity<int> {
         quantity: quantity,
       );
 
-  RecipeIngredientEntity copyWith({
-    int? id,
-    int? parentRecipeId,
-    int? recipeIngredientId,
-    double? quantity,
-    RecipeIngredientType? type,
-  }) {
-    return RecipeIngredientEntity(
-      id: id ?? this.id,
-      parentRecipeId: parentRecipeId ?? this.parentRecipeId,
-      recipeIngredientId: recipeIngredientId ?? this.recipeIngredientId,
-      quantity: quantity ?? this.quantity,
-      type: type ?? this.type,
-    );
-  }
-
   @override
   List<Object?> get props =>
       [id, parentRecipeId, recipeIngredientId, quantity, type];

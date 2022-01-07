@@ -8,7 +8,7 @@ import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../mocks.dart';
-import '../../sqlite_repository_tests.dart';
+import 'sqlite_repository_tests.dart';
 
 void main() {
   late SQLiteDatabase database;
