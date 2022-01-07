@@ -36,9 +36,10 @@ class IngredientsList extends StatefulWidget {
 class _IngredientsListState extends State<IngredientsList> {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         ListView.builder(
+          primary: false,
           shrinkWrap: true,
           itemCount: widget.ingredients.length,
           padding: kMediumEdgeInsets.copyWith(bottom: kSmallSpace),
@@ -56,9 +57,11 @@ class _IngredientsListState extends State<IngredientsList> {
             );
           },
         ),
-        SecondaryButton(
-          child: const Text('Adicionar ingrediente'),
-          onPressed: () => showRecipeIngredientForm(context),
+        Center(
+          child: SecondaryButton(
+            child: const Text('Adicionar ingrediente'),
+            onPressed: () => showRecipeIngredientForm(context),
+          ),
         ),
       ],
     );
