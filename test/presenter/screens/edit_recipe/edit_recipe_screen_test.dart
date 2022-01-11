@@ -139,7 +139,8 @@ void main() {
       AppTextFormFieldFinder(
         name: 'Quantidade produzida',
         type: TextInputType.number,
-        value: Formatter.simple(sugarWithEggRecipeWithId.quantityProduced),
+        value:
+            Formatter.simpleNumber(sugarWithEggRecipeWithId.quantityProduced),
       ),
       findsOneWidget,
     );
@@ -174,14 +175,14 @@ void main() {
       expect(find.text(ingredient.name), findsOneWidget);
       expect(
         find.text(
-          '${Formatter.simple(recipeIngredient.quantity)} '
+          '${Formatter.simpleNumber(recipeIngredient.quantity)} '
           '${ingredient.measurementUnit.abbreviation}',
         ),
         findsOneWidget,
       );
       final cost =
           ingredient.cost / ingredient.quantity * recipeIngredient.quantity;
-      expect(find.text(Formatter.money(cost)), findsOneWidget);
+      expect(find.text(Formatter.currency(cost)), findsOneWidget);
     }
   });
 
@@ -222,7 +223,7 @@ void main() {
       AppTextFormFieldFinder(
         name: ingredient.measurementUnit.label,
         type: TextInputType.number,
-        value: Formatter.simple(ingredient.quantity),
+        value: Formatter.simpleNumber(ingredient.quantity),
       ),
       '10',
     );

@@ -47,7 +47,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
     if (initialValue != null) {
       id = initialValue.id;
       nameController.text = initialValue.name;
-      quantityController.text = Formatter.simple(initialValue.quantity);
+      quantityController.text = Formatter.simpleNumber(initialValue.quantity);
       measurementUnit = initialValue.measurementUnit;
       costController.text = initialValue.cost.toStringAsFixed(2);
     }

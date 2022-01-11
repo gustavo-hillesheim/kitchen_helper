@@ -24,6 +24,7 @@ dependencies:
   flutter_slidable: ^1.1.0
   dropdown_search: ^2.0.1
   multi_value_listenable_builder: ^0.0.2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

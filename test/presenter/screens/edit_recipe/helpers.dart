@@ -62,17 +62,17 @@ Future<void> fillGeneralInformationForm(
   }
   if (quantityProduced != null) {
     await tester.enterText(
-        quantityProducedFieldFinder, Formatter.simple(quantityProduced));
+        quantityProducedFieldFinder, Formatter.simpleNumber(quantityProduced));
   }
   if (notes != null) {
     await tester.enterText(notesFieldFinder, notes);
   }
   if (quantitySold != null) {
     await tester.enterText(
-        quantitySoldFieldFinder, Formatter.simple(quantitySold));
+        quantitySoldFieldFinder, Formatter.simpleNumber(quantitySold));
   }
   if (price != null) {
-    await tester.enterText(priceFieldFinder, Formatter.simple(price));
+    await tester.enterText(priceFieldFinder, Formatter.simpleNumber(price));
   }
   if (measurementUnit != null) {
     await tester.tap(measurementUnitSelectorFinder);
@@ -96,7 +96,7 @@ Future<void> addIngredient(
         name: 'Quantidade',
         type: TextInputType.number,
       ),
-      Formatter.simple(quantity),
+      Formatter.simpleNumber(quantity),
     );
   }
   if (ingredientName != null) {

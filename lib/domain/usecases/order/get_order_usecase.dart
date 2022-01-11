@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart' as fp;
-import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/domain/domain.dart';
+
+import '../../../core/core.dart';
+import '../../domain.dart';
 
 class GetOrderUseCase extends UseCase<int, Order?> {
   final OrderRepository repository;

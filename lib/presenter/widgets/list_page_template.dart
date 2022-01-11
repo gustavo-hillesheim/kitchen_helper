@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
 
+import '../../core/core.dart';
 import '../constants.dart';
+import '../screens/states.dart';
 import 'widgets.dart';
 
 typedef TileBuilder<T> = Widget Function(BuildContext context, T entity);
@@ -19,6 +19,7 @@ class ListPageTemplate<T> extends StatelessWidget {
   final String emptySubtext;
   final String emptyActionText;
   final VoidCallback onAdd;
+  final Widget? headerBottom;
 
   const ListPageTemplate({
     Key? key,
@@ -30,6 +31,7 @@ class ListPageTemplate<T> extends StatelessWidget {
     required this.emptySubtext,
     required this.emptyActionText,
     required this.onAdd,
+    this.headerBottom,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,7 @@ class ListPageTemplate<T> extends StatelessWidget {
             icon: Icons.add,
             onPressed: onAdd,
           ),
+          bottom: headerBottom,
         ),
         body: BottomCard(
           child: _buildList(),
@@ -146,7 +149,9 @@ class ListPageTemplate<T> extends StatelessWidget {
 
 mixin ListPageBloc<T> implements BlocBase<ScreenState<List<T>>> {
   UseCase<NoParams, List<T>> get getUseCase;
+
   UseCase<T, void> get deleteUseCase;
+
   UseCase<T, T> get saveUseCase;
 
   Future<void> load() async {

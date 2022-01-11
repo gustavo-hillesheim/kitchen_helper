@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 
-import '../utils/validator.dart';
+import '../presenter.dart';
 
 class AppTextFormField extends StatefulWidget {
   final String name;
@@ -36,7 +35,7 @@ class AppTextFormField extends StatefulWidget {
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         initialValue =
-            initialValue != null ? Formatter.simple(initialValue) : null,
+            initialValue != null ? Formatter.simpleNumber(initialValue) : null,
         super(key: key);
 
   AppTextFormField.money({

@@ -23,7 +23,7 @@ class RecipeListTile extends StatelessWidget {
       ),
     );
     final quantityProducedText = Text(
-      'Produz ${Formatter.simple(recipe.quantityProduced)} '
+      'Produz ${Formatter.simpleNumber(recipe.quantityProduced)} '
       '${recipe.measurementUnit.label}',
       style: textTheme.subtitle2,
     );
@@ -36,9 +36,9 @@ class RecipeListTile extends StatelessWidget {
       final quantitySold = recipe.quantitySold!;
       final price = recipe.price!;
       final quantitySoldText = Text(
-        'Vende ${Formatter.simple(quantitySold)} '
+        'Vende ${Formatter.simpleNumber(quantitySold)} '
         '${recipe.measurementUnit.label} '
-        'por ${Formatter.money(price)}',
+        'por ${Formatter.currency(price)}',
         style: textTheme.subtitle2,
       );
       widgets.add(kSmallSpacerVertical);

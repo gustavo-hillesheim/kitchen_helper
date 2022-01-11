@@ -60,7 +60,7 @@ void main() {
         AppTextFormFieldFinder(
           name: 'Quantidade',
           type: TextInputType.number,
-          value: Formatter.simple(egg.quantity),
+          value: Formatter.simpleNumber(egg.quantity),
         ),
         findsOneWidget,
       );

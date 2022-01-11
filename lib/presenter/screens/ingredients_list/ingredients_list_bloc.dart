@@ -1,7 +1,6 @@
-import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
-
 import '../../../domain/domain.dart';
+import '../../presenter.dart';
+import '../states.dart';
 
 class IngredientsListBloc extends AppCubit<List<Ingredient>>
     with ListPageBloc<Ingredient> {

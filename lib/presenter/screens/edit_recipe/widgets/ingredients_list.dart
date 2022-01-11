@@ -111,14 +111,14 @@ class IngredientListTile extends StatelessWidget {
       ),
     );
     final quantityText = Text(
-      '${Formatter.simple(ingredient.quantity)} '
+      '${Formatter.simpleNumber(ingredient.quantity)} '
       '${ingredient.measurementUnit.abbreviation}',
       style: textTheme.headline5!.copyWith(
         fontWeight: FontWeight.w300,
       ),
     );
     final priceText = Text(
-      Formatter.money(ingredient.cost),
+      Formatter.currency(ingredient.cost),
       style: textTheme.subtitle2,
     );
     final ingredientInfo = Row(

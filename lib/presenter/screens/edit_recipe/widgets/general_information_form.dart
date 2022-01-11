@@ -122,7 +122,7 @@ class GeneralInformationForm extends StatelessWidget {
               ],
             ),
             kMediumSpacerVertical,
-            Text('Custo total: ${Formatter.money(cost)}'),
+            Text('Custo total: ${Formatter.currency(cost)}'),
             _buildProfitIndicators(),
           ],
         ),
@@ -191,9 +191,9 @@ class GeneralInformationForm extends StatelessWidget {
       totalCost: cost,
     );
     return 'Lucro por '
-        '${Formatter.simple(quantitySold)} '
+        '${Formatter.simpleNumber(quantitySold)} '
         '${measurementUnit.label}: '
-        '${Formatter.money(profitPerQuantitySold)}';
+        '${Formatter.currency(profitPerQuantitySold)}';
   }
 
   String _getTotalProfitLabel({
@@ -207,6 +207,6 @@ class GeneralInformationForm extends StatelessWidget {
       pricePerQuantitySold: pricePerQuantitySold,
       totalCost: cost,
     );
-    return 'Lucro total: ${Formatter.money(profit)}';
+    return 'Lucro total: ${Formatter.currency(profit)}';
   }
 }

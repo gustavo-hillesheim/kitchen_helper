@@ -13,6 +13,7 @@ const kSmallEdgeInsets = EdgeInsets.all(kSmallSpace);
 const kMediumEdgeInsets = EdgeInsets.all(kMediumSpace);
 const kLargeEdgeInsets = EdgeInsets.all(kLargeSpace);
 
+const kExtraSmallSpacerVertical = SizedBox(height: kExtraSmallSpace);
 const kSmallSpacerVertical = SizedBox(height: kSmallSpace);
 const kMediumSpacerVertical = SizedBox(height: kMediumSpace);
 const kLargeSpacerVertical = SizedBox(height: kLargeSpace);
