@@ -26,6 +26,12 @@ class MenuScreen extends StatelessWidget {
               route: '/recipes',
               icon: Icons.food_bank_outlined,
             ),
+            PageDescriptionTile(
+              name: 'Pedidos',
+              description: 'Cadastre e gerencie seus pedidos',
+              route: '/orders',
+              icon: Icons.receipt_long_outlined,
+            ),
           ],
         ),
       ),

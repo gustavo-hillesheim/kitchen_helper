@@ -48,7 +48,7 @@ void main() {
             const SuccessState<List<Ingredient>>([flour, egg, orangeJuice]),
           ],
       act: (bloc) async {
-        await bloc.loadIngredients();
+        await bloc.load();
         await bloc.delete(orangeJuice);
         await bloc.save(orangeJuice);
       },
@@ -59,18 +59,19 @@ void main() {
       });
 
   blocTest<IngredientsListBloc, ScreenState<List<Ingredient>>>(
-    'Should emit FailureState if loadIngredients fail',
+    'Should emit FailureState if load fail',
     build: () {
       createInstances();
       when(() => getUseCase.execute(const NoParams()))
-          .thenAnswer((_) async => Left(FakeFailure('Some error on load')));
+          .thenAnswer((_) async => const Left(FakeFailure('Some error on '
+              'load')));
       return bloc;
     },
     expect: () => [
       const LoadingState<List<Ingredient>>(),
-      FailureState<List<Ingredient>>(FakeFailure('Some error on load')),
+      const FailureState<List<Ingredient>>(FakeFailure('Some error on load')),
     ],
-    act: (bloc) async => await bloc.loadIngredients(),
+    act: (bloc) async => await bloc.load(),
   );
 
   test(
@@ -78,13 +79,13 @@ void main() {
       'Failure', () async {
     createInstances();
     when(() => deleteUseCase.execute(egg))
-        .thenAnswer((_) async => Left(FakeFailure('Delete error')));
+        .thenAnswer((_) async => const Left(FakeFailure('Delete error')));
     when(() => getUseCase.execute(const NoParams()))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.delete(egg);
 
-    expect(result.getLeft().toNullable(), FakeFailure('Delete error'));
+    expect(result.getLeft().toNullable(), const FakeFailure('Delete error'));
   });
 
   test(
@@ -92,12 +93,12 @@ void main() {
       'Failure', () async {
     createInstances();
     when(() => saveUseCase.execute(egg))
-        .thenAnswer((_) async => Left(FakeFailure('Save error')));
+        .thenAnswer((_) async => const Left(FakeFailure('Save error')));
     when(() => getUseCase.execute(const NoParams()))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.save(egg);
 
-    expect(result.getLeft().toNullable(), FakeFailure('Save error'));
+    expect(result.getLeft().toNullable(), const FakeFailure('Save error'));
   });
 }

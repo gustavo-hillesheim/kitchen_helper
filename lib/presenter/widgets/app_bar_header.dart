@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import 'page_template.dart';
+import 'body_with_header.dart';
 
-class AppBarPageHeader implements PageHeader {
+class AppBarHeader implements Header {
   final String title;
-  final AppBarPageHeaderAction? action;
+  final AppBarHeaderAction? action;
   @override
   final double maxHeight = 250;
   @override
@@ -14,7 +14,7 @@ class AppBarPageHeader implements PageHeader {
   @override
   HeaderBuilder get builder => build;
 
-  AppBarPageHeader({
+  AppBarHeader({
     required this.title,
     required BuildContext context,
     this.action,
@@ -94,12 +94,12 @@ class AppBarPageHeader implements PageHeader {
       );
 }
 
-class AppBarPageHeaderAction {
+class AppBarHeaderAction {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
-  AppBarPageHeaderAction({
+  AppBarHeaderAction({
     required this.label,
     required this.icon,
     required this.onPressed,

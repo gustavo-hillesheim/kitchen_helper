@@ -21,7 +21,7 @@ class AppModule extends Module {
         Bind((i) => GetIngredientUseCase(i())),
         Bind((i) => DeleteIngredientUseCase(i())),
         Bind((i) => SaveRecipeUseCase(i())),
-        Bind<GetRecipesUseCase>((i) => GetRecipesUseCase(i())),
+        Bind((i) => GetRecipesUseCase(i())),
         Bind((i) => GetRecipeUseCase(i())),
         Bind((i) => DeleteRecipeUseCase(i())),
         Bind((i) => GetRecipeCostUseCase(i(), i())),
@@ -62,5 +62,6 @@ class AppModule extends Module {
             initialValue: route.data as Recipe?,
           );
         }),
+        ChildRoute('/orders', child: (_, __) => const OrdersListScreen()),
       ];
 }

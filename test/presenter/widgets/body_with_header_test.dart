@@ -35,8 +35,8 @@ void main() {
 Future<void> pumpWidget(WidgetTester tester) {
   return tester.pumpWidget(
     MaterialApp(
-      home: PageTemplate(
-        header: PageHeader(
+      home: BodyWithHeader(
+        header: Header(
           minHeight: minHeight,
           maxHeight: maxHeight,
           builder: (_, height) {

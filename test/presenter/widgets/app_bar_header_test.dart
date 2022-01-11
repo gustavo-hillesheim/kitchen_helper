@@ -47,11 +47,11 @@ void main() {
 
 void onActionPressed() {}
 
-AppBarPageHeader createHeader(BuildContext context) {
-  return AppBarPageHeader(
+AppBarHeader createHeader(BuildContext context) {
+  return AppBarHeader(
     title: 'Header',
     context: context,
-    action: AppBarPageHeaderAction(
+    action: AppBarHeaderAction(
       label: 'Action',
       icon: Icons.delete,
       onPressed: onActionPressed,
