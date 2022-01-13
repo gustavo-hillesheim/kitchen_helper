@@ -64,3 +64,9 @@ class Order extends Equatable implements Entity<int> {
 }
 
 enum OrderStatus { ordered, delivered }
+
+extension OrderStatusName on OrderStatus {
+  String get name {
+    return _$OrderStatusEnumMap[this]!;
+  }
+}

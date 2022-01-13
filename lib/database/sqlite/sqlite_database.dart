@@ -119,8 +119,16 @@ class SQLiteDatabase {
     await _executor.delete(table, where: '$idColumn = ?', whereArgs: [id]);
   }
 
-  Future<List<Map<String, dynamic>>> findAll(String table) async {
-    return await _executor.query(table);
+  Future<List<Map<String, dynamic>>> findAll(
+    String table, {
+    Map<String, dynamic>? where,
+  }) async {
+    final whereObj = _Where.fromMap(where ?? {});
+    return await _executor.query(
+      table,
+      where: whereObj.where,
+      whereArgs: whereObj.whereArgs,
+    );
   }
 
   Future<Map<String, dynamic>?> findById(

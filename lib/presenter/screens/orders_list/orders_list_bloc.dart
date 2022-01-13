@@ -17,7 +17,9 @@ class OrdersListBloc extends AppCubit<List<Order>> with ListPageBloc<Order> {
   ) : super(const LoadingState());
 
   @override
-  Future<void> load({bool isDelivered = false}) async {
-    super.load();
+  Future<void> load({OrderStatus? status}) async {
+    runEither(() => getUseCase.execute(OrdersFilter(
+          status: status,
+        )));
   }
 }

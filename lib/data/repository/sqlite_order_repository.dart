@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart' as fp;
+import 'package:sqflite/sqflite.dart';
 
 import '../../core/core.dart';
 import '../../database/sqlite/sqlite.dart';
@@ -38,12 +39,29 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   @override
-  Future<fp.Either<Failure, List<Order>>> findAll() {
-    return super.findAll().onRightThen(
-          (orders) => orders
-              .asyncMap((order) => _withProducts(order))
-              .then((orders) => orders.asEitherList()),
-        );
+  Future<fp.Either<Failure, List<Order>>> findAll(
+      {OrdersFilter? filter}) async {
+    try {
+      final where = filter != null ? _filterToWhereMap(filter) : null;
+      final entities = await database.findAll(tableName, where: where);
+      final ordersResult = entities
+          .map(fromMap)
+          .toList(growable: false)
+          .asyncMap((order) => _withProducts(order))
+          .then((orders) => orders.asEitherList());
+      return ordersResult;
+    } on DatabaseException catch (e) {
+      return fp.Left(
+          DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
+  Map<String, dynamic> _filterToWhereMap(OrdersFilter filter) {
+    final where = <String, dynamic>{};
+    if (filter.status != null) {
+      where['status'] = filter.status!.name;
+    }
+    return where;
   }
 
   @override

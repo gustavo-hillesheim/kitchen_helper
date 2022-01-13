@@ -15,6 +15,7 @@ class OrdersListScreen extends StatefulWidget {
 
 class _OrdersListScreenState extends State<OrdersListScreen> {
   late final OrdersListBloc bloc;
+  OrderStatus? _filterStatus;
 
   @override
   void initState() {
@@ -45,12 +46,29 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
             icon: Icon(Icons.filter_alt_outlined),
           ),
           ToggleableTag(
+            label: 'Não Entregue',
+            value: _filterStatus == OrderStatus.ordered,
+            onChange: (value) =>
+                _updateFilterStatus(value ? OrderStatus.ordered : null),
+          ),
+          kSmallSpacerHorizontal,
+          ToggleableTag(
             label: 'Entregue',
-            onChange: (value) => bloc.load(isDelivered: value),
+            value: _filterStatus == OrderStatus.delivered,
+            onChange: (value) =>
+                _updateFilterStatus(value ? OrderStatus.delivered : null),
           ),
         ],
       ),
     );
+  }
+
+  void _updateFilterStatus(OrderStatus? status) {
+    setState(() {
+      _filterStatus = status;
+      print(_filterStatus);
+      bloc.load(status: _filterStatus);
+    });
   }
 
   void _goToEditScreen([Order? order]) async {

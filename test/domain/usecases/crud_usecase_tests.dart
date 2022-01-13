@@ -77,32 +77,56 @@ void getUseCaseTests<T extends Entity<ID>, ID>({
   );
 }
 
+typedef GetResult<T> = Future<Either<Failure, List<T>>>;
+typedef GetUseCase<T> = UseCase<Object, List<T>>;
+
 void getAllUseCaseTests<T extends Entity<ID>, ID>({
-  required UseCase<NoParams, List<T>> Function() usecaseFn,
+  required GetUseCase<T> Function() usecaseFn,
   required Repository<T, ID> Function() repositoryFn,
   required List<T> entities,
+  GetResult<T> Function(GetUseCase<T>)? executeUseCaseFn,
+  When<GetResult<T>> Function(Repository<T, ID>)? mockRepositoryFn,
+  Function(Repository<T, ID>)? verifyRepositoryFn,
 }) {
+  GetResult<T> executeUsecase(UseCase<Object, List<T>> usecase) {
+    return (executeUseCaseFn != null
+        ? executeUseCaseFn(usecase)
+        : usecase.execute(const NoParams()));
+  }
+
+  When<GetResult<T>> mockRepository(Repository<T, ID> repository) {
+    return (mockRepositoryFn != null
+        ? mockRepositoryFn(repository)
+        : when(() => repository.findAll()));
+  }
+
+  void verifyRepository(Repository<T, ID> repository) {
+    (verifyRepositoryFn != null
+        ? verifyRepositoryFn(repository)
+        : verify(() => repository.findAll()));
+  }
+
   test('WHEN called SHOULD get entities', () async {
     final usecase = usecaseFn();
     final repository = repositoryFn();
-    when(() => repository.findAll()).thenAnswer((_) async => Right(entities));
+    mockRepository(repository).thenAnswer((_) async => Right(entities));
 
-    final result = await usecase.execute(const NoParams());
+    final result = await executeUsecase(usecase);
 
     expect(result.getRight().toNullable(), entities);
-    verify(() => repository.findAll());
+    verifyRepository(repository);
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
     final usecase = usecaseFn();
     final repository = repositoryFn();
-    when(() => repository.findAll())
+    mockRepository(repository)
         .thenAnswer((_) async => const Left(FakeFailure('error')));
 
-    final result = await usecase.execute(const NoParams());
+    final result = await executeUsecase(usecase);
 
     expect(result.getLeft().toNullable()?.message, 'error');
-    verify(() => repository.findAll());
+    verifyRepository(repository);
   });
 }
 

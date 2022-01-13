@@ -4,6 +4,7 @@ import '../presenter.dart';
 
 class ToggleableTag extends StatefulWidget {
   final String label;
+  final bool? value;
   final Color? activeColor;
   final Color? inactiveColor;
   final ValueChanged<bool> onChange;
@@ -12,6 +13,7 @@ class ToggleableTag extends StatefulWidget {
     Key? key,
     required this.label,
     required this.onChange,
+    this.value,
     this.activeColor,
     this.inactiveColor,
   }) : super(key: key);
@@ -29,8 +31,9 @@ class _ToggleableTagState extends State<ToggleableTag> {
         widget.inactiveColor ?? Theme.of(context).colorScheme.primary;
     final activeColor =
         widget.activeColor ?? Theme.of(context).scaffoldBackgroundColor;
-    final foregroundColor = _isActive ? inactiveColor : activeColor;
-    final backgroundColor = _isActive ? activeColor : inactiveColor;
+    final isActive = widget.value ?? _isActive;
+    final foregroundColor = isActive ? inactiveColor : activeColor;
+    final backgroundColor = isActive ? activeColor : inactiveColor;
 
     return Stack(
       children: [
@@ -44,7 +47,7 @@ class _ToggleableTagState extends State<ToggleableTag> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => setState(() {
-                _isActive = !_isActive;
+                _isActive = !isActive;
                 widget.onChange(_isActive);
               }),
               borderRadius: BorderRadius.circular(kSmallSpace),
