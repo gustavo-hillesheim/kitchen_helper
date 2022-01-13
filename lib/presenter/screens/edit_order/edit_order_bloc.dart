@@ -22,6 +22,13 @@ class EditOrderBloc extends AppCubit<Order> {
     return state;
   }
 
+  Future<Either<Failure, List<EditingOrderProduct>>> getEditingOrderProducts(
+      List<OrderProduct> products) async {
+    final futures = products.map(getEditingOrderProduct);
+    final values = (await Future.wait(futures)).asEitherList();
+    return values;
+  }
+
   Future<Either<Failure, EditingOrderProduct>> getEditingOrderProduct(
       OrderProduct orderProduct) async {
     return _getEditingOrderProductFromRecipe(orderProduct);

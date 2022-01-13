@@ -28,7 +28,10 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
     return ListPageTemplate<Order>(
       title: 'Pedidos',
       bloc: bloc,
-      tileBuilder: (_, order) => OrderListTile(order),
+      tileBuilder: (_, order) => OrderListTile(
+        order,
+        onTap: () => _goToEditScreen(order),
+      ),
       deletedMessage: (order) => 'Pedido excluído',
       emptyText: 'Sem pedidos',
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',

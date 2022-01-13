@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../presenter.dart';
@@ -9,8 +10,13 @@ typedef OrderListTileState = ScreenState<List<OrderProductData>>;
 
 class OrderListTile extends StatefulWidget {
   final Order order;
+  final VoidCallback onTap;
 
-  const OrderListTile(this.order, {Key? key}) : super(key: key);
+  const OrderListTile(
+    this.order, {
+    Key? key,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   State<OrderListTile> createState() => _OrderListTileState();
@@ -18,11 +24,20 @@ class OrderListTile extends StatefulWidget {
 
 class _OrderListTileState extends State<OrderListTile> {
   late final OrderListTileBloc bloc;
+  double? _price;
 
   @override
   void initState() {
     super.initState();
-    bloc = OrderListTileBloc();
+    bloc = OrderListTileBloc(Modular.get(), Modular.get());
+    bloc.getPrice(widget.order).then((result) {
+      result.fold(
+        (failure) => debugPrint('Could not get order price ${failure.message}'),
+        (price) => setState(() {
+          _price = price;
+        }),
+      );
+    });
   }
 
   @override
@@ -38,7 +53,7 @@ class _OrderListTileState extends State<OrderListTile> {
               Opacity(
                 opacity: isLoading ? 0.5 : 1,
                 child: FlatTile(
-                  onTap: () {},
+                  onTap: widget.onTap,
                   padding: FlatTile.defaultPadding.copyWith(
                     right: kSmallSpace,
                     // Aligns the Expandable button with the title
@@ -79,12 +94,13 @@ class _OrderListTileState extends State<OrderListTile> {
                 ),
               ),
               const Spacer(),
-              Text(
-                Formatter.currency(50),
-                style: textTheme.headline6?.copyWith(
-                  fontWeight: FontWeight.w300,
+              if (_price != null)
+                Text(
+                  Formatter.currency(_price!),
+                  style: textTheme.headline6?.copyWith(
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
-              ),
             ],
           ),
           kExtraSmallSpacerVertical,
@@ -94,7 +110,7 @@ class _OrderListTileState extends State<OrderListTile> {
 
   Widget buildFlexibleSection(OrderListTileState state, TextTheme textTheme) {
     if (state is EmptyState) {
-      bloc.loadProducts();
+      bloc.loadProducts(widget.order);
     }
     if (state is EmptyState || state is LoadingState) {
       return const SizedBox.shrink();

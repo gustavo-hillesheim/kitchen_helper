@@ -33,6 +33,7 @@ class AppModule extends Module {
         Bind((i) => GetOrdersUseCase(i())),
         Bind((i) => GetOrderUseCase(i())),
         Bind((i) => DeleteOrderUseCase(i())),
+        Bind((i) => GetOrderPriceUseCase(i())),
       ];
 
   @override
