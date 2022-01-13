@@ -130,7 +130,7 @@ void main() {
 
   testWidgets('Should call bloc.save if input values are valid',
       (tester) async {
-    final expectedIngredient = const Ingredient(
+    const expectedIngredient = Ingredient(
       name: 'egg',
       quantity: 12,
       measurementUnit: MeasurementUnit.units,
@@ -144,7 +144,8 @@ void main() {
     await tester.enterText(emptyNameFieldFinder, 'egg');
     await tester.enterText(emptyQuantityFieldFinder, '12');
     await tester.enterText(emptyCostFieldFinder, '10.50');
-    await tester.tap(find.byType(MeasurementUnitSelector));
+    await tester.tap(find.byWidgetPredicate(
+        (widget) => widget is DropdownButtonFormField<MeasurementUnit>));
     await tester.pumpAndSettle();
     await tester.tap(find.text(MeasurementUnit.units.label).last);
     await tester.pumpAndSettle();
@@ -174,7 +175,7 @@ void main() {
   testWidgets('Should show error text if save fails', (tester) async {
     final navigator = mockNavigator();
     when(() => bloc.save(egg))
-        .thenAnswer((_) async => FailureState(FakeFailure('Error text')));
+        .thenAnswer((_) async => FailureState(const FakeFailure('Error text')));
 
     await tester.pumpWidget(MaterialApp(
         home: EditIngredientScreen(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../domain/domain.dart';
 import '../../../constants.dart';
 import '../../../utils/utils.dart';
-import '../../../widgets/secondary_button.dart';
 import '../../../widgets/widgets.dart';
 import '../models/editing_recipe_ingredient.dart';
 import 'edit_recipe_ingredient_form.dart';
@@ -13,7 +12,7 @@ typedef OnEditIngredient = void Function(
 typedef OnAddIngredient = ValueChanged<RecipeIngredient>;
 typedef OnDeleteIngredient = ValueChanged<EditingRecipeIngredient>;
 
-class IngredientsList extends StatefulWidget {
+class IngredientsList extends StatelessWidget {
   final OnAddIngredient onAdd;
   final OnEditIngredient onEdit;
   final OnDeleteIngredient onDelete;
@@ -30,25 +29,20 @@ class IngredientsList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<IngredientsList> createState() => _IngredientsListState();
-}
-
-class _IngredientsListState extends State<IngredientsList> {
-  @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
         ListView.builder(
           primary: false,
           shrinkWrap: true,
-          itemCount: widget.ingredients.length,
+          itemCount: ingredients.length,
           padding: kMediumEdgeInsets.copyWith(bottom: kSmallSpace),
           itemBuilder: (_, i) {
-            final ingredient = widget.ingredients[i];
+            final ingredient = ingredients[i];
             return Padding(
               padding: const EdgeInsets.only(bottom: kSmallSpace),
               child: ActionsSlider(
-                onDelete: () => widget.onDelete(ingredient),
+                onDelete: () => onDelete(ingredient),
                 child: IngredientListTile(
                   ingredient,
                   onTap: () => showRecipeIngredientForm(context, ingredient),
@@ -76,15 +70,15 @@ class _IngredientsListState extends State<IngredientsList> {
       builder: (_) {
         return EditRecipeIngredientForm(
           initialValue: initialValue,
-          recipeToIgnore: widget.recipeId,
-          onSave: (recipeIngredient) => setState(() {
+          recipeToIgnore: recipeId,
+          onSave: (recipeIngredient) {
             if (initialValue != null) {
-              widget.onEdit(initialValue, recipeIngredient);
+              onEdit(initialValue, recipeIngredient);
             } else {
-              widget.onAdd(recipeIngredient);
+              onAdd(recipeIngredient);
             }
             Navigator.of(context).pop();
-          }),
+          },
         );
       },
     );

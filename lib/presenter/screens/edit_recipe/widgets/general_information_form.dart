@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
+import '../../../../extensions.dart';
 import '../../../presenter.dart';
 import '../edit_recipe_bloc.dart';
 
@@ -54,12 +55,10 @@ class GeneralInformationForm extends StatelessWidget {
                     ),
                     kSmallSpacerHorizontal,
                     Expanded(
-                      child: ValueListenableBuilder<MeasurementUnit?>(
-                        valueListenable: measurementUnitNotifier,
-                        builder: (_, measurementUnit, __) =>
-                            MeasurementUnitSelector(
-                          value: measurementUnit,
-                          onChange: (m) => measurementUnitNotifier.value = m,
+                      child: measurementUnitNotifier.builder(
+                        (_, value, onChange) => MeasurementUnitSelector(
+                          value: value,
+                          onChange: onChange,
                         ),
                       ),
                     ),
@@ -79,17 +78,15 @@ class GeneralInformationForm extends StatelessWidget {
                   ),
                 ),
                 kSmallSpacerVertical,
-                ValueListenableBuilder<bool>(
-                  valueListenable: canBeSoldNotifier,
-                  builder: (_, canBeSold, __) => CheckboxListTile(
-                    value: canBeSold,
-                    onChanged: (v) => canBeSoldNotifier.value = v ?? false,
+                canBeSoldNotifier.builder(
+                  (_, value, onChange) => CheckboxListTile(
+                    value: value,
+                    onChanged: (v) => onChange(v ?? false),
                     title: const Text('Pode ser vendida?'),
                   ),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: canBeSoldNotifier,
-                  builder: (_, canBeSold, __) => canBeSold
+                canBeSoldNotifier.builder(
+                  (_, canBeSold, __) => canBeSold
                       ? Column(
                           children: [
                             kSmallSpacerVertical,

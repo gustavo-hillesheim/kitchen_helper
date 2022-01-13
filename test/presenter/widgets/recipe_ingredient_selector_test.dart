@@ -1,23 +1,20 @@
-import 'dart:async';
-
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../mocks.dart';
-import '../../../finders.dart';
+import '../../mocks.dart';
+import '../finders.dart';
 
 void main() {
   late RecipeIngredientSelectorService service;
   late OnChangedMock onChanged;
   final dropdownFinder = find.byWidgetPredicate(
-    (widget) => widget is DropdownSearch<SelectorItem>,
+    (widget) => widget is DropdownSearch<RecipeIngredientSelectorItem>,
   );
 
   setUp(() {
@@ -27,7 +24,7 @@ void main() {
 
   Future<void> pumpWidget(
     WidgetTester tester, {
-    EditingRecipeIngredient? initialValue,
+    RecipeIngredientSelectorItem? initialValue,
   }) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
@@ -48,7 +45,8 @@ void main() {
 
   testWidgets('WHEN there are no items SHOULD render Empty state',
       (tester) async {
-    when(() => service.getItems()).thenAnswer((_) async => const Right([]));
+    when(() => service.getItems(getOnly: any(named: 'getOnly')))
+        .thenAnswer((_) async => const Right([]));
 
     await pumpWidget(tester);
 
@@ -66,8 +64,8 @@ void main() {
 
   testWidgets('WHEN service returns Failure SHOULD render Error state',
       (tester) async {
-    when(() => service.getItems()).thenAnswer(
-      (_) async => Left(FakeFailure('some error')),
+    when(() => service.getItems(getOnly: any(named: 'getOnly'))).thenAnswer(
+      (_) async => const Left(FakeFailure('some error')),
     );
 
     await pumpWidget(tester);
@@ -88,13 +86,11 @@ void main() {
       (tester) async {
     await pumpWidget(
       tester,
-      initialValue: const EditingRecipeIngredient(
+      initialValue: const RecipeIngredientSelectorItem(
         id: 1,
         name: 'value',
         type: RecipeIngredientType.ingredient,
         measurementUnit: MeasurementUnit.kilograms,
-        quantity: 1,
-        cost: 1,
       ),
     );
 
@@ -102,7 +98,7 @@ void main() {
   });
 
   testWidgets('WHEN user chooses item SHOULD call onChanged', (tester) async {
-    final cakeRecipeSelectorItem = SelectorItem(
+    final cakeRecipeSelectorItem = RecipeIngredientSelectorItem(
       id: cakeRecipe.id!,
       name: cakeRecipe.name,
       measurementUnit: cakeRecipe.measurementUnit,
@@ -110,7 +106,7 @@ void main() {
     );
 
     when(() => onChanged(any())).thenReturn(null);
-    when(() => service.getItems()).thenAnswer(
+    when(() => service.getItems(getOnly: any(named: 'getOnly'))).thenAnswer(
       (_) async => Right([cakeRecipeSelectorItem]),
     );
 
@@ -129,5 +125,5 @@ void main() {
 }
 
 class OnChangedMock extends Mock {
-  void call(SelectorItem? item);
+  void call(RecipeIngredientSelectorItem? item);
 }

@@ -2,11 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../mocks.dart';
+import '../../mocks.dart';
 
 void main() {
   late RecipeIngredientSelectorService service;
@@ -90,10 +90,10 @@ void main() {
   });
 }
 
-List<SelectorItem> _selectorItems(List items) {
+List<RecipeIngredientSelectorItem> _selectorItems(List items) {
   return items.map((item) {
     if (item is Ingredient) {
-      return SelectorItem(
+      return RecipeIngredientSelectorItem(
         id: item.id!,
         name: item.name,
         measurementUnit: item.measurementUnit,
@@ -101,7 +101,7 @@ List<SelectorItem> _selectorItems(List items) {
       );
     }
     if (item is Recipe) {
-      return SelectorItem(
+      return RecipeIngredientSelectorItem(
         id: item.id!,
         name: item.name,
         measurementUnit: item.measurementUnit,

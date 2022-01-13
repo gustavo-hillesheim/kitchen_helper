@@ -77,7 +77,6 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       maxLines: widget.multiline ?? false ? null : 1,
       decoration: InputDecoration(
         label: Text(widget.name),
-        border: const OutlineInputBorder(),
         prefixText: widget.prefixText,
         hintText: widget.example != null ? 'Ex.: ${widget.example}' : null,
       ),

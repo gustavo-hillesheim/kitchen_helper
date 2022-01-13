@@ -2,29 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../presenter.dart';
-import '../models/editing_recipe_ingredient.dart';
+import '../models/editing_order_product.dart';
 
-class EditRecipeIngredientForm extends StatefulWidget {
-  final ValueChanged<RecipeIngredient> onSave;
-  final EditingRecipeIngredient? initialValue;
-  final int? recipeToIgnore;
+class EditOrderProductForm extends StatefulWidget {
+  final ValueChanged<OrderProduct> onSave;
+  final EditingOrderProduct? initialValue;
 
-  const EditRecipeIngredientForm({
+  const EditOrderProductForm({
     Key? key,
     required this.onSave,
-    this.recipeToIgnore,
     this.initialValue,
   }) : super(key: key);
 
   @override
-  _EditRecipeIngredientFormState createState() =>
-      _EditRecipeIngredientFormState();
+  _EditOrderProductFormState createState() => _EditOrderProductFormState();
 }
 
-class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
+class _EditOrderProductFormState extends State<EditOrderProductForm> {
   final _formKey = GlobalKey<FormState>();
   final _quantityController = TextEditingController();
-  RecipeIngredientSelectorItem? _selectedRecipeIngredient;
+  RecipeIngredientSelectorItem? _selectedOrderProduct;
 
   @override
   void initState() {
@@ -32,11 +29,11 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
     if (widget.initialValue != null) {
       final initialValue = widget.initialValue!;
       _quantityController.text = Formatter.simpleNumber(initialValue.quantity);
-      _selectedRecipeIngredient = RecipeIngredientSelectorItem(
+      _selectedOrderProduct = RecipeIngredientSelectorItem(
         id: initialValue.id,
         name: initialValue.name,
         measurementUnit: initialValue.measurementUnit,
-        type: initialValue.type,
+        type: RecipeIngredientType.recipe,
       );
     }
   }
@@ -58,8 +55,8 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                 children: [
                   Text(
                     widget.initialValue != null
-                        ? 'Editar ingrediente'
-                        : 'Adicionar ingrediente',
+                        ? 'Editar produto'
+                        : 'Adicionar produto',
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   kMediumSpacerVertical,
@@ -67,17 +64,16 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       RecipeIngredientSelector(
+                        showOnly: RecipeIngredientSelectorItems.recipes,
                         initialValue: selectorInitialValue,
-                        recipeToIgnore: widget.recipeToIgnore,
                         onChanged: (item) => setState(() {
-                          _selectedRecipeIngredient = item;
+                          _selectedOrderProduct = item;
                         }),
                       ),
                       kSmallSpacerVertical,
                       AppTextFormField.number(
-                        name:
-                            _selectedRecipeIngredient?.measurementUnit.label ??
-                                'Quantidade',
+                        name: _selectedOrderProduct?.measurementUnit.label ??
+                            'Quantidade',
                         controller: _quantityController,
                       ),
                     ],
@@ -101,7 +97,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
       return RecipeIngredientSelectorItem(
         id: widget.initialValue!.id,
         name: widget.initialValue!.name,
-        type: widget.initialValue!.type,
+        type: RecipeIngredientType.recipe,
         measurementUnit: widget.initialValue!.measurementUnit,
       );
     }
@@ -109,13 +105,12 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
 
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
-      final selectedRecipeIngredient = _selectedRecipeIngredient!;
-      final recipeIngredient = RecipeIngredient(
-        id: selectedRecipeIngredient.id,
-        type: selectedRecipeIngredient.type,
+      final selectedOrderProduct = _selectedOrderProduct!;
+      final orderProduct = OrderProduct(
+        id: selectedOrderProduct.id,
         quantity: double.parse(_quantityController.text.replaceAll(',', '.')),
       );
-      widget.onSave(recipeIngredient);
+      widget.onSave(orderProduct);
     }
   }
 }

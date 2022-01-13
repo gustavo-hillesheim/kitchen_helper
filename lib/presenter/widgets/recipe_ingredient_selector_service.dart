@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../core/core.dart';
-import '../../../../domain/domain.dart';
-import '../../../../extensions.dart';
+import '../../core/core.dart';
+import '../../domain/domain.dart';
+import '../../extensions.dart';
 import 'recipe_ingredient_selector.dart';
 
 class RecipeIngredientSelectorService {
@@ -16,11 +16,19 @@ class RecipeIngredientSelectorService {
     this.getIngredientsUseCase,
   );
 
-  Future<Either<Failure, List<SelectorItem>>> getItems({
+  Future<Either<Failure, List<RecipeIngredientSelectorItem>>> getItems({
     int? recipeToIgnore,
+    RecipeIngredientSelectorItems? getOnly,
   }) async {
-    final recipes = await getRecipesUseCase.execute(const NoParams());
-    final ingredients = await getIngredientsUseCase.execute(const NoParams());
+    final shouldGetRecipes =
+        getOnly != RecipeIngredientSelectorItems.ingredients;
+    final shouldGetIngredients =
+        getOnly != RecipeIngredientSelectorItems.recipes;
+
+    Either<Failure, List<Recipe>> recipes = await _getRecipes(shouldGetRecipes);
+    Either<Failure, List<Ingredient>> ingredients =
+        await _getIngredients(shouldGetIngredients);
+
     final items = recipes.combine(
       ingredients,
       (r, List<Ingredient> i) => _combineRecipesAndIngredients(r, i),
@@ -34,7 +42,20 @@ class RecipeIngredientSelectorService {
     });
   }
 
-  List<SelectorItem> _combineRecipesAndIngredients(
+  Future<Either<Failure, List<Recipe>>> _getRecipes(bool shouldGet) async {
+    return shouldGet
+        ? (await getRecipesUseCase.execute(const NoParams()))
+        : const Right([]);
+  }
+
+  Future<Either<Failure, List<Ingredient>>> _getIngredients(
+      bool shouldGet) async {
+    return shouldGet
+        ? (await getIngredientsUseCase.execute(const NoParams()))
+        : const Right([]);
+  }
+
+  List<RecipeIngredientSelectorItem> _combineRecipesAndIngredients(
       List<Recipe> recipes, List<Ingredient> ingredients) {
     final recipeItems = _recipesAsSelectorItems(recipes);
     final ingredientItems = _ingredientsAsSelectorItems(ingredients);
@@ -45,8 +66,9 @@ class RecipeIngredientSelectorService {
     return items;
   }
 
-  Iterable<SelectorItem> _recipesAsSelectorItems(List<Recipe> recipes) {
-    return recipes.map((r) => SelectorItem(
+  Iterable<RecipeIngredientSelectorItem> _recipesAsSelectorItems(
+      List<Recipe> recipes) {
+    return recipes.map((r) => RecipeIngredientSelectorItem(
           id: r.id!,
           name: r.name,
           type: RecipeIngredientType.recipe,
@@ -54,10 +76,10 @@ class RecipeIngredientSelectorService {
         ));
   }
 
-  Iterable<SelectorItem> _ingredientsAsSelectorItems(
+  Iterable<RecipeIngredientSelectorItem> _ingredientsAsSelectorItems(
     List<Ingredient> ingredients,
   ) {
-    return ingredients.map((i) => SelectorItem(
+    return ingredients.map((i) => RecipeIngredientSelectorItem(
           id: i.id!,
           name: i.name,
           type: RecipeIngredientType.ingredient,
@@ -66,11 +88,11 @@ class RecipeIngredientSelectorService {
   }
 
   Future<Either<Failure, void>> _deepRemoveIgnoredRecipe(
-    List<SelectorItem> items,
+    List<RecipeIngredientSelectorItem> items,
     int ignoredRecipe,
   ) async {
     try {
-      final itemsToRemove = <SelectorItem>[];
+      final itemsToRemove = <RecipeIngredientSelectorItem>[];
       for (final item in items) {
         if (item.type != RecipeIngredientType.recipe) {
           continue;

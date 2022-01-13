@@ -75,5 +75,14 @@ class AppModule extends Module {
           child: (_, __) => const OrdersListScreen(),
           guards: [AppGuard()],
         ),
+        ChildRoute('/edit-order', child: (_, route) {
+          if (route.data is! Order?) {
+            throw Exception('The route /edit-order only accepts values'
+                ' of type Order? as argument');
+          }
+          return EditOrderScreen(
+            initialValue: route.data as Order?,
+          );
+        }),
       ];
 }

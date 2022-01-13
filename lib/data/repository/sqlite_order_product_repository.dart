@@ -24,7 +24,7 @@ class SQLiteOrderProductRepository extends SQLiteRepository<OrderProductEntity>
     implements OrderProductRepository {
   SQLiteOrderProductRepository(SQLiteDatabase database)
       : super(
-          'order_products',
+          'orderProducts',
           'id',
           database,
           fromMap: (map) => OrderProductEntity.fromJson(map),

@@ -33,7 +33,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       emptyText: 'Sem pedidos',
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',
       emptyActionText: 'Adicionar pedido',
-      onAdd: () {},
+      onAdd: () => _goToEditScreen(),
       headerBottom: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -48,5 +48,12 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
         ],
       ),
     );
+  }
+
+  void _goToEditScreen([Order? order]) async {
+    final shouldReload = await EditOrderScreen.navigate(order);
+    if (shouldReload ?? false) {
+      bloc.load();
+    }
   }
 }
