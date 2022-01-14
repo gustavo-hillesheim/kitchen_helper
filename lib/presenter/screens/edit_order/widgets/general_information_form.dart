@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/domain.dart';
 import '../../../../extensions.dart';
 import '../../../presenter.dart';
+import 'calculated_value.dart';
 
 class GeneralInformationForm extends StatelessWidget {
   final TextEditingController clientNameController;
@@ -73,15 +74,35 @@ class GeneralInformationForm extends StatelessWidget {
               ),
             ),
             kMediumSpacerVertical,
-            Text('Custo: ${Formatter.currency(cost)}'),
-            kSmallSpacerVertical,
-            Text('Preço: ${Formatter.currency(price)}'),
-            kSmallSpacerVertical,
-            Text('Desconto: ${Formatter.currency(discount)}'),
-            kSmallSpacerVertical,
-            Text('Preço Final: ${Formatter.currency(price - discount)}'),
-            kSmallSpacerVertical,
-            Text('Lucro: ${Formatter.currency(price - discount - cost)}'),
+            Row(
+              children: [
+                Expanded(
+                  child: CalculatedValue(
+                    title: 'Preço final',
+                    values: [
+                      CalculationValue(value: price, description: 'Preço'),
+                      CalculationValue(
+                        value: -discount,
+                        description: 'Descontos',
+                      ),
+                    ],
+                  ),
+                ),
+                kMediumSpacerHorizontal,
+                Expanded(
+                  child: CalculatedValue(
+                    title: 'Lucro',
+                    values: [
+                      CalculationValue(
+                        value: price - discount,
+                        description: 'Preço final',
+                      ),
+                      CalculationValue(value: -cost, description: 'Custo'),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),

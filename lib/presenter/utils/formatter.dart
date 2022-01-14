@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
 
 class Formatter {
-  static String currency(num number) {
-    return 'R\$${number.toStringAsFixed(2)}';
+  static String currency(num number, {bool symbol = true}) {
+    return (symbol ? 'R\$' : '') + number.toStringAsFixed(2);
   }
 
   static String simpleNumber(num number) {
