@@ -117,31 +117,4 @@ void main() {
       );
     },
   );
-
-  test('WHEN calculateProfitPerQuantitySold is called SHOULD calculate', () {
-    final result = bloc.calculateProfitPerQuantitySold(
-      quantityProduced: 100,
-      quantitySold: 10,
-      pricePerQuantitySold: 25,
-      totalCost: 50,
-    );
-
-    // 25 - (50 / (100 / 10))
-    // 25 - 5
-    expect(result, 20);
-  });
-
-  test('WHEN calculateTotalProfit is called SHOULD calculate', () {
-    final result = bloc.calculateTotalProfit(
-      quantityProduced: 100,
-      quantitySold: 10,
-      pricePerQuantitySold: 25,
-      totalCost: 50,
-    );
-
-    // (25 - (50 / (100 / 10))) * (100 / 10)
-    // (25 - 5) * 10
-    // 20 * 10
-    expect(result, 200);
-  });
 }

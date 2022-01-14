@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../presenter.dart';
+import '../presenter.dart';
 
 class CalculatedValue extends StatelessWidget {
   final String title;

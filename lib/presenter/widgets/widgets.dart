@@ -5,6 +5,7 @@ export 'app_dropdown_button_field.dart';
 export 'app_text_form_field.dart';
 export 'body_with_header.dart';
 export 'bottom_card.dart';
+export 'calculated_value.dart';
 export 'empty.dart';
 export 'expandable.dart';
 export 'flat_tile.dart';

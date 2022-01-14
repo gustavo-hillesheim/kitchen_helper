@@ -5,9 +5,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
-import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:modular_test/modular_test.dart';
 
@@ -30,22 +28,6 @@ final priceFieldFinder = AppTextFormFieldFinder(
   type: TextInputType.number,
   prefix: 'R\$',
 );
-
-void mockProfitCalculation(
-    EditRecipeBloc bloc, double profitPerQuantitySold, double totalProfit) {
-  when(() => bloc.calculateProfitPerQuantitySold(
-        quantityProduced: any(named: 'quantityProduced'),
-        quantitySold: any(named: 'quantitySold'),
-        pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-        totalCost: any(named: 'totalCost'),
-      )).thenAnswer((_) => profitPerQuantitySold);
-  when(() => bloc.calculateTotalProfit(
-        quantityProduced: any(named: 'quantityProduced'),
-        quantitySold: any(named: 'quantitySold'),
-        pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-        totalCost: any(named: 'totalCost'),
-      )).thenAnswer((_) => totalProfit);
-}
 
 Future<void> fillGeneralInformationForm(
   WidgetTester tester, {

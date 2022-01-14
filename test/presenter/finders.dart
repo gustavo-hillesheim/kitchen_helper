@@ -56,3 +56,25 @@ class AppTextFormFieldFinder extends MatchFinder {
     return false;
   }
 }
+
+class CalculatedValueFinder extends MatchFinder {
+  final String title;
+  final double value;
+
+  CalculatedValueFinder({
+    required this.title,
+    required this.value,
+  }) : super(skipOffstage: true);
+
+  @override
+  String get description => 'CalculatedValue(title: $title, value: $value)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is CalculatedValue) {
+      final widget = candidate.widget as CalculatedValue;
+      return widget.title == title && widget.value == value;
+    }
+    return false;
+  }
+}

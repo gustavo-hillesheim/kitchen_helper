@@ -66,7 +66,6 @@ void main() {
     'WHEN recipe is saved with success SHOULD pop page with true result',
     (tester) async {
       final navigator = mockNavigator();
-      mockProfitCalculation(bloc, 10, 100);
       when(() => bloc.save(any()))
           .thenAnswer((_) async => const SuccessState(null));
       when(() => navigator.pop(any())).thenAnswer((_) {});
@@ -100,7 +99,6 @@ void main() {
   testWidgets(
     'WHEN recipe is saved with failure SHOULD show snackbar message',
     (tester) async {
-      mockProfitCalculation(bloc, 10, 100);
       when(() => bloc.save(any()))
           .thenAnswer((_) async => const FailureState(FakeFailure('error')));
 
@@ -119,7 +117,6 @@ void main() {
 
   testWidgets('WHEN has initialValue SHOULD render fields with value',
       (tester) async {
-    mockProfitCalculation(bloc, 10, 100);
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const FailureState(FakeFailure('error')));
     when(() => bloc.getCost(any())).thenAnswer((_) async => const Right(10));
@@ -187,7 +184,6 @@ void main() {
   });
 
   testWidgets('SHOULD be able to edit and delete ingredients', (tester) async {
-    mockProfitCalculation(bloc, 10, 100);
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const FailureState(FakeFailure('error')));
     when(() => bloc.getCost(any())).thenAnswer((_) async => const Right(10));

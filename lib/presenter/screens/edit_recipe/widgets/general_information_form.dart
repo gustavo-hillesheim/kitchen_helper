@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/screens/edit_order/widgets/calculated_value.dart';
+import 'package:kitchen_helper/presenter/widgets/calculated_value.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
