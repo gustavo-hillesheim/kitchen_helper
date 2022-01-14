@@ -4,12 +4,14 @@ import '../../../presenter.dart';
 
 class CalculatedValue extends StatelessWidget {
   final String title;
-  final List<CalculationValue> values;
+  final double value;
+  final List<CalculationStep> calculation;
 
   const CalculatedValue({
     Key? key,
     required this.title,
-    required this.values,
+    required this.value,
+    required this.calculation,
   }) : super(key: key);
 
   @override
@@ -25,28 +27,38 @@ class CalculatedValue extends StatelessWidget {
             children: [
               const Text('R\$'),
               Text(
-                Formatter.currency(_finalValue, symbol: false),
+                Formatter.currency(value, symbol: false),
                 style: const TextStyle(fontSize: 24),
               ),
             ],
           ),
           kSmallSpacerVertical,
-          for (var i = 0; i < values.length; i++) ...[
-            _buildCalculationRow(values[i]),
-            if (i < values.length - 1) const Divider(),
+          for (var i = 0; i < calculation.length; i++) ...[
+            _buildCalculationRow(calculation[i], sign: i > 0),
+            if (i < calculation.length - 1) const Divider(),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildCalculationRow(CalculationValue value) {
+  Widget _buildCalculationRow(CalculationStep value, {required bool sign}) {
     const normalTextStyle = TextStyle(fontSize: 12);
     const currencySymbolTextStyle = TextStyle(fontSize: 10);
 
     return Row(
       children: [
-        Text(value.value < 0 ? '-' : '+', style: normalTextStyle),
+        SizedBox(
+          width: 8,
+          child: sign
+              ? Center(
+                  child: Text(
+                    value.value < 0 ? '-' : '+',
+                    style: normalTextStyle,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
         kExtraSmallSpacerHorizontal,
         const Text('R\$', style: currencySymbolTextStyle),
         Text(
@@ -58,18 +70,14 @@ class CalculatedValue extends StatelessWidget {
       ],
     );
   }
-
-  double get _finalValue {
-    return values.map((v) => v.value).fold(0, (a, b) => a + b);
-  }
 }
 
-class CalculationValue {
+class CalculationStep {
   final double value;
   final String description;
 
-  CalculationValue({
+  CalculationStep(
+    this.description, {
     required this.value,
-    required this.description,
   });
 }

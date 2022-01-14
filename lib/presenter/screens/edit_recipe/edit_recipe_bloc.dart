@@ -75,18 +75,6 @@ class EditRecipeBloc extends AppCubit<void> {
         );
   }
 
-  double calculateProfitPerQuantitySold({
-    required double quantityProduced,
-    required double quantitySold,
-    required double pricePerQuantitySold,
-    required double totalCost,
-  }) {
-    final quantitySoldRatio = quantityProduced / quantitySold;
-    final costPerQuantitySold = totalCost / quantitySoldRatio;
-    final profitPerQuantitySold = pricePerQuantitySold - costPerQuantitySold;
-    return profitPerQuantitySold;
-  }
-
   double calculateTotalProfit({
     required double quantityProduced,
     required double quantitySold,

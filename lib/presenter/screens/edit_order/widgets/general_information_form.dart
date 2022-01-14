@@ -78,13 +78,11 @@ class GeneralInformationForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: CalculatedValue(
-                    title: 'Preço final',
-                    values: [
-                      CalculationValue(value: price, description: 'Preço'),
-                      CalculationValue(
-                        value: -discount,
-                        description: 'Descontos',
-                      ),
+                    title: 'Preço',
+                    value: price - discount,
+                    calculation: [
+                      CalculationStep('Preço base', value: price),
+                      CalculationStep('Descontos', value: -discount),
                     ],
                   ),
                 ),
@@ -92,12 +90,10 @@ class GeneralInformationForm extends StatelessWidget {
                 Expanded(
                   child: CalculatedValue(
                     title: 'Lucro',
-                    values: [
-                      CalculationValue(
-                        value: price - discount,
-                        description: 'Preço final',
-                      ),
-                      CalculationValue(value: -cost, description: 'Custo'),
+                    value: price - discount - cost,
+                    calculation: [
+                      CalculationStep('Preço', value: price - discount),
+                      CalculationStep('Custo', value: -cost),
                     ],
                   ),
                 )

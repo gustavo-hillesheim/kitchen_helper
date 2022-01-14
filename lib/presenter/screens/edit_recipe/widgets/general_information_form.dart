@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kitchen_helper/presenter/screens/edit_order/widgets/calculated_value.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
@@ -119,8 +120,20 @@ class GeneralInformationForm extends StatelessWidget {
               ],
             ),
             kMediumSpacerVertical,
-            Text('Custo total: ${Formatter.currency(cost)}'),
-            _buildProfitIndicators(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: CalculatedValue(
+                    title: 'Custo',
+                    value: cost,
+                    calculation: const [],
+                  ),
+                ),
+                kMediumSpacerHorizontal,
+                Expanded(child: _buildProfitIndicators()),
+              ],
+            )
           ],
         ),
       ),
@@ -152,58 +165,19 @@ class GeneralInformationForm extends StatelessWidget {
           return const Text(GeneralInformationForm.unableToCalculateProfitText);
         }
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            kSmallSpacerVertical,
-            Text(_getProfitPerQuantitySoldLabel(
-              quantityProduced: quantityProduced,
-              quantitySold: quantitySold,
-              pricePerQuantitySold: pricePerQuantitySold,
-              measurementUnit: measurementUnit,
-            )),
-            kSmallSpacerVertical,
-            Text(_getTotalProfitLabel(
-              quantityProduced: quantityProduced,
-              quantitySold: quantitySold,
-              pricePerQuantitySold: pricePerQuantitySold,
-            )),
+        final quantitySoldRatio = quantityProduced / quantitySold;
+        final costPerQuantitySold = cost / quantitySoldRatio;
+
+        return CalculatedValue(
+          title: 'Lucro por ${Formatter.simpleNumber(quantitySold)} '
+              '${measurementUnit.label}',
+          value: pricePerQuantitySold - costPerQuantitySold,
+          calculation: [
+            CalculationStep('Preço', value: pricePerQuantitySold),
+            CalculationStep('Custo', value: -costPerQuantitySold),
           ],
         );
       },
     );
-  }
-
-  String _getProfitPerQuantitySoldLabel({
-    required double quantityProduced,
-    required double quantitySold,
-    required double pricePerQuantitySold,
-    required MeasurementUnit measurementUnit,
-  }) {
-    final profitPerQuantitySold = bloc.calculateProfitPerQuantitySold(
-      quantityProduced: quantityProduced,
-      quantitySold: quantitySold,
-      pricePerQuantitySold: pricePerQuantitySold,
-      totalCost: cost,
-    );
-    return 'Lucro por '
-        '${Formatter.simpleNumber(quantitySold)} '
-        '${measurementUnit.label}: '
-        '${Formatter.currency(profitPerQuantitySold)}';
-  }
-
-  String _getTotalProfitLabel({
-    required double quantityProduced,
-    required double quantitySold,
-    required double pricePerQuantitySold,
-  }) {
-    final profit = bloc.calculateTotalProfit(
-      quantityProduced: quantityProduced,
-      quantitySold: quantitySold,
-      pricePerQuantitySold: pricePerQuantitySold,
-      totalCost: cost,
-    );
-    return 'Lucro total: ${Formatter.currency(profit)}';
   }
 }
