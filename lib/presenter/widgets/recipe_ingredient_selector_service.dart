@@ -18,6 +18,7 @@ class RecipeIngredientSelectorService {
 
   Future<Either<Failure, List<RecipeIngredientSelectorItem>>> getItems({
     int? recipeToIgnore,
+    RecipeFilter? recipeFilter,
     RecipeIngredientSelectorItems? getOnly,
   }) async {
     final shouldGetRecipes =
@@ -25,7 +26,10 @@ class RecipeIngredientSelectorService {
     final shouldGetIngredients =
         getOnly != RecipeIngredientSelectorItems.recipes;
 
-    Either<Failure, List<Recipe>> recipes = await _getRecipes(shouldGetRecipes);
+    Either<Failure, List<Recipe>> recipes = await _getRecipes(
+      shouldGetRecipes,
+      recipeFilter,
+    );
     Either<Failure, List<Ingredient>> ingredients =
         await _getIngredients(shouldGetIngredients);
 
@@ -42,9 +46,12 @@ class RecipeIngredientSelectorService {
     });
   }
 
-  Future<Either<Failure, List<Recipe>>> _getRecipes(bool shouldGet) async {
+  Future<Either<Failure, List<Recipe>>> _getRecipes(
+    bool shouldGet,
+    RecipeFilter? recipeFilter,
+  ) async {
     return shouldGet
-        ? (await getRecipesUseCase.execute(const NoParams()))
+        ? (await getRecipesUseCase.execute(recipeFilter))
         : const Right([]);
   }
 

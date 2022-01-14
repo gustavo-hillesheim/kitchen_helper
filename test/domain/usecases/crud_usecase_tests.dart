@@ -78,7 +78,7 @@ void getUseCaseTests<T extends Entity<ID>, ID>({
 }
 
 typedef GetResult<T> = Future<Either<Failure, List<T>>>;
-typedef GetUseCase<T> = UseCase<Object, List<T>>;
+typedef GetUseCase<T> = UseCase<Object?, List<T>>;
 
 void getAllUseCaseTests<T extends Entity<ID>, ID>({
   required GetUseCase<T> Function() usecaseFn,
@@ -88,7 +88,7 @@ void getAllUseCaseTests<T extends Entity<ID>, ID>({
   When<GetResult<T>> Function(Repository<T, ID>)? mockRepositoryFn,
   Function(Repository<T, ID>)? verifyRepositoryFn,
 }) {
-  GetResult<T> executeUsecase(UseCase<Object, List<T>> usecase) {
+  GetResult<T> executeUsecase(GetUseCase<T> usecase) {
     return (executeUseCaseFn != null
         ? executeUseCaseFn(usecase)
         : usecase.execute(const NoParams()));

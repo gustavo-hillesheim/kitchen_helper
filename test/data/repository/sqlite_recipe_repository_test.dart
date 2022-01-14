@@ -103,6 +103,23 @@ void main() {
           .findByRecipe(sugarWithEggRecipeWithId.id!));
     });
 
+    test('WHEN informing filter SHOULD use where clause on database', () async {
+      when(() => database.findAll(any(), where: any(named: 'where')))
+          .thenAnswer((_) async => []);
+
+      await repository.findAll(
+        filter: RecipeFilter(canBeSold: true),
+      );
+      verify(() => database.findAll(repository.tableName, where: {
+            'canBeSold': 1,
+          }));
+
+      await repository.findAll(filter: RecipeFilter(canBeSold: false));
+      verify(() => database.findAll(repository.tableName, where: {
+            'canBeSold': 0,
+          }));
+    });
+
     testExceptionsOnFindAll(() => repository, () => database, 'recipes');
   });
 

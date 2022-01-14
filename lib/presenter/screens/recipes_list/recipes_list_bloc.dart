@@ -15,4 +15,9 @@ class RecipesListBloc extends AppCubit<List<Recipe>> with ListPageBloc<Recipe> {
     this.deleteUseCase,
     this.saveUseCase,
   ) : super(const LoadingState());
+
+  @override
+  Future<void> load() {
+    return runEither(() => getUseCase.execute(const RecipeFilter()));
+  }
 }

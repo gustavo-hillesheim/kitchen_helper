@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../domain/domain.dart';
 import '../../../../extensions.dart';
 import '../../../presenter.dart';
-import '../../../widgets/calculated_value.dart';
 
 class GeneralInformationForm extends StatelessWidget {
   final TextEditingController clientNameController;

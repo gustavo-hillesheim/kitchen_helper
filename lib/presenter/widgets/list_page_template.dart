@@ -148,7 +148,7 @@ class ListPageTemplate<T> extends StatelessWidget {
 }
 
 mixin ListPageBloc<T> implements BlocBase<ScreenState<List<T>>> {
-  UseCase<Object, List<T>> get getUseCase;
+  UseCase<Object?, List<T>> get getUseCase;
 
   UseCase<T, void> get deleteUseCase;
 

@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../core/core.dart';
 import '../../database/sqlite/sqlite.dart';
@@ -42,12 +43,28 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
   }
 
   @override
-  Future<Either<Failure, List<Recipe>>> findAll() {
-    return super.findAll().onRightThen(
-          (recipes) => recipes
-              .asyncMap((recipe) => _withIngredients(recipe))
-              .then((recipes) => recipes.asEitherList()),
-        );
+  Future<Either<Failure, List<Recipe>>> findAll({RecipeFilter? filter}) async {
+    try {
+      final where = filter != null ? _filterToMap(filter) : null;
+      final entities = await database.findAll(tableName, where: where);
+      final recipes = entities.map(fromMap).toList(growable: false);
+      return recipes
+          .asyncMap((recipe) => _withIngredients(recipe))
+          .then((recipes) => recipes.asEitherList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
+  Map<String, dynamic> _filterToMap(RecipeFilter filter) {
+    final where = <String, dynamic>{};
+    if (filter.canBeSold == true) {
+      where['canBeSold'] = 1;
+    }
+    if (filter.canBeSold == false) {
+      where['canBeSold'] = 0;
+    }
+    return where;
   }
 
   @override

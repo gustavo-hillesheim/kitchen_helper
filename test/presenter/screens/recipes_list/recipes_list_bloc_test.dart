@@ -16,6 +16,7 @@ void main() {
   late RecipesListBloc bloc;
 
   void setup() {
+    registerFallbackValue(const RecipeFilter());
     registerFallbackValue(FakeRecipe());
     saveRecipeUseCase = SaveRecipeUseCaseMock();
     getRecipesUseCase = GetRecipesUseCaseMock();
@@ -36,7 +37,7 @@ void main() {
         const Right([]),
         const Left(FakeFailure('get error'))
       ];
-      when(() => getRecipesUseCase.execute(const NoParams()))
+      when(() => getRecipesUseCase.execute(any()))
           .thenAnswer((_) async => getResponses.removeAt(0));
     },
     build: () => bloc,
@@ -51,7 +52,7 @@ void main() {
       await bloc.load();
     },
     verify: (_) {
-      verify(() => getRecipesUseCase.execute(const NoParams()));
+      verify(() => getRecipesUseCase.execute(const RecipeFilter()));
     },
   );
 
@@ -62,12 +63,12 @@ void main() {
     setUp: () {
       setup();
       final deleteResponses = <Either<Failure, void>>[
-        const Right(null),
+        Right(null),
         Left(FakeFailure('error'))
       ];
       when(() => deleteRecipeUseCase.execute(any()))
           .thenAnswer((_) async => deleteResponses.removeAt(0));
-      when(() => getRecipesUseCase.execute(const NoParams()))
+      when(() => getRecipesUseCase.execute(any()))
           .thenAnswer((_) async => const Right([]));
     },
     build: () => bloc,
@@ -85,7 +86,7 @@ void main() {
     },
     verify: (_) {
       verify(() => deleteRecipeUseCase.execute(cakeRecipe)).called(2);
-      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
+      verify(() => getRecipesUseCase.execute(const RecipeFilter())).called(2);
     },
   );
 
@@ -97,11 +98,11 @@ void main() {
       setup();
       final saveResponses = <Either<Failure, Recipe>>[
         Right(cakeRecipe),
-        Left(FakeFailure('error'))
+        const Left(FakeFailure('error'))
       ];
       when(() => saveRecipeUseCase.execute(any()))
           .thenAnswer((_) async => saveResponses.removeAt(0));
-      when(() => getRecipesUseCase.execute(const NoParams()))
+      when(() => getRecipesUseCase.execute(any()))
           .thenAnswer((_) async => const Right([]));
     },
     build: () => bloc,
@@ -119,7 +120,7 @@ void main() {
     },
     verify: (_) {
       verify(() => saveRecipeUseCase.execute(cakeRecipe)).called(2);
-      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
+      verify(() => getRecipesUseCase.execute(const RecipeFilter())).called(2);
     },
   );
 }

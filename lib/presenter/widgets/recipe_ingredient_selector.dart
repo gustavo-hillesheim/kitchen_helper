@@ -24,6 +24,7 @@ class RecipeIngredientSelector extends StatefulWidget {
   final RecipeIngredientSelectorItem? initialValue;
   final ValueChanged<RecipeIngredientSelectorItem?> onChanged;
   final RecipeIngredientSelectorService? service;
+  final RecipeFilter? recipeFilter;
   final int? recipeToIgnore;
   final RecipeIngredientSelectorItems showOnly;
 
@@ -31,6 +32,7 @@ class RecipeIngredientSelector extends StatefulWidget {
     Key? key,
     required this.onChanged,
     this.initialValue,
+    this.recipeFilter,
     this.service,
     this.recipeToIgnore,
     this.showOnly = RecipeIngredientSelectorItems.all,
@@ -72,6 +74,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
       onFind: (_) => service
           .getItems(
             recipeToIgnore: widget.recipeToIgnore,
+            recipeFilter: widget.recipeFilter,
             getOnly: widget.showOnly,
           )
           .throwOnFailure(),

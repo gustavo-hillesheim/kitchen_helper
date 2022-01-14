@@ -15,6 +15,7 @@ void main() {
   late GetIngredientsUseCase getIngredientsUseCase;
 
   setUp(() {
+    registerFallbackValue(const RecipeFilter());
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipesUseCase = GetRecipesUseCaseMock();
     getIngredientsUseCase = GetIngredientsUseCaseMock();
@@ -27,7 +28,7 @@ void main() {
 
   test('WHEN call getItems SHOULD return both recipes and ingredients',
       () async {
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
@@ -51,7 +52,7 @@ void main() {
       final recipeId = invocation.positionalArguments[0];
       return Right(recipesMap[recipeId]);
     });
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
@@ -72,7 +73,7 @@ void main() {
       final recipeId = invocation.positionalArguments[0];
       return Right(recipesMap[recipeId]);
     });
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, sugarWithEggRecipeWithId]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
