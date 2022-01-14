@@ -16,6 +16,7 @@ class Order extends Equatable implements Entity<int> {
   final DateTime deliveryDate;
   final OrderStatus status;
   final List<OrderProduct> products;
+  final List<Discount> discounts;
 
   const Order({
     this.id,
@@ -25,6 +26,7 @@ class Order extends Equatable implements Entity<int> {
     required this.deliveryDate,
     required this.status,
     required this.products,
+    required this.discounts,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
@@ -39,6 +41,7 @@ class Order extends Equatable implements Entity<int> {
     DateTime? deliveryDate,
     OrderStatus? status,
     List<OrderProduct>? products,
+    List<Discount>? discounts,
   }) {
     return Order(
       id: id ?? this.id,
@@ -48,6 +51,7 @@ class Order extends Equatable implements Entity<int> {
       deliveryDate: deliveryDate ?? this.deliveryDate,
       status: status ?? this.status,
       products: products ?? this.products,
+      discounts: discounts ?? this.discounts,
     );
   }
 
@@ -60,6 +64,7 @@ class Order extends Equatable implements Entity<int> {
         deliveryDate,
         status,
         products,
+        discounts,
       ];
 }
 

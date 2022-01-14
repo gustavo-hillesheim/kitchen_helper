@@ -12,6 +12,7 @@ class GeneralInformationForm extends StatelessWidget {
   final ValueNotifier<OrderStatus?> statusNotifier;
   final double cost;
   final double price;
+  final double discount;
 
   const GeneralInformationForm({
     Key? key,
@@ -22,6 +23,7 @@ class GeneralInformationForm extends StatelessWidget {
     required this.statusNotifier,
     required this.cost,
     required this.price,
+    required this.discount,
   }) : super(key: key);
 
   @override
@@ -75,7 +77,11 @@ class GeneralInformationForm extends StatelessWidget {
             kSmallSpacerVertical,
             Text('Preço: ${Formatter.currency(price)}'),
             kSmallSpacerVertical,
-            Text('Lucro: ${Formatter.currency(price - cost)}'),
+            Text('Desconto: ${Formatter.currency(discount)}'),
+            kSmallSpacerVertical,
+            Text('Preço Final: ${Formatter.currency(price - discount)}'),
+            kSmallSpacerVertical,
+            Text('Lucro: ${Formatter.currency(price - discount - cost)}'),
           ],
         ),
       ),

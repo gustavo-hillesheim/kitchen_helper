@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
+import 'package:kitchen_helper/presenter/screens/edit_order/widgets/discount_list.dart';
 
 import '../../../domain/domain.dart';
 import '../../../extensions.dart';
@@ -30,7 +31,7 @@ class EditOrderScreen extends StatefulWidget {
 class _EditOrderScreenState extends State<EditOrderScreen>
     with SingleTickerProviderStateMixin {
   late final EditOrderBloc bloc;
-  late final _tabController = TabController(length: 2, vsync: this);
+  late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
   final _clientNameController = TextEditingController();
   final _clientAddressController = TextEditingController();
@@ -38,6 +39,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
   final _products = <EditingOrderProduct>[];
+  final _discounts = <Discount>[];
   var _cost = 0.0;
   var _price = 0.0;
 
@@ -48,6 +50,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     if (widget.initialValue != null) {
       _fillControllers(widget.initialValue!);
       _fillCostPriceAndProducts(widget.initialValue!);
+      _discounts.addAll(widget.initialValue!.discounts);
     }
   }
 
@@ -98,6 +101,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
               tabs: const [
                 Tab(text: 'Geral'),
                 Tab(text: 'Produtos'),
+                Tab(text: 'Descontos'),
               ],
             ),
             Expanded(
@@ -112,12 +116,19 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                     statusNotifier: _statusNotifier,
                     cost: _cost,
                     price: _price,
+                    discount: _calculateDiscount(),
                   ),
                   OrderProductsList(
                     onAdd: _onAddProduct,
                     onEdit: _onEditProduct,
                     onDelete: _onDeleteProduct,
                     products: _products,
+                  ),
+                  DiscountList(
+                    discounts: _discounts,
+                    onDelete: _onDeleteDiscount,
+                    onEdit: _onEditDiscount,
+                    onAdd: _onAddDiscount,
                   ),
                 ],
               ),
@@ -149,6 +160,14 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     }
   }
 
+  double _calculateDiscount() {
+    var totalDiscount = 0.0;
+    for (final discount in _discounts) {
+      totalDiscount += discount.calculate(_price);
+    }
+    return totalDiscount;
+  }
+
   Order _createOrder() {
     return Order(
       id: widget.initialValue?.id,
@@ -163,7 +182,27 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 quantity: ep.quantity,
               ))
           .toList(),
+      discounts: _discounts,
     );
+  }
+
+  void _onAddDiscount(Discount discount) {
+    setState(() {
+      _discounts.add(discount);
+    });
+  }
+
+  void _onEditDiscount(Discount oldValue, Discount newValue) {
+    setState(() {
+      final index = _discounts.indexOf(oldValue);
+      _discounts[index] = newValue;
+    });
+  }
+
+  void _onDeleteDiscount(Discount discount) {
+    setState(() {
+      _discounts.remove(discount);
+    });
   }
 
   void _onAddProduct(OrderProduct product) {

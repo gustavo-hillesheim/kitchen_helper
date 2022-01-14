@@ -78,6 +78,15 @@ class SQLiteDatabase {
       FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE,
       FOREIGN KEY (productId) REFERENCES recipes (id) ON DELETE CASCADE
     )''');
+    await db.execute('''
+    CREATE TABLE orderDiscounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      type TEXT NOT NULL,
+      value REAL NOT NULL,
+      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE
+    )''');
   }
 
   Future<T> insideTransaction<T>(TransactionCallback<T> action) async {

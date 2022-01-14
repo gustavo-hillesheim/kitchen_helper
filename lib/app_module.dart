@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'app_guard.dart';
 import 'data/repository/sqlite_ingredient_repository.dart';
+import 'data/repository/sqlite_order_discount_repository.dart';
 import 'data/repository/sqlite_order_product_repository.dart';
 import 'data/repository/sqlite_order_repository.dart';
 import 'data/repository/sqlite_recipe_ingredient_repository.dart';
@@ -19,7 +20,9 @@ class AppModule extends Module {
             (i) => SQLiteRecipeIngredientRepository(i())),
         Bind<RecipeRepository>((i) => SQLiteRecipeRepository(i(), i())),
         Bind<OrderProductRepository>((i) => SQLiteOrderProductRepository(i())),
-        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i())),
+        Bind<OrderDiscountRepository>(
+            (i) => SQLiteOrderDiscountRepository(i())),
+        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i())),
         Bind((i) => SaveIngredientUseCase(i())),
         Bind((i) => GetIngredientsUseCase(i())),
         Bind((i) => GetIngredientUseCase(i())),

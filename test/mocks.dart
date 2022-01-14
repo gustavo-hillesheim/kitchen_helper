@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/data/repository/sqlite_order_discount_repository.dart';
 import 'package:kitchen_helper/data/repository/sqlite_order_product_repository.dart';
 import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
@@ -36,6 +37,9 @@ class RecipeIngredientRepositoryMock extends Mock
 
 class OrderProductRepositoryMock extends Mock
     implements OrderProductRepository {}
+
+class OrderDiscountRepositoryMock extends Mock
+    implements OrderDiscountRepository {}
 
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
@@ -231,6 +235,9 @@ final spidermanOrder = Order(
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
   products: [cakeOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
+  ],
 );
 final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
 
@@ -242,6 +249,9 @@ final batmanOrder = Order(
   deliveryDate: DateTime(2022, 1, 7, 12),
   status: OrderStatus.delivered,
   products: [cakeOrderProduct, iceCreamOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
+  ],
 );
 
 IModularNavigator mockNavigator() {

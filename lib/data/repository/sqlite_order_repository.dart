@@ -1,58 +1,64 @@
-import 'package:fpdart/fpdart.dart' as fp;
+import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:sqflite/sqflite.dart';
 
 import '../../core/core.dart';
 import '../../database/sqlite/sqlite.dart';
 import '../../domain/domain.dart';
 import '../../extensions.dart';
+import 'sqlite_order_discount_repository.dart';
 import 'sqlite_order_product_repository.dart';
 
 class SQLiteOrderRepository extends SQLiteRepository<Order>
     implements OrderRepository {
   final OrderProductRepository orderProductRepository;
+  final OrderDiscountRepository orderDiscountRepository;
 
-  SQLiteOrderRepository(SQLiteDatabase database, this.orderProductRepository)
-      : super(
+  SQLiteOrderRepository(
+    SQLiteDatabase database,
+    this.orderProductRepository,
+    this.orderDiscountRepository,
+  ) : super(
           'orders',
           'id',
           database,
           fromMap: (map) {
             map = Map.from(map);
             map['products'] = [];
+            map['discounts'] = [];
             return Order.fromJson(map);
           },
           toMap: (order) {
             final map = order.toJson();
             map.remove('products');
+            map.remove('discounts');
             return map;
           },
         );
 
   @override
-  Future<fp.Either<Failure, Order?>> findById(int id) {
+  Future<Either<Failure, Order?>> findById(int id) {
     return super.findById(id).onRightThen((order) async {
       if (order != null) {
-        return _withProducts(order);
+        return _withProducts(order)
+            .onRightThen((order) => _withDiscounts(order));
       }
-      return fp.Right(order);
+      return Right(order);
     });
   }
 
   @override
-  Future<fp.Either<Failure, List<Order>>> findAll(
-      {OrdersFilter? filter}) async {
+  Future<Either<Failure, List<Order>>> findAll({OrdersFilter? filter}) async {
     try {
       final where = filter != null ? _filterToWhereMap(filter) : null;
       final entities = await database.findAll(tableName, where: where);
-      final ordersResult = entities
+      final ordersResult = await Future.wait(entities
           .map(fromMap)
           .toList(growable: false)
-          .asyncMap((order) => _withProducts(order))
-          .then((orders) => orders.asEitherList());
-      return ordersResult;
+          .map((order) => _withDiscounts(order)
+              .onRightThen((order) => _withProducts(order))));
+      return ordersResult.asEitherList();
     } on DatabaseException catch (e) {
-      return fp.Left(
-          DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
     }
   }
 
@@ -65,36 +71,41 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   @override
-  Future<fp.Either<Failure, void>> deleteById(int id) {
+  Future<Either<Failure, void>> deleteById(int id) {
     return database.insideTransaction(
       () => super
           .deleteById(id)
+          .onRightThen((_) => orderDiscountRepository.deleteByOrder(id))
           .onRightThen((_) => orderProductRepository.deleteByOrder(id)),
     );
   }
 
   @override
-  Future<fp.Either<Failure, void>> update(Order order) {
+  Future<Either<Failure, void>> update(Order order) {
     return database.insideTransaction(
       () => super
           .update(order)
+          .onRightThen((_) => orderDiscountRepository.deleteByOrder(order.id!))
           .onRightThen((_) => orderProductRepository.deleteByOrder(order.id!))
+          .onRightThen((_) => _createDiscounts(order))
           .onRightThen((_) => _createProducts(order))
-          .onRightThen((_) => const fp.Right(null)),
+          .onRightThen((_) => const Right(null)),
     );
   }
 
   @override
-  Future<fp.Either<Failure, int>> create(Order order) {
+  Future<Either<Failure, int>> create(Order order) {
     return database.insideTransaction(
       () => super.create(order).onRightThen((orderId) {
         order = order.copyWith(id: orderId);
-        return _createProducts(order).onRightThen((_) => fp.Right(orderId));
+        return _createProducts(order)
+            .onRightThen((_) => _createDiscounts(order))
+            .onRightThen((_) => Right(orderId));
       }),
     );
   }
 
-  Future<fp.Either<Failure, List<int>>> _createProducts(Order order) async {
+  Future<Either<Failure, List<int>>> _createProducts(Order order) async {
     final productEntities = _createProductEntities(order);
     final futures = productEntities
         .map((product) => orderProductRepository.create(product));
@@ -108,21 +119,50 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
         .toList(growable: false);
   }
 
-  Future<fp.Either<Failure, Order>> _withProducts(Order order) async {
+  Future<Either<Failure, Order>> _withProducts(Order order) async {
     return _getProducts(order).onRightThen(
-      (products) => fp.Right(order.copyWith(products: products)),
+      (products) => Right(order.copyWith(products: products)),
     );
   }
 
-  Future<fp.Either<Failure, List<OrderProduct>>> _getProducts(
-      Order order) async {
+  Future<Either<Failure, List<OrderProduct>>> _getProducts(Order order) async {
     return orderProductRepository
         .findByOrder(order.id!)
         .onRightThen((productsEntities) {
       final products = productsEntities
           .map((e) => e.toOrderProduct())
           .toList(growable: false);
-      return fp.Right(products);
+      return Right(products);
+    });
+  }
+
+  Future<Either<Failure, List<int>>> _createDiscounts(Order order) async {
+    final discountEntities = _createDiscountEntities(order);
+    final futures = discountEntities
+        .map((discount) => orderDiscountRepository.create(discount));
+    final results = await Future.wait(futures);
+    return results.asEitherList();
+  }
+
+  List<OrderDiscountEntity> _createDiscountEntities(Order order) {
+    return order.discounts
+        .map((d) => OrderDiscountEntity.fromModels(order, d))
+        .toList();
+  }
+
+  Future<Either<Failure, Order>> _withDiscounts(Order order) async {
+    return _getDiscounts(order).onRightThen(
+      (discounts) => Right(order.copyWith(discounts: discounts)),
+    );
+  }
+
+  Future<Either<Failure, List<Discount>>> _getDiscounts(Order order) async {
+    return orderDiscountRepository
+        .findByOrder(order.id!)
+        .onRightThen((discountEntities) {
+      final discounts =
+          discountEntities.map((e) => e.toDiscount()).toList(growable: false);
+      return Right(discounts);
     });
   }
 }
