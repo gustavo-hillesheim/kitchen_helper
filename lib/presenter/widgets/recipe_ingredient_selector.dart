@@ -117,7 +117,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
       );
 
   Widget _errorBuilder(_, __, error) {
-    debugPrint(error.toString());
+    debugPrint('Error on RecipeIngredientSelector: ${error.toString()}');
     if (error is Error) {
       debugPrintStack(stackTrace: error.stackTrace);
     }
@@ -134,9 +134,6 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
 
   bool get _showOnlyRecipes =>
       widget.showOnly == RecipeIngredientSelectorItems.recipes;
-
-  bool get _showOnlyIngredients =>
-      widget.showOnly == RecipeIngredientSelectorItems.ingredients;
 }
 
 class RecipeIngredientSelectorItem extends Equatable {

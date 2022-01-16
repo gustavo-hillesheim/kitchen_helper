@@ -89,6 +89,37 @@ void main() {
       _selectorItems([egg, flour, sugarWithId]),
     );
   });
+
+  test('WHEN getOnly is recipes SHOULD only call getRecipesUseCase', () async {
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
+      (_) async => Right([cakeRecipe, sugarWithEggRecipeWithId]),
+    );
+
+    final result = await service.getItems(
+      getOnly: RecipeIngredientSelectorItems.recipes,
+    );
+
+    expect(
+      result.getRight().toNullable(),
+      _selectorItems([cakeRecipe, sugarWithEggRecipeWithId]),
+    );
+  });
+
+  test('WHEN getOnly is ingredients SHOULD only call getIngredientsUseCase',
+      () async {
+    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
+      (_) async => const Right([sugarWithId, egg, flour]),
+    );
+
+    final result = await service.getItems(
+      getOnly: RecipeIngredientSelectorItems.ingredients,
+    );
+
+    expect(
+      result.getRight().toNullable(),
+      _selectorItems([egg, flour, sugarWithId]),
+    );
+  });
 }
 
 List<RecipeIngredientSelectorItem> _selectorItems(List items) {

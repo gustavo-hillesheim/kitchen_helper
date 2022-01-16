@@ -25,12 +25,16 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     RecipeIngredientSelectorItem? initialValue,
+    RecipeIngredientSelectorItems? showOnly,
+    RecipeFilter? recipeFilter,
   }) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: RecipeIngredientSelector(
           onChanged: onChanged,
           initialValue: initialValue,
+          showOnly: showOnly ?? RecipeIngredientSelectorItems.all,
+          recipeFilter: recipeFilter,
           service: service,
         ),
       ),
@@ -121,6 +125,39 @@ void main() {
     await tester.tap(cakeRecipeFinder);
 
     verify(() => onChanged(cakeRecipeSelectorItem));
+  });
+
+  testWidgets('WHEN getOnly is informed SHOULD call service with it',
+      (tester) async {
+    when(() => service.getItems(getOnly: any(named: 'getOnly'))).thenAnswer(
+      (_) async => const Right([]),
+    );
+    await pumpWidget(tester, showOnly: RecipeIngredientSelectorItems.recipes);
+
+    await tester.tap(dropdownFinder);
+    await tester.pumpAndSettle();
+
+    verify(
+        () => service.getItems(getOnly: RecipeIngredientSelectorItems.recipes));
+  });
+
+  testWidgets('WHEN recipeFilter is informed SHOULD call service with it',
+      (tester) async {
+    const filter = RecipeFilter(canBeSold: true);
+    when(() => service.getItems(
+        getOnly: any(named: 'getOnly'),
+        recipeFilter: any(named: 'recipeFilter'))).thenAnswer(
+      (_) async => const Right([]),
+    );
+    await pumpWidget(tester, recipeFilter: filter);
+
+    await tester.tap(dropdownFinder);
+    await tester.pumpAndSettle();
+
+    verify(() => service.getItems(
+          recipeFilter: filter,
+          getOnly: RecipeIngredientSelectorItems.all,
+        ));
   });
 }
 

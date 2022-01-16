@@ -76,7 +76,7 @@ class CalculationStep {
   final double value;
   final String description;
 
-  CalculationStep(
+  const CalculationStep(
     this.description, {
     required this.value,
   });
