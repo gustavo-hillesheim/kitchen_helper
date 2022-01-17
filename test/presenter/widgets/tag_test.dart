@@ -12,7 +12,7 @@ void main() {
       ),
     ));
 
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.blue,
       foregroundColor: Colors.red,
@@ -20,7 +20,7 @@ void main() {
   });
 }
 
-verifyTag({
+expectTag({
   required String label,
   required Color backgroundColor,
   required Color foregroundColor,

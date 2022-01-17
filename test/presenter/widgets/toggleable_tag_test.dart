@@ -15,7 +15,7 @@ void main() {
     );
     await tester.pumpWidget(MaterialApp(home: widget));
 
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.red,
       foregroundColor: Colors.blue,
@@ -24,7 +24,7 @@ void main() {
     await tester.tap(find.byWidget(widget));
     await tester.pump();
 
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.blue,
       foregroundColor: Colors.red,
@@ -48,7 +48,7 @@ void main() {
       home: widget,
     ));
 
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.red,
       foregroundColor: Colors.blue,
@@ -68,7 +68,7 @@ void main() {
     );
     await tester.pumpWidget(MaterialApp(home: widget));
 
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.red,
       foregroundColor: Colors.blue,
@@ -78,7 +78,7 @@ void main() {
     await tester.pump();
 
     // Should not change
-    verifyTag(
+    expectTag(
       label: 'Test',
       backgroundColor: Colors.red,
       foregroundColor: Colors.blue,

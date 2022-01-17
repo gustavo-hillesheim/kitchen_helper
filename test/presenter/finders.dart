@@ -78,3 +78,40 @@ class CalculatedValueFinder extends MatchFinder {
     return false;
   }
 }
+
+class ToggleableTagFinder extends MatchFinder {
+  final String label;
+  final bool value;
+
+  ToggleableTagFinder({required this.label, required this.value});
+
+  @override
+  String get description => 'ToggleableTag(label: $label, value: $value)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is ToggleableTag) {
+      final widget = candidate.widget as ToggleableTag;
+      return widget.label == label && widget.value == value;
+    }
+    return false;
+  }
+}
+
+class TagFinder extends MatchFinder {
+  final String label;
+
+  TagFinder({required this.label});
+
+  @override
+  String get description => 'Tag(label: $label)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is Tag) {
+      final widget = candidate.widget as Tag;
+      return widget.label == label;
+    }
+    return false;
+  }
+}

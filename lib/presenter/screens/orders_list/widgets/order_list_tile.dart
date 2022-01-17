@@ -11,11 +11,13 @@ typedef OrderListTileState = ScreenState<List<OrderProductData>>;
 class OrderListTile extends StatefulWidget {
   final Order order;
   final VoidCallback onTap;
+  final OrderListTileBloc? bloc;
 
   const OrderListTile(
     this.order, {
     Key? key,
     required this.onTap,
+    this.bloc,
   }) : super(key: key);
 
   @override
@@ -29,7 +31,7 @@ class _OrderListTileState extends State<OrderListTile> {
   @override
   void initState() {
     super.initState();
-    bloc = OrderListTileBloc(Modular.get(), Modular.get());
+    bloc = widget.bloc ?? OrderListTileBloc(Modular.get(), Modular.get());
     bloc.getPrice(widget.order).then((result) {
       result.fold(
         (failure) => debugPrint('Could not get order price ${failure.message}'),
@@ -47,7 +49,7 @@ class _OrderListTileState extends State<OrderListTile> {
     return StreamBuilder<OrderListTileState>(
         stream: bloc.stream,
         builder: (context, snapshot) {
-          final isLoading = bloc.state is LoadingState;
+          final isLoading = snapshot.data is LoadingState;
           return Stack(
             children: [
               Opacity(
@@ -62,7 +64,7 @@ class _OrderListTileState extends State<OrderListTile> {
                   child: Expandable(
                     top: buildTopSection(textTheme),
                     flexibleBuilder: (_) => buildFlexibleSection(
-                      bloc.state,
+                      snapshot.data!,
                       textTheme,
                     ),
                     bottom: buildBottomSection(),

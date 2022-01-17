@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 
 import '../../core/core.dart';
@@ -9,8 +10,11 @@ abstract class OrderRepository implements Repository<Order, int> {
   Future<Either<Failure, List<Order>>> findAll({OrdersFilter? filter});
 }
 
-class OrdersFilter {
+class OrdersFilter extends Equatable {
   final OrderStatus? status;
 
-  OrdersFilter({this.status});
+  const OrdersFilter({this.status});
+
+  @override
+  List<Object?> get props => [status];
 }

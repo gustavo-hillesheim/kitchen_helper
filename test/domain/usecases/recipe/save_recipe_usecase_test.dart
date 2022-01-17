@@ -19,7 +19,7 @@ void main() {
     usecaseFn: () => usecase,
     repositoryFn: () => repository,
     entityWithId: cakeRecipe,
-    entityWithoutId: cakeRecipe.copyWith(id: 2),
-    id: 2,
+    entityWithoutId: cakeRecipeWithoutId,
+    id: 5,
   );
 }

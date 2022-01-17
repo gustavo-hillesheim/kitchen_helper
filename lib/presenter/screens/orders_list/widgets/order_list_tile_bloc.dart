@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 
 import '../../../../core/core.dart';
@@ -36,8 +37,9 @@ class OrderListTileBloc extends AppCubit<List<OrderProductData>> {
         .onRightThen<Failure, Recipe>(
           (recipe) async => recipe != null
               ? Right(recipe)
-              : const Left(
-                  BusinessFailure('Não foi possível encontrar o produto')),
+              : Left(BusinessFailure(
+                  'Não foi possível encontrar o produto ${product.id}',
+                )),
         )
         .onRightThen((recipe) => Right(OrderProductData(
               quantity: product.quantity,
@@ -47,14 +49,17 @@ class OrderListTileBloc extends AppCubit<List<OrderProductData>> {
   }
 }
 
-class OrderProductData {
+class OrderProductData extends Equatable {
   final double quantity;
   final MeasurementUnit measurementUnit;
   final String name;
 
-  OrderProductData({
+  const OrderProductData({
     required this.quantity,
     required this.measurementUnit,
     required this.name,
   });
+
+  @override
+  List<Object?> get props => [quantity, name, measurementUnit];
 }

@@ -31,6 +31,12 @@ class _ExpandableState extends State<Expandable>
   var _isExpanding = false;
 
   @override
+  void dispose() {
+    expansionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

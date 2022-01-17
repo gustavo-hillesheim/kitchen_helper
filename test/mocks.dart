@@ -48,6 +48,16 @@ class RecipeIngredientSelectorServiceMock extends Mock
 
 class GetRecipeUseCaseMock extends Mock implements GetRecipeUseCase {}
 
+class GetOrderUseCaseMock extends Mock implements GetOrderUseCase {}
+
+class GetOrdersUseCaseMock extends Mock implements GetOrdersUseCase {}
+
+class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
+
+class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
+
+class GetOrderPriceUseCaseMock extends Mock implements GetOrderPriceUseCase {}
+
 class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
 
 class GetRecipeCostUseCaseMock extends Mock implements GetRecipeCostUseCase {}
@@ -64,6 +74,8 @@ class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
 
 class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
+
+class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
 class FakeFailure extends Failure {
   const FakeFailure(String message) : super(message);
@@ -135,8 +147,8 @@ final sugarWithEggRecipeWithoutId = Recipe(
 
 final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
 
-final cakeRecipe = Recipe(
-  id: 2,
+final cakeRecipe = cakeRecipeWithoutId.copyWith(id: 5);
+final cakeRecipeWithoutId = Recipe(
   name: 'Cake',
   measurementUnit: MeasurementUnit.units,
   quantityProduced: 1,
@@ -220,6 +232,7 @@ final ingredientsMap = {
 
 final recipesMap = {
   cakeRecipe.id: cakeRecipe,
+  iceCreamRecipe.id: iceCreamRecipe,
   sugarWithEggRecipeWithId.id: sugarWithEggRecipeWithId,
   recipeWithIngredients.id: recipeWithIngredients,
   recipeWithRecipeAndIngredients.id: recipeWithRecipeAndIngredients,
