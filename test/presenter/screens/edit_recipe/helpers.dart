@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../mocks.dart';
 import '../../finders.dart';
@@ -88,43 +83,6 @@ Future<void> addIngredient(
     await tester.pumpAndSettle();
   }
   await tester.tap(find.text('Salvar').last);
-}
-
-void mockRecipeIngredientsSelectorService() {
-  registerFallbackValue(const NoParams());
-  final getRecipeUseCase = GetRecipeUseCaseMock();
-  final getRecipesUseCase = GetRecipesUseCaseMock();
-  final getIngredientsUseCase = GetIngredientsUseCaseMock();
-  when(() => getRecipeUseCase.execute(any()))
-      .thenAnswer((_) async => const Right(null));
-  when(() => getIngredientsUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([egg]));
-  when(() => getRecipesUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([]));
-  initModule(FakeModule(
-    getRecipeUseCase,
-    getRecipesUseCase,
-    getIngredientsUseCase,
-  ));
-}
-
-class FakeModule extends Module {
-  final GetRecipeUseCase getRecipeUseCase;
-  final GetRecipesUseCase getRecipesUseCase;
-  final GetIngredientsUseCase getIngredientsUseCase;
-
-  FakeModule(
-    this.getRecipeUseCase,
-    this.getRecipesUseCase,
-    this.getIngredientsUseCase,
-  );
-
-  @override
-  List<Bind<Object>> get binds => [
-        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
-        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
-        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
-      ];
 }
 
 List<EditingRecipeIngredient> editingRecipeIngredients(Recipe recipe) {

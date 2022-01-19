@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/general_information_form.dart';
+import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/general_recipe_information_form.dart';
 
 import '../../../../mocks.dart';
 import '../../../finders.dart';
@@ -19,7 +19,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: TextEditingController(),
             notesController: TextEditingController(),
             quantitySoldController: TextEditingController(),
@@ -41,7 +41,7 @@ void main() {
     expect(quantitySoldFieldFinder, findsNothing);
     expect(priceFieldFinder, findsNothing);
     expect(
-      find.text(GeneralInformationForm.unableToCalculateProfitText),
+      find.text(GeneralRecipeInformationForm.unableToCalculateProfitText),
       findsNothing,
     );
 
@@ -52,7 +52,7 @@ void main() {
     expect(quantitySoldFieldFinder, findsOneWidget);
     expect(priceFieldFinder, findsOneWidget);
     expect(
-      find.text(GeneralInformationForm.unableToCalculateProfitText),
+      find.text(GeneralRecipeInformationForm.unableToCalculateProfitText),
       findsOneWidget,
     );
   });
@@ -62,7 +62,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: TextEditingController(),
             notesController: TextEditingController(),
             quantitySoldController: TextEditingController(),
@@ -109,7 +109,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: quantityProducedController,
             notesController: notesController,
             quantitySoldController: quantitySoldController,

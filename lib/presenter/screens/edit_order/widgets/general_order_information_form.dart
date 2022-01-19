@@ -4,7 +4,7 @@ import '../../../../domain/domain.dart';
 import '../../../../extensions.dart';
 import '../../../presenter.dart';
 
-class GeneralInformationForm extends StatelessWidget {
+class GeneralOrderInformationForm extends StatelessWidget {
   final TextEditingController clientNameController;
   final TextEditingController clientAddressController;
   final ValueNotifier<DateTime?> orderDateNotifier;
@@ -14,7 +14,7 @@ class GeneralInformationForm extends StatelessWidget {
   final double price;
   final double discount;
 
-  const GeneralInformationForm({
+  const GeneralOrderInformationForm({
     Key? key,
     required this.clientNameController,
     required this.clientAddressController,
@@ -64,9 +64,9 @@ class GeneralInformationForm extends StatelessWidget {
             statusNotifier.builder(
               (_, value, onChange) => AppDropdownButtonField(
                 name: 'Status',
-                values: const {
-                  'Recebido': OrderStatus.ordered,
-                  'Entregue': OrderStatus.delivered,
+                values: {
+                  OrderStatus.ordered.label: OrderStatus.ordered,
+                  OrderStatus.delivered.label: OrderStatus.delivered,
                 },
                 value: value,
                 onChange: onChange,

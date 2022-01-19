@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/widgets/calculated_value.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
@@ -7,7 +6,7 @@ import '../../../../extensions.dart';
 import '../../../presenter.dart';
 import '../edit_recipe_bloc.dart';
 
-class GeneralInformationForm extends StatelessWidget {
+class GeneralRecipeInformationForm extends StatelessWidget {
   static const unableToCalculateProfitText = 'Não é possível calcular o lucro'
       ' ainda';
 
@@ -21,7 +20,7 @@ class GeneralInformationForm extends StatelessWidget {
   final EditRecipeBloc bloc;
   final Recipe? initialValue;
 
-  const GeneralInformationForm({
+  const GeneralRecipeInformationForm({
     Key? key,
     required this.quantityProducedController,
     required this.notesController,
@@ -162,7 +161,8 @@ class GeneralInformationForm extends StatelessWidget {
             quantitySold == null ||
             pricePerQuantitySold == null ||
             measurementUnit == null) {
-          return const Text(GeneralInformationForm.unableToCalculateProfitText);
+          return const Text(
+              GeneralRecipeInformationForm.unableToCalculateProfitText);
         }
 
         final quantitySoldRatio = quantityProduced / quantitySold;

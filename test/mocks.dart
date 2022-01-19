@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/data/repository/sqlite_order_discount_repository.dart';
 import 'package:kitchen_helper/data/repository/sqlite_order_product_repository.dart';
@@ -9,6 +10,7 @@ import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:modular_test/modular_test.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ModularNavigateMock extends Mock implements IModularNavigator {}
@@ -69,6 +71,8 @@ class FakeIngredient extends Fake implements Ingredient {}
 class FakeRecipe extends Fake implements Recipe {}
 
 class FakeOrder extends Fake implements Order {}
+
+class FakeOrderProduct extends Fake implements OrderProduct {}
 
 class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
 
@@ -244,7 +248,7 @@ final iceCreamOrderProduct = OrderProduct(id: iceCreamRecipe.id!, quantity: 2);
 final spidermanOrder = Order(
   clientName: 'Test client',
   clientAddress: 'New York Street, 123',
-  orderDate: DateTime(2022, 1, 1),
+  orderDate: DateTime(2022, 1, 1, 1, 10),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
   products: [cakeOrderProduct],
@@ -258,7 +262,7 @@ final batmanOrder = Order(
   id: 2,
   clientName: 'Batman',
   clientAddress: 'Gotham',
-  orderDate: DateTime(2022, 1, 3),
+  orderDate: DateTime(2022, 1, 3, 1, 15),
   deliveryDate: DateTime(2022, 1, 7, 12),
   status: OrderStatus.delivered,
   products: [cakeOrderProduct, iceCreamOrderProduct],
@@ -271,4 +275,41 @@ IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();
   Modular.navigatorDelegate = navigator;
   return navigator;
+}
+
+void mockRecipeIngredientsSelectorService() {
+  registerFallbackValue(const NoParams());
+  final getRecipeUseCase = GetRecipeUseCaseMock();
+  final getRecipesUseCase = GetRecipesUseCaseMock();
+  final getIngredientsUseCase = GetIngredientsUseCaseMock();
+  when(() => getRecipeUseCase.execute(any()))
+      .thenAnswer((_) async => const Right(null));
+  when(() => getIngredientsUseCase.execute(any()))
+      .thenAnswer((_) async => const Right([egg]));
+  when(() => getRecipesUseCase.execute(any()))
+      .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
+  initModule(FakeModule(
+    getRecipeUseCase,
+    getRecipesUseCase,
+    getIngredientsUseCase,
+  ));
+}
+
+class FakeModule extends Module {
+  final GetRecipeUseCase getRecipeUseCase;
+  final GetRecipesUseCase getRecipesUseCase;
+  final GetIngredientsUseCase getIngredientsUseCase;
+
+  FakeModule(
+    this.getRecipeUseCase,
+    this.getRecipesUseCase,
+    this.getIngredientsUseCase,
+  );
+
+  @override
+  List<Bind<Object>> get binds => [
+        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
+        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
+        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
+      ];
 }

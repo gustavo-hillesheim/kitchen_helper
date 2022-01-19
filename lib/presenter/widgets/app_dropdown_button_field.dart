@@ -30,7 +30,7 @@ class AppDropdownButtonField<T> extends StatelessWidget {
         contentPadding: const EdgeInsets.fromLTRB(12, 22, 12, 13),
       ),
       items: values.entries
-          .map((entry) => DropdownMenuItem<T>(
+          .map((entry) => DropdownMenuItem(
                 value: entry.value,
                 child: Text(entry.key),
               ))

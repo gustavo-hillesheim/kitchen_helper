@@ -80,12 +80,12 @@ class _EditDiscountFormState extends State<EditDiscountForm> {
                       ),
                       kMediumSpacerVertical,
                       _typeNotifier.builder(
-                        (_, value, __) => AppTextFormField(
-                          name: value?.label ?? 'Valor',
+                        (_, type, __) => AppTextFormField.number(
+                          name: type?.label ?? 'Valor',
                           controller: _valueController,
-                          prefixText: value == DiscountType.fixed
+                          prefixText: type == DiscountType.fixed
                               ? 'R\$'
-                              : (value == DiscountType.percentage ? '%' : null),
+                              : (type == DiscountType.percentage ? '%' : null),
                         ),
                       ),
                     ],

@@ -8,7 +8,7 @@ import '../../presenter.dart';
 import '../states.dart';
 import 'edit_recipe_bloc.dart';
 import 'models/editing_recipe_ingredient.dart';
-import 'widgets/general_information_form.dart';
+import 'widgets/general_recipe_information_form.dart';
 import 'widgets/ingredients_list.dart';
 
 class EditRecipeScreen extends StatefulWidget {
@@ -77,7 +77,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   Future<void> _fillControllers(Recipe recipe) async {
     final ingredientsResult = await bloc.getEditingRecipeIngredients(recipe);
     ingredientsResult.fold(
-      (f) => print('Ingredients failure: ${f.message}'),
+      (f) => debugPrint('Could not find ingredients: ${f.message}'),
       (i) => _ingredients.addAll(i),
     );
     _measurementUnitNotifier.value = recipe.measurementUnit;
@@ -87,7 +87,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   Future<void> _fillCost(Recipe recipe) async {
     final result = await bloc.getCost(recipe);
     result.fold(
-      (failure) => print('Cost failure: ${failure.message}'),
+      (failure) => debugPrint('Could not get price: ${failure.message}'),
       (cost) {
         if (mounted) {
           setState(() {
@@ -132,7 +132,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
               child: TabBarView(
                 controller: _tabsController,
                 children: [
-                  GeneralInformationForm(
+                  GeneralRecipeInformationForm(
                     initialValue: widget.initialValue,
                     quantityProducedController: _quantityProducedController,
                     notesController: _notesController,

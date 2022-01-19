@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
-import 'package:kitchen_helper/presenter/screens/edit_order/widgets/discount_list.dart';
 
 import '../../../domain/domain.dart';
 import '../../../extensions.dart';
@@ -9,15 +8,18 @@ import '../../presenter.dart';
 import '../states.dart';
 import 'edit_order_bloc.dart';
 import 'models/editing_order_product.dart';
-import 'widgets/general_information_form.dart';
+import 'widgets/discount_list.dart';
+import 'widgets/general_order_information_form.dart';
 import 'widgets/order_products_list.dart';
 
 class EditOrderScreen extends StatefulWidget {
   final Order? initialValue;
+  final EditOrderBloc? bloc;
 
   const EditOrderScreen({
     Key? key,
     this.initialValue,
+    this.bloc,
   }) : super(key: key);
 
   static Future<bool?> navigate([Order? order]) {
@@ -46,7 +48,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   @override
   void initState() {
     super.initState();
-    bloc = EditOrderBloc(Modular.get(), Modular.get(), Modular.get());
+    bloc = widget.bloc ??
+        EditOrderBloc(Modular.get(), Modular.get(), Modular.get());
     if (widget.initialValue != null) {
       _fillControllers(widget.initialValue!);
       _fillCostPriceAndProducts(widget.initialValue!);
@@ -108,7 +111,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  GeneralInformationForm(
+                  GeneralOrderInformationForm(
                     clientNameController: _clientNameController,
                     clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,

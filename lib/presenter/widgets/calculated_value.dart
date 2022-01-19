@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import '../presenter.dart';
@@ -72,7 +73,7 @@ class CalculatedValue extends StatelessWidget {
   }
 }
 
-class CalculationStep {
+class CalculationStep extends Equatable {
   final double value;
   final String description;
 
@@ -80,4 +81,7 @@ class CalculationStep {
     this.description, {
     required this.value,
   });
+
+  @override
+  List<Object?> get props => [description, value];
 }
