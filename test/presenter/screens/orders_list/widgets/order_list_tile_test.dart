@@ -16,24 +16,30 @@ import '../../../finders.dart';
 void main() {
   late OrderListTileBloc bloc;
   late StreamController<ScreenState<List<OrderProductData>>> streamController;
+  ScreenState<List<OrderProductData>>? state;
+
+  void setState(ScreenState<List<OrderProductData>> newState) {
+    state = newState;
+    streamController.sink.add(newState);
+  }
 
   setUp(() {
     bloc = OrderListTileBlocMock();
     streamController = StreamController();
     when(() => bloc.stream).thenAnswer((_) {
-      streamController.sink.add(const EmptyState());
+      setState(const EmptyState());
       return streamController.stream;
     });
+    when(() => bloc.state).thenAnswer((_) => state!);
   });
 
   testWidgets('SHOULD render order data', (tester) async {
     when(() => bloc.getPrice(batmanOrder))
         .thenAnswer((_) async => const Right(1));
     when(() => bloc.loadProducts(batmanOrder)).thenAnswer((_) async {
-      streamController.sink.add(const LoadingState());
+      setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
-      streamController.sink
-          .add(SuccessState(_productData(batmanOrder.products)));
+      setState(SuccessState(_productData(batmanOrder.products)));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -76,9 +82,9 @@ void main() {
     when(() => bloc.getPrice(spidermanOrder))
         .thenAnswer((_) async => const Left(FakeFailure('price failure')));
     when(() => bloc.loadProducts(spidermanOrder)).thenAnswer((_) async {
-      streamController.sink.add(const LoadingState());
+      setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
-      streamController.sink.add(const FailureState(FakeFailure('failure')));
+      setState(const FailureState(FakeFailure('failure')));
     });
 
     await tester.pumpWidget(MaterialApp(

@@ -131,6 +131,29 @@ void main() {
     await tester.tap(ToggleableTagFinder(label: 'Não Entregue', value: false));
     verify(() => bloc.load(status: OrderStatus.ordered));
   });
+
+  testWidgets(
+      'WHEN navigate to edit screen with filter on AND should reload '
+      'SHOULD reload with filter', (tester) async {
+    final navigator = mockNavigator();
+    when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
+    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+      streamController.sink.add(const SuccessState([]));
+    });
+    await tester.pumpWidget(MaterialApp(
+      home: OrdersListScreen(bloc: bloc),
+    ));
+    // Renders empty
+    await tester.pump();
+
+    await tester.tap(ToggleableTagFinder(label: 'Entregue', value: false));
+    verify(() => bloc.load(status: OrderStatus.delivered));
+
+    await tester.tap(find.text('Adicionar'));
+    await tester.pumpAndSettle();
+
+    verify(() => bloc.load(status: OrderStatus.delivered));
+  });
 }
 
 void mockOrderListTile() {

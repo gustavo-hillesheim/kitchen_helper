@@ -49,7 +49,7 @@ class _OrderListTileState extends State<OrderListTile> {
     return StreamBuilder<OrderListTileState>(
         stream: bloc.stream,
         builder: (context, snapshot) {
-          final isLoading = snapshot.data is LoadingState;
+          final isLoading = bloc.state is LoadingState;
           return Stack(
             children: [
               Opacity(
@@ -64,7 +64,7 @@ class _OrderListTileState extends State<OrderListTile> {
                   child: Expandable(
                     top: buildTopSection(textTheme),
                     flexibleBuilder: (_) => buildFlexibleSection(
-                      snapshot.data!,
+                      bloc.state,
                       textTheme,
                     ),
                     bottom: buildBottomSection(),
