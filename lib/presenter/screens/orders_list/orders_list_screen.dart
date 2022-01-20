@@ -18,6 +18,7 @@ class OrdersListScreen extends StatefulWidget {
 
 class _OrdersListScreenState extends State<OrdersListScreen> {
   late final OrdersListBloc bloc;
+  OrdersFilter? lastFilter;
 
   @override
   void initState() {
@@ -42,7 +43,10 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       emptyActionText: 'Adicionar pedido',
       onAdd: () => _goToEditScreen(),
       headerBottom: OrderFilter(
-        onChange: (filter) => bloc.load(status: filter.status),
+        onChange: (filter) {
+          lastFilter = filter;
+          bloc.load(status: filter.status);
+        },
       ),
     );
   }
@@ -50,7 +54,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
   void _goToEditScreen([Order? order]) async {
     final shouldReload = await EditOrderScreen.navigate(order);
     if (shouldReload ?? false) {
-      bloc.load();
+      bloc.load(status: lastFilter?.status);
     }
   }
 }
