@@ -1,9 +1,12 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
-import 'package:kitchen_helper/data/repository/sqlite_recipe_repository.dart';
 
 import 'app_guard.dart';
 import 'data/repository/sqlite_ingredient_repository.dart';
+import 'data/repository/sqlite_order_discount_repository.dart';
+import 'data/repository/sqlite_order_product_repository.dart';
+import 'data/repository/sqlite_order_repository.dart';
+import 'data/repository/sqlite_recipe_ingredient_repository.dart';
+import 'data/repository/sqlite_recipe_repository.dart';
 import 'database/sqlite/sqlite.dart';
 import 'domain/domain.dart';
 import 'presenter/presenter.dart';
@@ -16,15 +19,24 @@ class AppModule extends Module {
         Bind<RecipeIngredientRepository>(
             (i) => SQLiteRecipeIngredientRepository(i())),
         Bind<RecipeRepository>((i) => SQLiteRecipeRepository(i(), i())),
+        Bind<OrderProductRepository>((i) => SQLiteOrderProductRepository(i())),
+        Bind<OrderDiscountRepository>(
+            (i) => SQLiteOrderDiscountRepository(i())),
+        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i())),
         Bind((i) => SaveIngredientUseCase(i())),
         Bind((i) => GetIngredientsUseCase(i())),
         Bind((i) => GetIngredientUseCase(i())),
         Bind((i) => DeleteIngredientUseCase(i())),
         Bind((i) => SaveRecipeUseCase(i())),
-        Bind<GetRecipesUseCase>((i) => GetRecipesUseCase(i())),
+        Bind((i) => GetRecipesUseCase(i())),
         Bind((i) => GetRecipeUseCase(i())),
         Bind((i) => DeleteRecipeUseCase(i())),
         Bind((i) => GetRecipeCostUseCase(i(), i())),
+        Bind((i) => SaveOrderUseCase(i())),
+        Bind((i) => GetOrdersUseCase(i())),
+        Bind((i) => GetOrderUseCase(i())),
+        Bind((i) => DeleteOrderUseCase(i())),
+        Bind((i) => GetOrderPriceUseCase(i())),
       ];
 
   @override
@@ -60,6 +72,20 @@ class AppModule extends Module {
           }
           return EditRecipeScreen(
             initialValue: route.data as Recipe?,
+          );
+        }),
+        ChildRoute(
+          '/orders',
+          child: (_, __) => const OrdersListScreen(),
+          guards: [AppGuard()],
+        ),
+        ChildRoute('/edit-order', child: (_, route) {
+          if (route.data is! Order?) {
+            throw Exception('The route /edit-order only accepts values'
+                ' of type Order? as argument');
+          }
+          return EditOrderScreen(
+            initialValue: route.data as Order?,
           );
         }),
       ];

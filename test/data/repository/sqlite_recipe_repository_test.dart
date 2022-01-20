@@ -1,13 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/data/repository/sqlite_recipe_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../mocks.dart';
-import '../../sqlite_repository_tests.dart';
+import 'sqlite_repository_tests.dart';
 
 void main() {
   late SQLiteDatabase database;
@@ -100,6 +101,23 @@ void main() {
       verify(() => recipeIngredientRepository.findByRecipe(cakeRecipe.id!));
       verify(() => recipeIngredientRepository
           .findByRecipe(sugarWithEggRecipeWithId.id!));
+    });
+
+    test('WHEN informing filter SHOULD use where clause on database', () async {
+      when(() => database.findAll(any(), where: any(named: 'where')))
+          .thenAnswer((_) async => []);
+
+      await repository.findAll(
+        filter: RecipeFilter(canBeSold: true),
+      );
+      verify(() => database.findAll(repository.tableName, where: {
+            'canBeSold': 1,
+          }));
+
+      await repository.findAll(filter: RecipeFilter(canBeSold: false));
+      verify(() => database.findAll(repository.tableName, where: {
+            'canBeSold': 0,
+          }));
     });
 
     testExceptionsOnFindAll(() => repository, () => database, 'recipes');

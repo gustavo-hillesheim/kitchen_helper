@@ -4,7 +4,7 @@ import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/edit_recipe_ingredient_form.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
 
 import '../../../../mocks.dart';
 import '../../../finders.dart';

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 
 import '../../../../domain/domain.dart';
+import '../../../presenter.dart';
 import '../models/editing_recipe_ingredient.dart';
-import 'recipe_ingredient_selector.dart';
 
 class EditRecipeIngredientForm extends StatefulWidget {
   final ValueChanged<RecipeIngredient> onSave;
@@ -25,15 +24,15 @@ class EditRecipeIngredientForm extends StatefulWidget {
 class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
   final _formKey = GlobalKey<FormState>();
   final _quantityController = TextEditingController();
-  SelectorItem? _selectedRecipeIngredient;
+  RecipeIngredientSelectorItem? _selectedRecipeIngredient;
 
   @override
   void initState() {
     super.initState();
     if (widget.initialValue != null) {
       final initialValue = widget.initialValue!;
-      _quantityController.text = Formatter.simple(initialValue.quantity);
-      _selectedRecipeIngredient = SelectorItem(
+      _quantityController.text = Formatter.simpleNumber(initialValue.quantity);
+      _selectedRecipeIngredient = RecipeIngredientSelectorItem(
         id: initialValue.id,
         name: initialValue.name,
         measurementUnit: initialValue.measurementUnit,
@@ -68,7 +67,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       RecipeIngredientSelector(
-                        initialValue: widget.initialValue,
+                        initialValue: selectorInitialValue,
                         recipeToIgnore: widget.recipeToIgnore,
                         onChanged: (item) => setState(() {
                           _selectedRecipeIngredient = item;
@@ -95,6 +94,17 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
         ),
       ),
     );
+  }
+
+  RecipeIngredientSelectorItem? get selectorInitialValue {
+    if (widget.initialValue != null) {
+      return RecipeIngredientSelectorItem(
+        id: widget.initialValue!.id,
+        name: widget.initialValue!.name,
+        type: widget.initialValue!.type,
+        measurementUnit: widget.initialValue!.measurementUnit,
+      );
+    }
   }
 
   void _save() {

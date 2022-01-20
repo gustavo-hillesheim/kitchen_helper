@@ -1,11 +1,16 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/data/repository/sqlite_order_discount_repository.dart';
+import 'package:kitchen_helper/data/repository/sqlite_order_product_repository.dart';
+import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:modular_test/modular_test.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ModularNavigateMock extends Mock implements IModularNavigator {}
@@ -25,10 +30,18 @@ class DeleteRecipeUseCaseMock extends Mock implements DeleteRecipeUseCase {}
 
 class IngredientRepositoryMock extends Mock implements IngredientRepository {}
 
+class OrderRepositoryMock extends Mock implements OrderRepository {}
+
 class RecipeRepositoryMock extends Mock implements RecipeRepository {}
 
 class RecipeIngredientRepositoryMock extends Mock
     implements RecipeIngredientRepository {}
+
+class OrderProductRepositoryMock extends Mock
+    implements OrderProductRepository {}
+
+class OrderDiscountRepositoryMock extends Mock
+    implements OrderDiscountRepository {}
 
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
@@ -36,6 +49,16 @@ class RecipeIngredientSelectorServiceMock extends Mock
     implements RecipeIngredientSelectorService {}
 
 class GetRecipeUseCaseMock extends Mock implements GetRecipeUseCase {}
+
+class GetOrderUseCaseMock extends Mock implements GetOrderUseCase {}
+
+class GetOrdersUseCaseMock extends Mock implements GetOrdersUseCase {}
+
+class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
+
+class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
+
+class GetOrderPriceUseCaseMock extends Mock implements GetOrderPriceUseCase {}
 
 class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
 
@@ -47,10 +70,16 @@ class FakeIngredient extends Fake implements Ingredient {}
 
 class FakeRecipe extends Fake implements Recipe {}
 
+class FakeOrder extends Fake implements Order {}
+
+class FakeOrderProduct extends Fake implements OrderProduct {}
+
 class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
 
 class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
+
+class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
 class FakeFailure extends Failure {
   const FakeFailure(String message) : super(message);
@@ -122,8 +151,8 @@ final sugarWithEggRecipeWithoutId = Recipe(
 
 final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
 
-final cakeRecipe = Recipe(
-  id: 2,
+final cakeRecipe = cakeRecipeWithoutId.copyWith(id: 5);
+final cakeRecipeWithoutId = Recipe(
   name: 'Cake',
   measurementUnit: MeasurementUnit.units,
   quantityProduced: 1,
@@ -133,6 +162,19 @@ final cakeRecipe = Recipe(
   ingredients: [
     RecipeIngredient.ingredient(flour.id!, quantity: 1),
     RecipeIngredient.recipe(sugarWithEggRecipeWithId.id!, quantity: 5),
+  ],
+);
+
+final iceCreamRecipe = Recipe(
+  id: 4,
+  name: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+  quantityProduced: 2,
+  quantitySold: 2,
+  canBeSold: true,
+  price: 20,
+  ingredients: [
+    RecipeIngredient.ingredient(sugarWithId.id!, quantity: 200),
   ],
 );
 
@@ -194,13 +236,80 @@ final ingredientsMap = {
 
 final recipesMap = {
   cakeRecipe.id: cakeRecipe,
+  iceCreamRecipe.id: iceCreamRecipe,
   sugarWithEggRecipeWithId.id: sugarWithEggRecipeWithId,
   recipeWithIngredients.id: recipeWithIngredients,
   recipeWithRecipeAndIngredients.id: recipeWithRecipeAndIngredients,
 };
 
+final cakeOrderProduct = OrderProduct(id: cakeRecipe.id!, quantity: 1);
+final iceCreamOrderProduct = OrderProduct(id: iceCreamRecipe.id!, quantity: 2);
+
+final spidermanOrder = Order(
+  clientName: 'Test client',
+  clientAddress: 'New York Street, 123',
+  orderDate: DateTime(2022, 1, 1, 1, 10),
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  products: [cakeOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
+  ],
+);
+final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
+
+final batmanOrder = Order(
+  id: 2,
+  clientName: 'Batman',
+  clientAddress: 'Gotham',
+  orderDate: DateTime(2022, 1, 3, 1, 15),
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  products: [cakeOrderProduct, iceCreamOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
+  ],
+);
+
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();
   Modular.navigatorDelegate = navigator;
   return navigator;
+}
+
+void mockRecipeIngredientsSelectorService() {
+  registerFallbackValue(const NoParams());
+  final getRecipeUseCase = GetRecipeUseCaseMock();
+  final getRecipesUseCase = GetRecipesUseCaseMock();
+  final getIngredientsUseCase = GetIngredientsUseCaseMock();
+  when(() => getRecipeUseCase.execute(any()))
+      .thenAnswer((_) async => const Right(null));
+  when(() => getIngredientsUseCase.execute(any()))
+      .thenAnswer((_) async => const Right([egg]));
+  when(() => getRecipesUseCase.execute(any()))
+      .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
+  initModule(FakeModule(
+    getRecipeUseCase,
+    getRecipesUseCase,
+    getIngredientsUseCase,
+  ));
+}
+
+class FakeModule extends Module {
+  final GetRecipeUseCase getRecipeUseCase;
+  final GetRecipesUseCase getRecipesUseCase;
+  final GetIngredientsUseCase getIngredientsUseCase;
+
+  FakeModule(
+    this.getRecipeUseCase,
+    this.getRecipesUseCase,
+    this.getIngredientsUseCase,
+  );
+
+  @override
+  List<Bind<Object>> get binds => [
+        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
+        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
+        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
+      ];
 }

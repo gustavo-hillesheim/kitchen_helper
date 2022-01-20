@@ -24,5 +24,8 @@ class AppWidget extends StatelessWidget {
           headline5: TextStyle(color: Colors.black87),
           headline6: TextStyle(color: Colors.black87),
         ),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
       );
 }

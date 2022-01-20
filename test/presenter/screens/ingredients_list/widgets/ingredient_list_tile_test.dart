@@ -19,10 +19,10 @@ void main() {
     ));
 
     expect(find.text(egg.name), findsOneWidget);
-    expect(find.text(Formatter.money(egg.cost)), findsOneWidget);
+    expect(find.text(Formatter.currency(egg.cost)), findsOneWidget);
     expect(
       find.text(
-          '${Formatter.simple(egg.quantity)} ${egg.measurementUnit.label}'),
+          '${Formatter.simpleNumber(egg.quantity)} ${egg.measurementUnit.label}'),
       findsOneWidget,
     );
 

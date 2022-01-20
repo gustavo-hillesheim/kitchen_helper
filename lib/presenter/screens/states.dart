@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
+
+import '../../core/core.dart';
 
 abstract class ScreenState<T> extends Equatable {
   const ScreenState();

@@ -25,7 +25,7 @@ void main() {
   });
 
   testWidgets('WHEN in LoadingState SHOULD show loader', (tester) async {
-    when(() => bloc.loadRecipes()).thenAnswer((_) async {
+    when(() => bloc.load()).thenAnswer((_) async {
       streamController.sink.add(const LoadingState());
     });
 
@@ -39,7 +39,7 @@ void main() {
 
   testWidgets('WHEN in SuccessState AND has recipes SHOULD show recipes',
       (tester) async {
-    when(() => bloc.loadRecipes()).thenAnswer((_) async {
+    when(() => bloc.load()).thenAnswer((_) async {
       streamController.sink
           .add(SuccessState([cakeRecipe, sugarWithEggRecipeWithId]));
     });
@@ -54,7 +54,7 @@ void main() {
 
   testWidgets('WHEN in SuccessState AND has no recipes SHOULD show empty',
       (tester) async {
-    when(() => bloc.loadRecipes()).thenAnswer((_) async {
+    when(() => bloc.load()).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('WHEN in FailureState SHOULD show error message', (tester) async {
-    when(() => bloc.loadRecipes()).thenAnswer((_) async {
+    when(() => bloc.load()).thenAnswer((_) async {
       streamController.sink.add(FailureState(FakeFailure('failure on load')));
     });
 
@@ -134,7 +134,7 @@ void main() {
   testWidgets(
     'SHOULD be able to delete and undelete recipe',
     (tester) async {
-      when(() => bloc.loadRecipes()).thenAnswer(
+      when(() => bloc.load()).thenAnswer(
           (_) async => streamController.sink.add(SuccessState([cakeRecipe])));
 
       await tester.pumpWidget(
@@ -153,7 +153,7 @@ void main() {
   testWidgets(
     'WHEN delete or undelete fail the user SHOULD be able to retry',
     (tester) async {
-      when(() => bloc.loadRecipes()).thenAnswer(
+      when(() => bloc.load()).thenAnswer(
           (_) async => streamController.sink.add(SuccessState([cakeRecipe])));
 
       await tester.pumpWidget(
@@ -178,7 +178,7 @@ void main() {
           '/edit-recipe',
           arguments: any(named: 'arguments'),
         )).thenAnswer((_) async => false);
-    when(() => bloc.loadRecipes()).thenAnswer(
+    when(() => bloc.load()).thenAnswer(
       (_) async => streamController.sink.add(const SuccessState([])),
     );
 
@@ -196,7 +196,7 @@ void main() {
           '/edit-recipe',
           arguments: any(named: 'arguments'),
         )).thenAnswer((_) async => true);
-    when(() => bloc.loadRecipes()).thenAnswer(
+    when(() => bloc.load()).thenAnswer(
       (_) async => streamController.sink.add(SuccessState([cakeRecipe])),
     );
 
@@ -207,7 +207,7 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe));
-    verify(() => bloc.loadRecipes()).called(2);
+    verify(() => bloc.load()).called(2);
   });
 }
 

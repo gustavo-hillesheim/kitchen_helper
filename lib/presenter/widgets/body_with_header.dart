@@ -5,21 +5,23 @@ import 'package:flutter/material.dart';
 typedef HeaderBuilder = Widget Function(BuildContext context, double height);
 typedef BeforeScrollCallback = bool Function(ScrollEvent event);
 
-class PageTemplate extends StatefulWidget {
-  final PageHeader header;
+/// Used with a scrollable body, so that the header expands or collapses
+/// according to the scroll.
+class BodyWithHeader extends StatefulWidget {
+  final Header header;
   final Widget body;
 
-  const PageTemplate({
+  const BodyWithHeader({
     Key? key,
     required this.header,
     required this.body,
   }) : super(key: key);
 
   @override
-  _PageTemplateState createState() => _PageTemplateState();
+  _BodyWithHeaderState createState() => _BodyWithHeaderState();
 }
 
-class _PageTemplateState extends State<PageTemplate> {
+class _BodyWithHeaderState extends State<BodyWithHeader> {
   late final scrollController = StoppableScrollController(
     beforeScroll: _handleScroll,
   );
@@ -70,14 +72,14 @@ class _PageTemplateState extends State<PageTemplate> {
   }
 }
 
-abstract class PageHeader {
+abstract class Header {
   double get minHeight;
 
   double get maxHeight;
 
   HeaderBuilder get builder;
 
-  factory PageHeader({
+  factory Header({
     required double minHeight,
     required double maxHeight,
     required HeaderBuilder builder,
@@ -89,7 +91,7 @@ abstract class PageHeader {
       );
 }
 
-class _PageHeaderImpl implements PageHeader {
+class _PageHeaderImpl implements Header {
   @override
   final double minHeight;
   @override

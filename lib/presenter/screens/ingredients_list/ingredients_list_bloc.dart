@@ -1,35 +1,19 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
-
-import '../../../core/core.dart';
 import '../../../domain/domain.dart';
+import '../../presenter.dart';
+import '../states.dart';
 
-class IngredientsListBloc extends AppCubit<List<Ingredient>> {
-  final GetIngredientsUseCase getIngredientsUseCase;
-  final SaveIngredientUseCase saveIngredientUseCase;
-  final DeleteIngredientUseCase deleteIngredientsUseCase;
+class IngredientsListBloc extends AppCubit<List<Ingredient>>
+    with ListPageBloc<Ingredient> {
+  @override
+  final GetIngredientsUseCase getUseCase;
+  @override
+  final SaveIngredientUseCase saveUseCase;
+  @override
+  final DeleteIngredientUseCase deleteUseCase;
 
   IngredientsListBloc(
-    this.getIngredientsUseCase,
-    this.saveIngredientUseCase,
-    this.deleteIngredientsUseCase,
+    this.getUseCase,
+    this.saveUseCase,
+    this.deleteUseCase,
   ) : super(const LoadingState());
-
-  Future<void> loadIngredients() {
-    return runEither(() => getIngredientsUseCase.execute(const NoParams()));
-  }
-
-  Future<Either<Failure, void>> delete(Ingredient ingredient) async {
-    return deleteIngredientsUseCase.execute(ingredient).then((result) {
-      loadIngredients();
-      return result;
-    });
-  }
-
-  Future<Either<Failure, Ingredient>> save(Ingredient ingredient) async {
-    return saveIngredientUseCase.execute(ingredient).then((result) {
-      loadIngredients();
-      return result;
-    });
-  }
 }

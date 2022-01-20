@@ -1,35 +1,23 @@
-import 'package:fpdart/fpdart.dart';
-
-import '../../../core/core.dart';
 import '../../../domain/domain.dart';
+import '../../presenter.dart';
 import '../states.dart';
 
-class RecipesListBloc extends AppCubit<List<Recipe>> {
-  final GetRecipesUseCase getRecipesUseCase;
-  final DeleteRecipeUseCase deleteRecipeUseCase;
-  final SaveRecipeUseCase saveRecipeUseCase;
+class RecipesListBloc extends AppCubit<List<Recipe>> with ListPageBloc<Recipe> {
+  @override
+  final GetRecipesUseCase getUseCase;
+  @override
+  final DeleteRecipeUseCase deleteUseCase;
+  @override
+  final SaveRecipeUseCase saveUseCase;
 
   RecipesListBloc(
-    this.getRecipesUseCase,
-    this.deleteRecipeUseCase,
-    this.saveRecipeUseCase,
+    this.getUseCase,
+    this.deleteUseCase,
+    this.saveUseCase,
   ) : super(const LoadingState());
 
-  Future<void> loadRecipes() async {
-    return runEither(() => getRecipesUseCase.execute(const NoParams()));
-  }
-
-  Future<Either<Failure, void>> delete(Recipe recipe) async {
-    return deleteRecipeUseCase.execute(recipe).then((result) {
-      loadRecipes();
-      return result;
-    });
-  }
-
-  Future<Either<Failure, Recipe>> save(Recipe recipe) async {
-    return saveRecipeUseCase.execute(recipe).then((result) {
-      loadRecipes();
-      return result;
-    });
+  @override
+  Future<void> load() {
+    return runEither(() => getUseCase.execute(const RecipeFilter()));
   }
 }

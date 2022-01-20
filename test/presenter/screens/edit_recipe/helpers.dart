@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../mocks.dart';
 import '../../finders.dart';
@@ -31,22 +24,6 @@ final priceFieldFinder = AppTextFormFieldFinder(
   prefix: 'R\$',
 );
 
-void mockProfitCalculation(
-    EditRecipeBloc bloc, double profitPerQuantitySold, double totalProfit) {
-  when(() => bloc.calculateProfitPerQuantitySold(
-        quantityProduced: any(named: 'quantityProduced'),
-        quantitySold: any(named: 'quantitySold'),
-        pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-        totalCost: any(named: 'totalCost'),
-      )).thenAnswer((_) => profitPerQuantitySold);
-  when(() => bloc.calculateTotalProfit(
-        quantityProduced: any(named: 'quantityProduced'),
-        quantitySold: any(named: 'quantitySold'),
-        pricePerQuantitySold: any(named: 'pricePerQuantitySold'),
-        totalCost: any(named: 'totalCost'),
-      )).thenAnswer((_) => totalProfit);
-}
-
 Future<void> fillGeneralInformationForm(
   WidgetTester tester, {
   bool? canBeSold,
@@ -62,17 +39,17 @@ Future<void> fillGeneralInformationForm(
   }
   if (quantityProduced != null) {
     await tester.enterText(
-        quantityProducedFieldFinder, Formatter.simple(quantityProduced));
+        quantityProducedFieldFinder, Formatter.simpleNumber(quantityProduced));
   }
   if (notes != null) {
     await tester.enterText(notesFieldFinder, notes);
   }
   if (quantitySold != null) {
     await tester.enterText(
-        quantitySoldFieldFinder, Formatter.simple(quantitySold));
+        quantitySoldFieldFinder, Formatter.simpleNumber(quantitySold));
   }
   if (price != null) {
-    await tester.enterText(priceFieldFinder, Formatter.simple(price));
+    await tester.enterText(priceFieldFinder, Formatter.simpleNumber(price));
   }
   if (measurementUnit != null) {
     await tester.tap(measurementUnitSelectorFinder);
@@ -96,7 +73,7 @@ Future<void> addIngredient(
         name: 'Quantidade',
         type: TextInputType.number,
       ),
-      Formatter.simple(quantity),
+      Formatter.simpleNumber(quantity),
     );
   }
   if (ingredientName != null) {
@@ -106,43 +83,6 @@ Future<void> addIngredient(
     await tester.pumpAndSettle();
   }
   await tester.tap(find.text('Salvar').last);
-}
-
-void mockRecipeIngredientsSelectorService() {
-  registerFallbackValue(const NoParams());
-  final getRecipeUseCase = GetRecipeUseCaseMock();
-  final getRecipesUseCase = GetRecipesUseCaseMock();
-  final getIngredientsUseCase = GetIngredientsUseCaseMock();
-  when(() => getRecipeUseCase.execute(any()))
-      .thenAnswer((_) async => const Right(null));
-  when(() => getIngredientsUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([egg]));
-  when(() => getRecipesUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([]));
-  initModule(FakeModule(
-    getRecipeUseCase,
-    getRecipesUseCase,
-    getIngredientsUseCase,
-  ));
-}
-
-class FakeModule extends Module {
-  final GetRecipeUseCase getRecipeUseCase;
-  final GetRecipesUseCase getRecipesUseCase;
-  final GetIngredientsUseCase getIngredientsUseCase;
-
-  FakeModule(
-    this.getRecipeUseCase,
-    this.getRecipesUseCase,
-    this.getIngredientsUseCase,
-  );
-
-  @override
-  List<Bind<Object>> get binds => [
-        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
-        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
-        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
-      ];
 }
 
 List<EditingRecipeIngredient> editingRecipeIngredients(Recipe recipe) {

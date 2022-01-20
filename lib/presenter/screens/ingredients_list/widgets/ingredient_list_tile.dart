@@ -25,12 +25,12 @@ class IngredientListTile extends StatelessWidget {
       ),
     );
     final quantityText = Text(
-      '${Formatter.simple(ingredient.quantity)} '
+      '${Formatter.simpleNumber(ingredient.quantity)} '
       '${ingredient.measurementUnit.label}',
       style: textTheme.subtitle2,
     );
     final priceText = Text(
-      Formatter.money(ingredient.cost),
+      Formatter.currency(ingredient.cost),
       style: textTheme.headline5!.copyWith(
         fontWeight: FontWeight.w300,
       ),

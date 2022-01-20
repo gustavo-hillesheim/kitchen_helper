@@ -1,4 +1,3 @@
-import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 
 const kExtraSmallSpace = 4.0;
@@ -13,6 +12,8 @@ const kSmallEdgeInsets = EdgeInsets.all(kSmallSpace);
 const kMediumEdgeInsets = EdgeInsets.all(kMediumSpace);
 const kLargeEdgeInsets = EdgeInsets.all(kLargeSpace);
 
+const kExtraSmallSpacerVertical = SizedBox(height: kExtraSmallSpace);
+const kExtraSmallSpacerHorizontal = SizedBox(width: kExtraSmallSpace);
 const kSmallSpacerVertical = SizedBox(height: kSmallSpace);
 const kMediumSpacerVertical = SizedBox(height: kMediumSpace);
 const kLargeSpacerVertical = SizedBox(height: kLargeSpace);

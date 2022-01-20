@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class FlatTile extends StatelessWidget {
+  static const defaultPadding = EdgeInsets.all(kMediumSpace);
+
   final Widget child;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry padding;
 
   const FlatTile({
     Key? key,
     required this.child,
+    this.padding = defaultPadding,
     this.onTap,
   }) : super(key: key);
 
@@ -23,7 +27,7 @@ class FlatTile extends StatelessWidget {
           borderRadius: kExtraSmallBorder,
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(kMediumSpace),
+            padding: padding,
             child: child,
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
@@ -30,7 +31,7 @@ class AppTextFormFieldFinder extends MatchFinder {
   final String name;
   final TextInputType? type;
   final String? prefix;
-  final String value;
+  final String? value;
 
   AppTextFormFieldFinder({
     required this.name,
@@ -51,7 +52,97 @@ class AppTextFormFieldFinder extends MatchFinder {
       return field.name == name &&
           field.keyboardType == type &&
           field.prefixText == prefix &&
-          field.controller?.text == value;
+          (value == null || value == (field.controller?.text ?? ''));
+    }
+    return false;
+  }
+}
+
+class AppDateTimeFieldFinder extends MatchFinder {
+  final String name;
+
+  AppDateTimeFieldFinder({required this.name});
+
+  @override
+  String get description => 'AppDateTimeField(name: $name)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is AppDateTimeField) {
+      final widget = candidate.widget as AppDateTimeField;
+      return widget.name == name;
+    }
+    return false;
+  }
+}
+
+class CalculatedValueFinder extends MatchFinder {
+  final String title;
+  final double value;
+  final List<CalculationStep>? calculation;
+
+  CalculatedValueFinder({
+    required this.title,
+    required this.value,
+    this.calculation,
+  }) : super(skipOffstage: true);
+
+  @override
+  String get description => 'CalculatedValue(title: $title, value: $value, '
+      'calculation: $calculation)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is CalculatedValue) {
+      final widget = candidate.widget as CalculatedValue;
+      return widget.title == title &&
+          widget.value == value &&
+          calculationMatch(widget.calculation);
+    }
+    return false;
+  }
+
+  bool calculationMatch(List<CalculationStep> widgetCalculation) {
+    if (calculation == null) {
+      return true;
+    }
+    return const DeepCollectionEquality()
+        .equals(calculation!, widgetCalculation);
+  }
+}
+
+class ToggleableTagFinder extends MatchFinder {
+  final String label;
+  final bool value;
+
+  ToggleableTagFinder({required this.label, required this.value});
+
+  @override
+  String get description => 'ToggleableTag(label: $label, value: $value)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is ToggleableTag) {
+      final widget = candidate.widget as ToggleableTag;
+      return widget.label == label && widget.value == value;
+    }
+    return false;
+  }
+}
+
+class TagFinder extends MatchFinder {
+  final String label;
+
+  TagFinder({required this.label});
+
+  @override
+  String get description => 'Tag(label: $label)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is Tag) {
+      final widget = candidate.widget as Tag;
+      return widget.label == label;
     }
     return false;
   }

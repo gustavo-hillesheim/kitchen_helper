@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 import '../../../../domain/domain.dart';
+import '../../../../extensions.dart';
 import '../../../presenter.dart';
 import '../edit_recipe_bloc.dart';
 
-class GeneralInformationForm extends StatelessWidget {
+class GeneralRecipeInformationForm extends StatelessWidget {
   static const unableToCalculateProfitText = 'Não é possível calcular o lucro'
       ' ainda';
 
@@ -19,7 +20,7 @@ class GeneralInformationForm extends StatelessWidget {
   final EditRecipeBloc bloc;
   final Recipe? initialValue;
 
-  const GeneralInformationForm({
+  const GeneralRecipeInformationForm({
     Key? key,
     required this.quantityProducedController,
     required this.notesController,
@@ -54,12 +55,10 @@ class GeneralInformationForm extends StatelessWidget {
                     ),
                     kSmallSpacerHorizontal,
                     Expanded(
-                      child: ValueListenableBuilder<MeasurementUnit?>(
-                        valueListenable: measurementUnitNotifier,
-                        builder: (_, measurementUnit, __) =>
-                            MeasurementUnitSelector(
-                          value: measurementUnit,
-                          onChange: (m) => measurementUnitNotifier.value = m,
+                      child: measurementUnitNotifier.builder(
+                        (_, value, onChange) => MeasurementUnitSelector(
+                          value: value,
+                          onChange: onChange,
                         ),
                       ),
                     ),
@@ -79,17 +78,15 @@ class GeneralInformationForm extends StatelessWidget {
                   ),
                 ),
                 kSmallSpacerVertical,
-                ValueListenableBuilder<bool>(
-                  valueListenable: canBeSoldNotifier,
-                  builder: (_, canBeSold, __) => CheckboxListTile(
-                    value: canBeSold,
-                    onChanged: (v) => canBeSoldNotifier.value = v ?? false,
+                canBeSoldNotifier.builder(
+                  (_, value, onChange) => CheckboxListTile(
+                    value: value,
+                    onChanged: (v) => onChange(v ?? false),
                     title: const Text('Pode ser vendida?'),
                   ),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: canBeSoldNotifier,
-                  builder: (_, canBeSold, __) => canBeSold
+                canBeSoldNotifier.builder(
+                  (_, canBeSold, __) => canBeSold
                       ? Column(
                           children: [
                             kSmallSpacerVertical,
@@ -122,8 +119,20 @@ class GeneralInformationForm extends StatelessWidget {
               ],
             ),
             kMediumSpacerVertical,
-            Text('Custo total: ${Formatter.money(cost)}'),
-            _buildProfitIndicators(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: CalculatedValue(
+                    title: 'Custo',
+                    value: cost,
+                    calculation: const [],
+                  ),
+                ),
+                kMediumSpacerHorizontal,
+                Expanded(child: _buildProfitIndicators()),
+              ],
+            )
           ],
         ),
       ),
@@ -152,61 +161,23 @@ class GeneralInformationForm extends StatelessWidget {
             quantitySold == null ||
             pricePerQuantitySold == null ||
             measurementUnit == null) {
-          return const Text(GeneralInformationForm.unableToCalculateProfitText);
+          return const Text(
+              GeneralRecipeInformationForm.unableToCalculateProfitText);
         }
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            kSmallSpacerVertical,
-            Text(_getProfitPerQuantitySoldLabel(
-              quantityProduced: quantityProduced,
-              quantitySold: quantitySold,
-              pricePerQuantitySold: pricePerQuantitySold,
-              measurementUnit: measurementUnit,
-            )),
-            kSmallSpacerVertical,
-            Text(_getTotalProfitLabel(
-              quantityProduced: quantityProduced,
-              quantitySold: quantitySold,
-              pricePerQuantitySold: pricePerQuantitySold,
-            )),
+        final quantitySoldRatio = quantityProduced / quantitySold;
+        final costPerQuantitySold = cost / quantitySoldRatio;
+
+        return CalculatedValue(
+          title: 'Lucro por ${Formatter.simpleNumber(quantitySold)} '
+              '${measurementUnit.label}',
+          value: pricePerQuantitySold - costPerQuantitySold,
+          calculation: [
+            CalculationStep('Preço', value: pricePerQuantitySold),
+            CalculationStep('Custo', value: -costPerQuantitySold),
           ],
         );
       },
     );
-  }
-
-  String _getProfitPerQuantitySoldLabel({
-    required double quantityProduced,
-    required double quantitySold,
-    required double pricePerQuantitySold,
-    required MeasurementUnit measurementUnit,
-  }) {
-    final profitPerQuantitySold = bloc.calculateProfitPerQuantitySold(
-      quantityProduced: quantityProduced,
-      quantitySold: quantitySold,
-      pricePerQuantitySold: pricePerQuantitySold,
-      totalCost: cost,
-    );
-    return 'Lucro por '
-        '${Formatter.simple(quantitySold)} '
-        '${measurementUnit.label}: '
-        '${Formatter.money(profitPerQuantitySold)}';
-  }
-
-  String _getTotalProfitLabel({
-    required double quantityProduced,
-    required double quantitySold,
-    required double pricePerQuantitySold,
-  }) {
-    final profit = bloc.calculateTotalProfit(
-      quantityProduced: quantityProduced,
-      quantitySold: quantitySold,
-      pricePerQuantitySold: pricePerQuantitySold,
-      totalCost: cost,
-    );
-    return 'Lucro total: ${Formatter.money(profit)}';
   }
 }

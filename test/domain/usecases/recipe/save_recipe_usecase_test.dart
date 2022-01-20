@@ -1,10 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
+import '../crud_usecase_tests.dart';
 
 void main() {
   late SaveRecipeUseCase usecase;
@@ -16,26 +15,11 @@ void main() {
     usecase = SaveRecipeUseCase(repository);
   });
 
-  void mockRecipeRepositorySave(Either<Failure, int> result) {
-    when(() => repository.save(any())).thenAnswer((_) async => result);
-  }
-
-  test('WHEN called SHOULD save the recipe', () async {
-    mockRecipeRepositorySave(const Right(2));
-
-    final result = await usecase.execute(cakeRecipe);
-
-    expect(result.getRight().toNullable(), cakeRecipe.copyWith(id: 2));
-    verify(() => repository.save(cakeRecipe));
-  });
-
-  test('WHEN repository returns Failure SHOULD return Failure too', () async {
-    final failure = FakeFailure('repository failure');
-    mockRecipeRepositorySave(Left(failure));
-
-    final result = await usecase.execute(cakeRecipe);
-
-    expect(result.getLeft().toNullable(), failure);
-    verify(() => repository.save(cakeRecipe));
-  });
+  saveUseCaseTests(
+    usecaseFn: () => usecase,
+    repositoryFn: () => repository,
+    entityWithId: cakeRecipe,
+    entityWithoutId: cakeRecipeWithoutId,
+    id: 5,
+  );
 }

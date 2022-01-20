@@ -2,11 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/recipe_ingredient_selector_service.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
+import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../mocks.dart';
+import '../../mocks.dart';
 
 void main() {
   late RecipeIngredientSelectorService service;
@@ -15,6 +15,7 @@ void main() {
   late GetIngredientsUseCase getIngredientsUseCase;
 
   setUp(() {
+    registerFallbackValue(const RecipeFilter());
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipesUseCase = GetRecipesUseCaseMock();
     getIngredientsUseCase = GetIngredientsUseCaseMock();
@@ -27,7 +28,7 @@ void main() {
 
   test('WHEN call getItems SHOULD return both recipes and ingredients',
       () async {
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
@@ -51,7 +52,7 @@ void main() {
       final recipeId = invocation.positionalArguments[0];
       return Right(recipesMap[recipeId]);
     });
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
@@ -72,7 +73,7 @@ void main() {
       final recipeId = invocation.positionalArguments[0];
       return Right(recipesMap[recipeId]);
     });
-    when(() => getRecipesUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([cakeRecipe, sugarWithEggRecipeWithId]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
@@ -88,12 +89,43 @@ void main() {
       _selectorItems([egg, flour, sugarWithId]),
     );
   });
+
+  test('WHEN getOnly is recipes SHOULD only call getRecipesUseCase', () async {
+    when(() => getRecipesUseCase.execute(any())).thenAnswer(
+      (_) async => Right([cakeRecipe, sugarWithEggRecipeWithId]),
+    );
+
+    final result = await service.getItems(
+      getOnly: RecipeIngredientSelectorItems.recipes,
+    );
+
+    expect(
+      result.getRight().toNullable(),
+      _selectorItems([cakeRecipe, sugarWithEggRecipeWithId]),
+    );
+  });
+
+  test('WHEN getOnly is ingredients SHOULD only call getIngredientsUseCase',
+      () async {
+    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
+      (_) async => const Right([sugarWithId, egg, flour]),
+    );
+
+    final result = await service.getItems(
+      getOnly: RecipeIngredientSelectorItems.ingredients,
+    );
+
+    expect(
+      result.getRight().toNullable(),
+      _selectorItems([egg, flour, sugarWithId]),
+    );
+  });
 }
 
-List<SelectorItem> _selectorItems(List items) {
+List<RecipeIngredientSelectorItem> _selectorItems(List items) {
   return items.map((item) {
     if (item is Ingredient) {
-      return SelectorItem(
+      return RecipeIngredientSelectorItem(
         id: item.id!,
         name: item.name,
         measurementUnit: item.measurementUnit,
@@ -101,7 +133,7 @@ List<SelectorItem> _selectorItems(List items) {
       );
     }
     if (item is Recipe) {
-      return SelectorItem(
+      return RecipeIngredientSelectorItem(
         id: item.id!,
         name: item.name,
         measurementUnit: item.measurementUnit,

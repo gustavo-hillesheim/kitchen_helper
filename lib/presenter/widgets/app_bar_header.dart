@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import 'page_template.dart';
+import 'body_with_header.dart';
 
-class AppBarPageHeader implements PageHeader {
+class AppBarHeader implements Header {
   final String title;
-  final AppBarPageHeaderAction? action;
+  final AppBarHeaderAction? action;
+  final Widget? bottom;
   @override
   final double maxHeight = 250;
   @override
@@ -14,40 +15,51 @@ class AppBarPageHeader implements PageHeader {
   @override
   HeaderBuilder get builder => build;
 
-  AppBarPageHeader({
+  AppBarHeader({
     required this.title,
     required BuildContext context,
     this.action,
+    this.bottom,
   }) : minHeight = kToolbarHeight + MediaQuery.of(context).padding.top;
 
   Widget build(BuildContext context, double availableHeight) {
     final canPop = ModalRoute.of(context)?.canPop ?? false;
 
-    return Container(
-      color: Theme.of(context).colorScheme.primary,
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kLargeSpace),
-              child: Center(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildTitle(context, availableHeight),
-                    const Spacer(),
-                    if (action != null) _buildAction(),
-                  ],
+    return IconTheme(
+      data: const IconThemeData(color: Colors.white),
+      child: Container(
+        color: Theme.of(context).colorScheme.primary,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kLargeSpace),
+                child: Center(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildTitle(context, availableHeight),
+                      const Spacer(),
+                      if (action != null) _buildAction(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            if (canPop)
-              const Positioned(
-                top: 4,
-                left: 4,
-                child: BackButton(color: Colors.white),
-              ),
-          ],
+              if (canPop)
+                const Positioned(
+                  top: 4,
+                  left: 4,
+                  child: BackButton(),
+                ),
+              if (bottom != null)
+                Positioned(
+                  bottom: 4,
+                  left: 4,
+                  right: 4,
+                  child: bottom!,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -94,12 +106,12 @@ class AppBarPageHeader implements PageHeader {
       );
 }
 
-class AppBarPageHeaderAction {
+class AppBarHeaderAction {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
 
-  AppBarPageHeaderAction({
+  AppBarHeaderAction({
     required this.label,
     required this.icon,
     required this.onPressed,

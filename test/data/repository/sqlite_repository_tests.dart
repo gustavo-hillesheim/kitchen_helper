@@ -7,12 +7,13 @@ import 'package:kitchen_helper/database/database.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'mocks.dart';
+import '../../mocks.dart';
 
 void testExceptionsOnFindById(
   SQLiteRepository Function() repositoryFn,
-  SQLiteDatabase Function() databaseFn,
-) {
+  SQLiteDatabase Function() databaseFn, {
+  void Function()? verifications,
+}) {
   test(
       'WHEN database throws a DatabaseException '
       'SHOULD return Failure', () async {
@@ -27,6 +28,9 @@ void testExceptionsOnFindById(
         DatabaseFailure(SQLiteRepository.couldNotFindMessage, exception));
     verify(
         () => database.findById(repository.tableName, repository.idColumn, 1));
+    if (verifications != null) {
+      verifications();
+    }
   });
 
   test(
@@ -45,6 +49,9 @@ void testExceptionsOnFindById(
     }
     verify(
         () => database.findById(repository.tableName, repository.idColumn, 1));
+    if (verifications != null) {
+      verifications();
+    }
   });
 }
 
@@ -128,8 +135,9 @@ void testExceptionsOnDeleteById(
   SQLiteRepository Function() repositoryFn,
   SQLiteDatabase Function() databaseFn,
   String tableName,
-  String idColumn,
-) {
+  String idColumn, {
+  void Function()? verifications,
+}) {
   test(
       'WHEN a DatabaseException is thrown '
       'SHOULD return Failure', () async {
@@ -144,6 +152,9 @@ void testExceptionsOnDeleteById(
     expect(result.getLeft().toNullable()?.message,
         SQLiteRepository.couldNotDeleteMessage);
     verify(() => database.deleteById(tableName, idColumn, 1));
+    if (verifications != null) {
+      verifications();
+    }
   });
 
   test(
@@ -160,14 +171,18 @@ void testExceptionsOnDeleteById(
     } catch (e) {
       verify(() => database.deleteById(any(), any(), any()));
     }
+    if (verifications != null) {
+      verifications();
+    }
   });
 }
 
 void testExceptionsOnFindAll(
   SQLiteRepository Function() repositoryFn,
   SQLiteDatabase Function() databaseFn,
-  String tableName,
-) {
+  String tableName, {
+  void Function()? verifications,
+}) {
   test(
       'WHEN a DatabaseException is thrown '
       'SHOULD return a Failure', () async {
@@ -182,6 +197,9 @@ void testExceptionsOnFindAll(
     expect(result.getLeft().toNullable()?.message,
         SQLiteRepository.couldNotFindAllMessage);
     verify(() => database.findAll(tableName));
+    if (verifications != null) {
+      verifications();
+    }
   });
 
   test(
@@ -197,6 +215,9 @@ void testExceptionsOnFindAll(
     } catch (e) {
       expect(e, isA<Exception>());
       verify(() => database.findAll(tableName));
+      if (verifications != null) {
+        verifications();
+      }
     }
   });
 }

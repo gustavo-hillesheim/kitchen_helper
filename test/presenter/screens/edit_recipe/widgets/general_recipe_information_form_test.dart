@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/general_information_form.dart';
+import 'package:kitchen_helper/presenter/screens/edit_recipe/widgets/general_recipe_information_form.dart';
 
 import '../../../../mocks.dart';
+import '../../../finders.dart';
 import '../helpers.dart';
 
 void main() {
@@ -18,7 +19,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: TextEditingController(),
             notesController: TextEditingController(),
             quantitySoldController: TextEditingController(),
@@ -40,7 +41,7 @@ void main() {
     expect(quantitySoldFieldFinder, findsNothing);
     expect(priceFieldFinder, findsNothing);
     expect(
-      find.text(GeneralInformationForm.unableToCalculateProfitText),
+      find.text(GeneralRecipeInformationForm.unableToCalculateProfitText),
       findsNothing,
     );
 
@@ -51,19 +52,17 @@ void main() {
     expect(quantitySoldFieldFinder, findsOneWidget);
     expect(priceFieldFinder, findsOneWidget);
     expect(
-      find.text(GeneralInformationForm.unableToCalculateProfitText),
+      find.text(GeneralRecipeInformationForm.unableToCalculateProfitText),
       findsOneWidget,
     );
   });
 
   testWidgets('WHEN quantities and price are informed SHOULD show profit info',
       (tester) async {
-    mockProfitCalculation(bloc, 9, 90);
-
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: TextEditingController(),
             notesController: TextEditingController(),
             quantitySoldController: TextEditingController(),
@@ -90,16 +89,16 @@ void main() {
     await tester.pump();
 
     expect(
-      find.text('Lucro por 10 ${MeasurementUnit.units.label}: R\$9.00'),
+      CalculatedValueFinder(
+        title: 'Lucro por 10 ${MeasurementUnit.units.label}',
+        value: 9,
+      ),
       findsOneWidget,
     );
-    expect(find.text('Lucro total: R\$90.00'), findsOneWidget);
   });
 
   testWidgets('WHEN values are informed SHOULD update controllers',
       (tester) async {
-    mockProfitCalculation(bloc, 9, 90);
-
     final quantityProducedController = TextEditingController();
     final notesController = TextEditingController();
     final quantitySoldController = TextEditingController();
@@ -110,7 +109,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: GeneralInformationForm(
+          body: GeneralRecipeInformationForm(
             quantityProducedController: quantityProducedController,
             notesController: notesController,
             quantitySoldController: quantitySoldController,

@@ -3,31 +3,39 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../domain/domain.dart';
-import '../../../../extensions.dart';
-import '../../../presenter.dart';
-import '../models/editing_recipe_ingredient.dart';
+import '../../domain/domain.dart';
+import '../../extensions.dart';
+import '../presenter.dart';
 import 'recipe_ingredient_selector_service.dart';
+
+enum RecipeIngredientSelectorItems { all, ingredients, recipes }
 
 class RecipeIngredientSelector extends StatefulWidget {
   static const emptyText = 'Nenhum registro encontrado';
   static const emptySubtext = 'Adicione ingredientes ou receitas e eles '
       'aparecerão aqui';
+  static const emptyRecipesSubtext = 'Adicione receitas e elas aparecerão aqui';
+  static const emptyIngredientsSubtext =
+      'Adicione ingredientes e eles aparecerão aqui';
   static const errorText = 'Erro';
   static const errorSubtext = 'Não foi possível listar os possíveis '
       'ingredientes';
 
-  final EditingRecipeIngredient? initialValue;
-  final ValueChanged<SelectorItem?> onChanged;
+  final RecipeIngredientSelectorItem? initialValue;
+  final ValueChanged<RecipeIngredientSelectorItem?> onChanged;
   final RecipeIngredientSelectorService? service;
+  final RecipeFilter? recipeFilter;
   final int? recipeToIgnore;
+  final RecipeIngredientSelectorItems showOnly;
 
   const RecipeIngredientSelector({
     Key? key,
     required this.onChanged,
     this.initialValue,
+    this.recipeFilter,
     this.service,
     this.recipeToIgnore,
+    this.showOnly = RecipeIngredientSelectorItems.all,
   }) : super(key: key);
 
   @override
@@ -37,7 +45,7 @@ class RecipeIngredientSelector extends StatefulWidget {
 
 class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   late final RecipeIngredientSelectorService service;
-  SelectorItem? initialValue;
+  RecipeIngredientSelectorItem? initialValue;
 
   @override
   void initState() {
@@ -49,7 +57,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
           Modular.get(),
         );
     if (widget.initialValue != null) {
-      initialValue = SelectorItem(
+      initialValue = RecipeIngredientSelectorItem(
         id: widget.initialValue!.id,
         type: widget.initialValue!.type,
         name: widget.initialValue!.name,
@@ -60,11 +68,15 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownSearch<SelectorItem>(
+    return DropdownSearch<RecipeIngredientSelectorItem>(
       selectedItem: initialValue,
       showSearchBox: true,
       onFind: (_) => service
-          .getItems(recipeToIgnore: widget.recipeToIgnore)
+          .getItems(
+            recipeToIgnore: widget.recipeToIgnore,
+            recipeFilter: widget.recipeFilter,
+            getOnly: widget.showOnly,
+          )
           .throwOnFailure(),
       validator: Validator.required,
       autoValidateMode: AutovalidateMode.onUserInteraction,
@@ -79,7 +91,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
     );
   }
 
-  bool _filterFn(SelectorItem? item, String? search) {
+  bool _filterFn(RecipeIngredientSelectorItem? item, String? search) {
     if (item == null) {
       return false;
     }
@@ -93,31 +105,44 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
         child: CircularProgressIndicator(),
       );
 
-  Widget _emptyBuilder(_, __) => const Empty(
-        text: RecipeIngredientSelector.emptyText,
-        subtext: RecipeIngredientSelector.emptySubtext,
+  Widget _emptyBuilder(_, __) => Center(
+        child: Empty(
+          text: RecipeIngredientSelector.emptyText,
+          subtext: _showAll
+              ? RecipeIngredientSelector.emptySubtext
+              : (_showOnlyRecipes
+                  ? RecipeIngredientSelector.emptyRecipesSubtext
+                  : RecipeIngredientSelector.emptyIngredientsSubtext),
+        ),
       );
 
   Widget _errorBuilder(_, __, error) {
-    debugPrint(error.toString());
+    debugPrint('Error on RecipeIngredientSelector: ${error.toString()}');
     if (error is Error) {
       debugPrintStack(stackTrace: error.stackTrace);
     }
-    return const Empty(
-      text: RecipeIngredientSelector.errorText,
-      subtext: RecipeIngredientSelector.errorSubtext,
-      icon: Icons.error_outline_outlined,
+    return const Center(
+      child: Empty(
+        text: RecipeIngredientSelector.errorText,
+        subtext: RecipeIngredientSelector.errorSubtext,
+        icon: Icons.error_outline_outlined,
+      ),
     );
   }
+
+  bool get _showAll => widget.showOnly == RecipeIngredientSelectorItems.all;
+
+  bool get _showOnlyRecipes =>
+      widget.showOnly == RecipeIngredientSelectorItems.recipes;
 }
 
-class SelectorItem extends Equatable {
+class RecipeIngredientSelectorItem extends Equatable {
   final int id;
   final String name;
   final RecipeIngredientType type;
   final MeasurementUnit measurementUnit;
 
-  const SelectorItem({
+  const RecipeIngredientSelectorItem({
     required this.id,
     required this.name,
     required this.type,

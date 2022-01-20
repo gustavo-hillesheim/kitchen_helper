@@ -57,7 +57,35 @@ class SQLiteDatabase {
       parentRecipeId INTEGER NOT NULL,
       recipeIngredientId INTEGER NOT NULL,
       type TEXT NOT NULL,
-      quantity REAL NOT NULL
+      quantity REAL NOT NULL,
+      FOREIGN KEY (parentRecipeId) REFERENCES recipe (id) ON DELETE CASCADE
+    )''');
+    await db.execute('''
+    CREATE TABLE orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      clientName TEXT NOT NULL,
+      clientAddress TEXT NOT NULL,
+      orderDate INTEGER NOT NULL,
+      deliveryDate INTEGER NOT NULL,
+      status TEXT NOT NULL
+    )''');
+    await db.execute('''
+    CREATE TABLE orderProducts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER NOT NULL,
+      productId INTEGER NOT NULL,
+      quantity REAL NOT NULL,
+      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE,
+      FOREIGN KEY (productId) REFERENCES recipes (id) ON DELETE CASCADE
+    )''');
+    await db.execute('''
+    CREATE TABLE orderDiscounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      type TEXT NOT NULL,
+      value REAL NOT NULL,
+      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE
     )''');
   }
 
@@ -100,8 +128,16 @@ class SQLiteDatabase {
     await _executor.delete(table, where: '$idColumn = ?', whereArgs: [id]);
   }
 
-  Future<List<Map<String, dynamic>>> findAll(String table) async {
-    return await _executor.query(table);
+  Future<List<Map<String, dynamic>>> findAll(
+    String table, {
+    Map<String, dynamic>? where,
+  }) async {
+    final whereObj = _Where.fromMap(where ?? {});
+    return await _executor.query(
+      table,
+      where: whereObj.where,
+      whereArgs: whereObj.whereArgs,
+    );
   }
 
   Future<Map<String, dynamic>?> findById(

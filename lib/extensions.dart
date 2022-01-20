@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:fpdart/fpdart.dart';
 
 import 'core/core.dart';
@@ -78,5 +79,21 @@ extension IterableEitherExtension<L, R> on Iterable<Either<L, R>> {
       elements.add(element.getRight().toNullable()!);
     }
     return Right(elements);
+  }
+}
+
+typedef ValueNotifierBuilder<T> = Widget Function(
+    BuildContext context, T value, ValueChanged<T> onChange);
+
+extension ValueNotifierBuilderExtension<T> on ValueNotifier<T> {
+  Widget builder(ValueNotifierBuilder<T> builder) {
+    return ValueListenableBuilder<T>(
+      valueListenable: this,
+      builder: (context, value, _) => builder(
+        context,
+        value,
+        (newValue) => this.value = newValue,
+      ),
+    );
   }
 }
