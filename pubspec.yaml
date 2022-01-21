@@ -1,5 +1,5 @@
 name: kitchen_helper
-description: A new Flutter project.
+description: App intended to help owner of autonomous kitchens to calculate their expenses and profits.
 
 publish_to: 'none'
 
