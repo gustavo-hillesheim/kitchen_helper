@@ -37,6 +37,21 @@ dev_dependencies:
   mocktail: ^0.2.0
   bloc_test: ^9.0.1
   modular_test: ^1.0.1+1
+  flutter_launcher_icons: ^0.9.2
+  flutter_native_splash: ^1.3.3
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/splash_icon.png
+
+flutter_icons:
+  android: true
+  image_path: "assets/splash_icon.png"
+  adaptive_icon_background: "#2196F3"
+  adaptive_icon_foreground: "assets/splash_icon.png"
+
+flutter_native_splash:
+  color: '#2196F3'
+  image: 'assets/splash_icon.png'

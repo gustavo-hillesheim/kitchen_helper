@@ -6,16 +6,17 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = createTheme();
     return MaterialApp(
-      title: 'Kitchen Helper',
+      title: 'Ajudante de cozinha',
       debugShowCheckedModeBanner: false,
-      theme: createTheme(),
+      theme: theme,
     ).modular();
   }
 
   ThemeData createTheme() => ThemeData(
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.teal,
+          primarySwatch: Colors.blue,
         ),
         scaffoldBackgroundColor: Colors.grey.shade100,
         textTheme: const TextTheme(
