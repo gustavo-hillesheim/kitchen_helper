@@ -6,7 +6,7 @@ import 'models.dart';
 
 part 'recipe.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Recipe extends Equatable implements Entity<int> {
   @override
   final int? id;

@@ -6,7 +6,7 @@ import 'models.dart';
 
 part 'order.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Order extends Equatable implements Entity<int> {
   @override
   final int? id;
