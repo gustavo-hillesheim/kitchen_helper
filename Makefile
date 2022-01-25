@@ -1,3 +1,12 @@
+icons:
+	fvm flutter pub run flutter_launcher_icons:main
+
+splash_screen:
+	fvm flutter pub run flutter_native_splash:create
+
+build_app:
+	fvm flutter build appbundle --obfuscate --split-debug-info=symbols
+
 code_coverage:
 	fvm flutter pub run code_coverage \
 	-m 80 -u --ignoreBarrelFiles \

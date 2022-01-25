@@ -9,7 +9,7 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kitchen Helper'),
+        title: const Text('Ajudante de cozinha'),
       ),
       body: SingleChildScrollView(
         child: Column(
