@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../domain/domain.dart';
@@ -16,11 +17,13 @@ class RecipeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final nameText = Text(
+    final nameText = AutoSizeText(
       recipe.name,
       style: textTheme.headline6!.copyWith(
         fontWeight: FontWeight.w400,
       ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
     final quantityProducedText = Text(
       'Produz ${Formatter.simpleNumber(recipe.quantityProduced)} '

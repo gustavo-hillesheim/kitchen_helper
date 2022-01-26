@@ -24,10 +24,8 @@ class IngredientListTile extends StatelessWidget {
       style: textTheme.headline6!.copyWith(
         fontWeight: FontWeight.w400,
       ),
-      maxLines: 1,
-      minFontSize: textTheme.headline6!.fontSize!,
       softWrap: false,
-      overflow: TextOverflow.fade,
+      overflow: TextOverflow.ellipsis,
     );
     final quantityText = Text(
       '${Formatter.simpleNumber(ingredient.quantity)} '
