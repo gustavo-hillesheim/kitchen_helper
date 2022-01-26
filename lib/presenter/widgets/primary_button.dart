@@ -18,6 +18,9 @@ class PrimaryButton extends StatelessWidget {
       minimumSize: MaterialStateProperty.all(
         const Size.fromHeight(48),
       ),
+      maximumSize: MaterialStateProperty.all(
+        const Size.fromHeight(48),
+      ),
       backgroundColor: MaterialStateProperty.all(
         Theme.of(context).colorScheme.secondary,
       ),
@@ -27,7 +30,11 @@ class PrimaryButton extends StatelessWidget {
       return ElevatedButton(
         style: buttonStyle,
         onPressed: null,
-        child: const Center(child: CircularProgressIndicator()),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+        ),
       );
     }
     return ElevatedButton(
