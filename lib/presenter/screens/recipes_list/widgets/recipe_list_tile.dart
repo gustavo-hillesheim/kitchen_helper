@@ -36,8 +36,8 @@ class RecipeListTile extends StatelessWidget {
       quantityProducedText,
     ];
     if (recipe.canBeSold) {
-      final quantitySold = recipe.quantitySold!;
-      final price = recipe.price!;
+      final quantitySold = recipe.quantitySold ?? 0;
+      final price = recipe.price ?? 0;
       final quantitySoldText = Text(
         'Vende ${Formatter.simpleNumber(quantitySold)} '
         '${recipe.measurementUnit.label} '
