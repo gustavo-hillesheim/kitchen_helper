@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../domain/domain.dart';
@@ -99,13 +98,11 @@ class IngredientListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final nameText = AutoSizeText(
+    final nameText = Text(
       ingredient.name,
       style: textTheme.headline6!.copyWith(
         fontWeight: FontWeight.w400,
       ),
-      softWrap: false,
-      overflow: TextOverflow.ellipsis,
     );
     final quantityText = Text(
       '${Formatter.simpleNumber(ingredient.quantity)} '
@@ -120,18 +117,16 @@ class IngredientListTile extends StatelessWidget {
     );
     final ingredientInfo = Row(
       children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              nameText,
-              kSmallSpacerVertical,
-              priceText,
-            ],
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            nameText,
+            kSmallSpacerVertical,
+            priceText,
+          ],
         ),
-        kMediumSpacerHorizontal,
+        const Spacer(),
         quantityText,
       ],
     );

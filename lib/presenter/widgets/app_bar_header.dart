@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -41,7 +40,6 @@ class AppBarHeader implements Header {
                     children: [
                       _buildTitle(context, availableHeight),
                       const Spacer(),
-                      kMediumSpacerHorizontal,
                       if (action != null) _buildAction(),
                     ],
                   ),
@@ -75,24 +73,23 @@ class AppBarHeader implements Header {
     final textTheme = Theme.of(context).textTheme;
     const kBackButtonSize = 24;
     final animationProgress = _animationProgress(availableHeight);
-    final expandedFontSize = textTheme.headline6!.fontSize! * 1.5;
+    final expandedFontSize = textTheme.headline4!.fontSize!;
     final collapsedFontSize = textTheme.headline6!.fontSize!;
     const expandedPadding = 0;
     const collapsedPadding = kBackButtonSize;
-    final fontSize = collapsedFontSize +
-        (expandedFontSize - collapsedFontSize) * animationProgress;
 
     return Padding(
       padding: EdgeInsets.only(
         left: collapsedPadding +
             (expandedPadding - collapsedPadding) * animationProgress,
       ),
-      child: AutoSizeText(
+      child: Text(
         title,
         style: Theme.of(context).textTheme.headline4!.copyWith(
+              fontSize: collapsedFontSize +
+                  (expandedFontSize - collapsedFontSize) * animationProgress,
               color: Colors.white,
             ),
-        maxFontSize: fontSize.roundToDouble(),
       ),
     );
   }

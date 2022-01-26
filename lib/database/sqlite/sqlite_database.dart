@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../core/core.dart';
 
@@ -27,16 +25,6 @@ class SQLiteDatabase {
   }
 
   static Future<Database> _initDatabase() async {
-    // Used for testing only
-    if (Platform.isWindows) {
-      return databaseFactoryFfi.openDatabase(
-        inMemoryDatabasePath,
-        options: OpenDatabaseOptions(
-          version: _databaseVersion,
-          onCreate: _onCreate,
-        ),
-      );
-    }
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
     Sqflite.setDebugModeOn(true);

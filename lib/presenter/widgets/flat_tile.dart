@@ -20,10 +20,7 @@ class FlatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        borderRadius: kExtraSmallBorder,
-        color: Colors.white,
-      ),
+      color: Colors.white,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
