@@ -161,8 +161,7 @@ class _ImportDialogState extends State<ImportDialog> {
 
   void _handleFilePickerButtonTap() async {
     final result = await FilePicker.platform.pickFiles(
-      allowedExtensions: ['json'],
-      type: FileType.custom,
+      type: FileType.any,
     );
     if (result != null) {
       bloc.readData(result.files.single.path!);
