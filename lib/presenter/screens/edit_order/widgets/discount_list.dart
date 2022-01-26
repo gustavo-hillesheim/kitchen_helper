@@ -1,8 +1,9 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/presenter/screens/edit_order/widgets/edit_discount_form.dart';
 
 import '../../../../domain/domain.dart';
 import '../../../presenter.dart';
+import 'edit_discount_form.dart';
 
 typedef OnEditDiscount = void Function(Discount, Discount);
 typedef OnAddDiscount = ValueChanged<Discount>;
@@ -98,8 +99,16 @@ class DiscountListTile extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          Text(discount.reason, style: reasonStyle),
-          const Spacer(),
+          Expanded(
+            child: AutoSizeText(
+              discount.reason,
+              style: reasonStyle,
+              minFontSize: reasonStyle.fontSize!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          kMediumSpacerHorizontal,
           if (discount.type == DiscountType.fixed)
             Text(Formatter.currency(discount.value), style: valueStyle)
           else

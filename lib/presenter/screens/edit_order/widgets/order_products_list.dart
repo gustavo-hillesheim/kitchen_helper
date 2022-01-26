@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../domain/domain.dart';
@@ -91,11 +92,13 @@ class OrderProductListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final nameText = Text(
+    final nameText = AutoSizeText(
       product.name,
       style: textTheme.headline6!.copyWith(
         fontWeight: FontWeight.w400,
       ),
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
     );
     final priceText = Text(
       Formatter.currency(product.price),
@@ -110,16 +113,18 @@ class OrderProductListTile extends StatelessWidget {
     );
     final productInfo = Row(
       children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            nameText,
-            kSmallSpacerVertical,
-            quantityText,
-          ],
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              nameText,
+              kSmallSpacerVertical,
+              quantityText,
+            ],
+          ),
         ),
-        const Spacer(),
+        kMediumSpacerHorizontal,
         priceText,
       ],
     );
