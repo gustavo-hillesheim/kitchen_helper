@@ -37,11 +37,16 @@ class AppModule extends Module {
         Bind((i) => GetOrderUseCase(i())),
         Bind((i) => DeleteOrderUseCase(i())),
         Bind((i) => GetOrderPriceUseCase(i())),
+        Bind((i) => ImportUseCase(i(), i(), i(), i())),
       ];
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute(Modular.initialRoute, child: (_, __) => const MenuScreen()),
+        ChildRoute(
+          Modular.initialRoute,
+          child: (_, __) => const MenuScreen(),
+          guards: [AppGuard()],
+        ),
         ChildRoute(
           '/ingredients',
           child: (_, __) => const IngredientsListScreen(),

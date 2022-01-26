@@ -48,7 +48,10 @@ extension FutureEitherFailureExtension<R> on Future<Either<Failure, R>> {
   Future<R> throwOnFailure() {
     return then((either) {
       return either.fold(
-        (failure) => throw failure,
+        (failure) {
+          print('Failure ${failure.message}');
+          throw failure;
+        },
         (r) => r,
       );
     });
