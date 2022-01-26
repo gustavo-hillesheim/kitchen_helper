@@ -3,7 +3,7 @@ description: App intended to help owner of autonomous kitchens to calculate thei
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
