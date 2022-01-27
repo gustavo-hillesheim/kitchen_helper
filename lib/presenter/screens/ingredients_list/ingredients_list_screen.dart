@@ -45,7 +45,7 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   }
 
   void _goToEditIngredientScreen([Ingredient? ingredient]) async {
-    final reload = await EditIngredientScreen.navigate(ingredient);
+    final reload = await EditIngredientScreen.navigate(ingredient?.id);
     if (reload ?? false) {
       bloc.load();
     }

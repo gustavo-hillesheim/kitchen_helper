@@ -50,12 +50,12 @@ class AppModule extends Module {
         ChildRoute(
           '/edit-ingredient',
           child: (_, route) {
-            if (route.data is! Ingredient?) {
+            if (route.data is! int?) {
               throw Exception('The route /edit-ingredient only accepts values'
-                  ' of type Ingredient? as argument');
+                  ' of type int? as argument');
             }
             return EditIngredientScreen(
-              initialValue: route.data as Ingredient?,
+              id: route.data as int?,
             );
           },
           guards: [AppGuard()],

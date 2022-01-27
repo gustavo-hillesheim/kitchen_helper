@@ -121,7 +121,7 @@ void main() {
     'Should navigate to EditIngredientScreen when IngredientListTile is tapped',
     (tester) async {
       final navigator = mockNavigator();
-      when(() => navigator.pushNamed(any(), arguments: egg))
+      when(() => navigator.pushNamed(any(), arguments: egg.id))
           .thenAnswer((_) async => false);
       when(() => bloc.load()).thenAnswer(
           (_) async => streamController.sink.add(const SuccessState([egg])));
@@ -133,7 +133,7 @@ void main() {
 
       await tester.tap(find.byType(IngredientListTile));
 
-      verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg));
+      verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg.id));
     },
   );
 
