@@ -207,7 +207,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
 
   Widget _buildLoadingOverlay() => Positioned.fill(
         child: Container(
-          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.2),
+          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
           child: const Center(
             child: CircularProgressIndicator(),
           ),

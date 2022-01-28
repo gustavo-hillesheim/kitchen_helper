@@ -10,16 +10,38 @@ class EditOrderBloc extends AppCubit<Order> {
   final SaveOrderUseCase saveOrderUseCase;
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
+  final GetOrderUseCase getOrderUseCase;
 
   EditOrderBloc(
     this.saveOrderUseCase,
     this.getRecipeUseCase,
     this.getRecipeCostUseCase,
+    this.getOrderUseCase,
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(Order order) async {
-    await runEither(() => saveOrderUseCase.execute(order));
+    await runEither(() async {
+      await Future.delayed(Duration(seconds: 1));
+      return saveOrderUseCase.execute(order);
+    });
     return state;
+  }
+
+  Future<void> loadOrder(int id) async {
+    emit(const LoadingOrderState());
+    final result = await getOrderUseCase.execute(id);
+    result.fold(
+      (f) => emit(FailureState(f)),
+      (order) {
+        if (order == null) {
+          emit(const FailureState(
+            BusinessFailure('Não foi possível encontrar o pedido'),
+          ));
+        } else {
+          emit(SuccessState(order));
+        }
+      },
+    );
   }
 
   Future<Either<Failure, List<EditingOrderProduct>>> getEditingOrderProducts(
@@ -48,4 +70,8 @@ class EditOrderBloc extends AppCubit<Order> {
               ),
         );
   }
+}
+
+class LoadingOrderState extends ScreenState<Order> {
+  const LoadingOrderState();
 }

@@ -89,7 +89,7 @@ void main() {
     await tester.pump();
 
     await tester.tap(find.byType(OrderListTile));
-    verify(() => navigator.pushNamed('/edit-order', arguments: batmanOrder));
+    verify(() => navigator.pushNamed('/edit-order', arguments: batmanOrder.id));
     verify(() => bloc.load());
   });
 

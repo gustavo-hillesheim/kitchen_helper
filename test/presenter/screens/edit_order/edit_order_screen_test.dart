@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
@@ -15,19 +17,25 @@ import 'helpers.dart';
 
 void main() {
   late EditOrderBloc bloc;
+  late StreamController<ScreenState<Order>> streamController;
+  ScreenState<Order> state = const EmptyState();
 
   setUp(() {
     registerFallbackValue(FakeOrder());
     registerFallbackValue(FakeOrderProduct());
     mockRecipeIngredientsSelectorService();
+    streamController = StreamController.broadcast();
+    streamController.stream.listen((newState) => state = newState);
     bloc = EditOrderBlocMock();
+    when(() => bloc.stream).thenAnswer((_) => streamController.stream);
+    when(() => bloc.state).thenAnswer((_) => state);
   });
 
   Future<void> pumpWidget(WidgetTester tester, {Order? initialValue}) async {
     await tester.pumpWidget(MaterialApp(
       home: EditOrderScreen(
         bloc: bloc,
-        initialValue: initialValue,
+        id: initialValue?.id,
       ),
     ));
   }
@@ -79,37 +87,14 @@ void main() {
     verify(() => bloc.save(spidermanOrder));
   });
 
-  testWidgets('WHEN has initialValue SHOULD render forms with value',
-      (tester) async {
-    when(() => bloc.getEditingOrderProducts(any())).thenAnswer(
-        (_) async => Right(editingOrderProducts(batmanOrder.products)));
-
-    await pumpWidget(tester, initialValue: batmanOrder);
-
-    expect(find.text('Editar pedido'), findsOneWidget);
-    expectGeneralOrderInformationFormState(
-      clientName: batmanOrder.clientName,
-      clientAddress: batmanOrder.clientAddress,
-      status: batmanOrder.status,
-      orderDate: batmanOrder.orderDate,
-      deliveryDate: batmanOrder.deliveryDate,
-    );
-    await goToProductsTab(tester);
-    for (final op in batmanOrder.products) {
-      expectOrderProductListTile(editingOrderProduct(op));
-    }
-    await goToDiscountsTab(tester);
-    for (final d in batmanOrder.discounts) {
-      expectDiscountListTile(d);
-    }
-  });
-
   testWidgets('WHEN deletes product SHOULD remove from product list',
       (tester) async {
     when(() => bloc.getEditingOrderProducts(any())).thenAnswer((_) async =>
         Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
+        streamController.sink.add(SuccessState(spidermanOrderWithId)));
 
     await pumpWidget(tester, initialValue: spidermanOrderWithId);
 
@@ -130,6 +115,8 @@ void main() {
     });
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
+        streamController.sink.add(SuccessState(spidermanOrderWithId)));
 
     await pumpWidget(tester, initialValue: spidermanOrderWithId);
 
@@ -155,6 +142,8 @@ void main() {
         Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
+        streamController.sink.add(SuccessState(spidermanOrderWithId)));
 
     await pumpWidget(tester, initialValue: spidermanOrderWithId);
 
@@ -171,6 +160,8 @@ void main() {
         Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
+        streamController.sink.add(SuccessState(spidermanOrderWithId)));
 
     await pumpWidget(tester, initialValue: spidermanOrderWithId);
 

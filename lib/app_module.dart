@@ -55,9 +55,7 @@ class AppModule extends Module {
               throw Exception('The route /edit-ingredient only accepts values'
                   ' of type int? as argument');
             }
-            return EditIngredientScreen(
-              id: route.data as int?,
-            );
+            return EditIngredientScreen(id: route.data as int?);
           },
           guards: [AppGuard()],
         ),
@@ -71,9 +69,7 @@ class AppModule extends Module {
             throw Exception('The route /edit-recipe only accepts values'
                 ' of type int? as argument');
           }
-          return EditRecipeScreen(
-            id: route.data as int?,
-          );
+          return EditRecipeScreen(id: route.data as int?);
         }),
         ChildRoute(
           '/orders',
@@ -81,13 +77,11 @@ class AppModule extends Module {
           guards: [AppGuard()],
         ),
         ChildRoute('/edit-order', child: (_, route) {
-          if (route.data is! Order?) {
+          if (route.data is! int?) {
             throw Exception('The route /edit-order only accepts values'
-                ' of type Order? as argument');
+                ' of type int? as argument');
           }
-          return EditOrderScreen(
-            initialValue: route.data as Order?,
-          );
+          return EditOrderScreen(id: route.data as int?);
         }),
       ];
 }

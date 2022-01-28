@@ -161,6 +161,7 @@ expectGeneralOrderInformationFormState({
   DateTime? orderDate,
   DateTime? deliveryDate,
 }) {
+  expect(D(), findsNothing);
   final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
   if (clientName != null) {
     expect(
@@ -188,6 +189,20 @@ expectGeneralOrderInformationFormState({
   if (deliveryDate != null) {
     expect(AppDateTimeFieldFinder(name: 'Data de entrega'), findsOneWidget);
     expect(find.text(dateFormat.format(deliveryDate)), findsOneWidget);
+  }
+}
+
+class D extends MatchFinder {
+  @override
+  // TODO: implement description
+  String get description => 'D';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is Text) {
+      print((candidate.widget as Text).data);
+    }
+    return false;
   }
 }
 
