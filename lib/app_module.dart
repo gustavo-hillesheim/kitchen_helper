@@ -32,6 +32,7 @@ class AppModule extends Module {
         Bind((i) => GetRecipeUseCase(i())),
         Bind((i) => DeleteRecipeUseCase(i())),
         Bind((i) => GetRecipeCostUseCase(i(), i())),
+        Bind((i) => GetRecipesDomainUseCase(i())),
         Bind((i) => SaveOrderUseCase(i())),
         Bind((i) => GetOrdersUseCase(i())),
         Bind((i) => GetOrderUseCase(i())),

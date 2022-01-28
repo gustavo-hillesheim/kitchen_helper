@@ -13,27 +13,31 @@ void main() {
   late SaveRecipeUseCase saveRecipeUseCase;
   late GetRecipesUseCase getRecipesUseCase;
   late DeleteRecipeUseCase deleteRecipeUseCase;
+  late GetRecipeUseCase getRecipeUseCase;
   late RecipesListBloc bloc;
 
   void setup() {
     registerFallbackValue(const RecipeFilter());
     registerFallbackValue(FakeRecipe());
+    registerFallbackValue(const NoParams());
     saveRecipeUseCase = SaveRecipeUseCaseMock();
     getRecipesUseCase = GetRecipesUseCaseMock();
     deleteRecipeUseCase = DeleteRecipeUseCaseMock();
+    getRecipeUseCase = GetRecipeUseCaseMock();
     bloc = RecipesListBloc(
       getRecipesUseCase,
       deleteRecipeUseCase,
       saveRecipeUseCase,
+      getRecipeUseCase,
     );
   }
 
-  blocTest<RecipesListBloc, ScreenState<List<Recipe>>>(
+  blocTest<RecipesListBloc, ScreenState<List<ListingRecipeDto>>>(
     'WHEN loadRecipes is called '
     'SHOULD call getRecipesUseCase',
     setUp: () {
       setup();
-      final getResponses = <Either<Failure, List<Recipe>>>[
+      final getResponses = <Either<Failure, List<ListingRecipeDto>>>[
         const Right([]),
         const Left(FakeFailure('get error'))
       ];
@@ -41,56 +45,58 @@ void main() {
           .thenAnswer((_) async => getResponses.removeAt(0));
     },
     build: () => bloc,
-    expect: () => <ScreenState<List<Recipe>>>[
+    expect: () => <ScreenState<List<ListingRecipeDto>>>[
       const LoadingState(),
       const SuccessState([]),
       const LoadingState(),
       const FailureState(FakeFailure('get error')),
     ],
     act: (bloc) async {
-      await bloc.load();
-      await bloc.load();
+      await bloc.loadRecipes();
+      await bloc.loadRecipes();
     },
     verify: (_) {
-      verify(() => getRecipesUseCase.execute(const RecipeFilter()));
+      verify(() => getRecipesUseCase.execute(const NoParams()));
     },
   );
 
-  blocTest<RecipesListBloc, ScreenState<List<Recipe>>>(
+  blocTest<RecipesListBloc, ScreenState<List<ListingRecipeDto>>>(
     'WHEN delete is called '
     'SHOULD call deleteRecipeUseCase '
     'AND getRecipesUseCase AND return delete response',
     setUp: () {
       setup();
       final deleteResponses = <Either<Failure, void>>[
-        Right(null),
-        Left(FakeFailure('error'))
+        const Right(null),
+        const Left(FakeFailure('error'))
       ];
       when(() => deleteRecipeUseCase.execute(any()))
           .thenAnswer((_) async => deleteResponses.removeAt(0));
+      when(() => getRecipeUseCase.execute(any()))
+          .thenAnswer((_) async => Right(cakeRecipe));
       when(() => getRecipesUseCase.execute(any()))
           .thenAnswer((_) async => const Right([]));
     },
     build: () => bloc,
-    expect: () => <ScreenState<List<Recipe>>>[
+    expect: () => <ScreenState<List<ListingRecipeDto>>>[
       const LoadingState(),
       const SuccessState([]),
       const LoadingState(),
       const SuccessState([]),
     ],
     act: (bloc) async {
-      var result = await bloc.delete(cakeRecipe);
-      expect(result.isRight(), true);
-      result = await bloc.delete(cakeRecipe);
+      var result = await bloc.delete(cakeRecipe.id!);
+      expect(result.getRight().toNullable(), cakeRecipe);
+      result = await bloc.delete(cakeRecipe.id!);
       expect(result.isLeft(), true);
     },
     verify: (_) {
-      verify(() => deleteRecipeUseCase.execute(cakeRecipe)).called(2);
-      verify(() => getRecipesUseCase.execute(const RecipeFilter())).called(2);
+      verify(() => deleteRecipeUseCase.execute(cakeRecipe.id!)).called(2);
+      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
     },
   );
 
-  blocTest<RecipesListBloc, ScreenState<List<Recipe>>>(
+  blocTest<RecipesListBloc, ScreenState<List<ListingRecipeDto>>>(
     'WHEN save is called '
     'SHOULD call saveRecipeUseCase '
     'AND getRecipesUseCase AND return save response',
@@ -106,7 +112,7 @@ void main() {
           .thenAnswer((_) async => const Right([]));
     },
     build: () => bloc,
-    expect: () => <ScreenState<List<Recipe>>>[
+    expect: () => <ScreenState<List<ListingRecipeDto>>>[
       const LoadingState(),
       const SuccessState([]),
       const LoadingState(),
@@ -120,7 +126,7 @@ void main() {
     },
     verify: (_) {
       verify(() => saveRecipeUseCase.execute(cakeRecipe)).called(2);
-      verify(() => getRecipesUseCase.execute(const RecipeFilter())).called(2);
+      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
     },
   );
 }

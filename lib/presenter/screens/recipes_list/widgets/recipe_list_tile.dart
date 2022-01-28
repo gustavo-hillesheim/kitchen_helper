@@ -5,7 +5,7 @@ import '../../../../domain/domain.dart';
 import '../../../presenter.dart';
 
 class RecipeListTile extends StatelessWidget {
-  final Recipe recipe;
+  final ListingRecipeDto recipe;
   final VoidCallback onTap;
 
   const RecipeListTile(
@@ -35,9 +35,9 @@ class RecipeListTile extends StatelessWidget {
       kSmallSpacerVertical,
       quantityProducedText,
     ];
-    if (recipe.canBeSold) {
-      final quantitySold = recipe.quantitySold ?? 0;
-      final price = recipe.price ?? 0;
+    if (recipe.quantitySold != null && recipe.price != null) {
+      final quantitySold = recipe.quantitySold!;
+      final price = recipe.price!;
       final quantitySoldText = Text(
         'Vende ${Formatter.simpleNumber(quantitySold)} '
         '${recipe.measurementUnit.label} '

@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
-import '../crud_usecase_tests.dart';
 
 void main() {
   late GetRecipesUseCase usecase;
@@ -14,18 +15,25 @@ void main() {
     usecase = GetRecipesUseCase(repository);
   });
 
-  getAllUseCaseTests<Recipe, int>(
-    usecaseFn: () => usecase,
-    executeUseCaseFn: (usecase) => usecase.execute(const RecipeFilter()),
-    repositoryFn: () => repository,
-    mockRepositoryFn: (repository) => when(
-      () => (repository as RecipeRepository)
-          .findAll(filter: any(named: 'filter')),
-    ),
-    verifyRepositoryFn: (repository) => verify(
-      () => (repository as RecipeRepository)
-          .findAll(filter: any(named: 'filter')),
-    ),
-    entities: [cakeRecipe, sugarWithEggRecipeWithId],
-  );
+  test('WHEN called SHOULD get entities', () async {
+    when(() => repository.findAllListing()).thenAnswer(
+      (_) async => Right([listingCakeRecipeDto, listingIceCreamRecipeDto]),
+    );
+
+    final result = await usecase.execute(const NoParams());
+
+    expect(result.getRight().toNullable(),
+        [listingCakeRecipeDto, listingIceCreamRecipeDto]);
+    verify(() => repository.findAllListing());
+  });
+
+  test('WHEN repository returns Failure SHOULD return Failure', () async {
+    when(() => repository.findAllListing())
+        .thenAnswer((_) async => const Left(FakeFailure('error')));
+
+    final result = await usecase.execute(const NoParams());
+
+    expect(result.getLeft().toNullable()?.message, 'error');
+    verify(() => repository.findAllListing());
+  });
 }

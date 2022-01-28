@@ -7,7 +7,7 @@ import 'recipe_ingredient_selector.dart';
 
 class RecipeIngredientSelectorService {
   final GetRecipeUseCase getRecipeUseCase;
-  final GetRecipesUseCase getRecipesUseCase;
+  final GetRecipesDomainUseCase getRecipesUseCase;
   final GetIngredientsUseCase getIngredientsUseCase;
 
   RecipeIngredientSelectorService(

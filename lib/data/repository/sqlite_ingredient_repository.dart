@@ -22,12 +22,11 @@ class SQLiteIngredientRepository extends SQLiteRepository<Ingredient>
       final records = await database.query(
         table: tableName,
         columns: ['id', 'name', 'measurementUnit', 'quantity', 'cost'],
-        orderBy: 'name',
+        orderBy: 'name COLLATE NOCASE',
       );
       return Right(records.map(ListingIngredientDto.fromJson).toList());
     } on DatabaseException catch (e) {
-      return const Left(
-          RepositoryFailure(SQLiteRepository.couldNotFindAllMessage));
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
     }
   }
 }

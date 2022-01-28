@@ -24,6 +24,9 @@ class DeleteIngredientUseCaseMock extends Mock
 
 class GetRecipesUseCaseMock extends Mock implements GetRecipesUseCase {}
 
+class GetRecipesDomainUseCaseMock extends Mock
+    implements GetRecipesDomainUseCase {}
+
 class SaveRecipeUseCaseMock extends Mock implements SaveRecipeUseCase {}
 
 class DeleteRecipeUseCaseMock extends Mock implements DeleteRecipeUseCase {}
@@ -179,6 +182,12 @@ final sugarWithEggRecipeWithoutId = Recipe(
 );
 
 final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
+final listingSugarWithEggRecipeDto = ListingRecipeDto(
+  id: sugarWithEggRecipeWithId.id!,
+  name: sugarWithEggRecipeWithId.name,
+  measurementUnit: sugarWithEggRecipeWithId.measurementUnit,
+  quantityProduced: sugarWithEggRecipeWithId.quantityProduced,
+);
 
 final cakeRecipe = cakeRecipeWithoutId.copyWith(id: 5);
 final cakeRecipeWithoutId = Recipe(
@@ -193,6 +202,14 @@ final cakeRecipeWithoutId = Recipe(
     RecipeIngredient.recipe(sugarWithEggRecipeWithId.id!, quantity: 5),
   ],
 );
+final listingCakeRecipeDto = ListingRecipeDto(
+  id: cakeRecipe.id!,
+  name: cakeRecipe.name,
+  quantityProduced: cakeRecipe.quantityProduced,
+  quantitySold: cakeRecipe.quantitySold,
+  price: cakeRecipe.price,
+  measurementUnit: cakeRecipe.measurementUnit,
+);
 
 final iceCreamRecipe = Recipe(
   id: 4,
@@ -205,6 +222,14 @@ final iceCreamRecipe = Recipe(
   ingredients: [
     RecipeIngredient.ingredient(sugarWithId.id!, quantity: 200),
   ],
+);
+const listingIceCreamRecipeDto = ListingRecipeDto(
+  id: 4,
+  name: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+  quantityProduced: 2,
+  quantitySold: 2,
+  price: 20,
 );
 
 const recipeWithRecipeAndIngredients = Recipe(
@@ -313,19 +338,24 @@ IModularNavigator mockNavigator() {
 
 void mockRecipeIngredientsSelectorService() {
   registerFallbackValue(const NoParams());
+  registerFallbackValue(const RecipeFilter());
   final getRecipeUseCase = GetRecipeUseCaseMock();
   final getRecipesUseCase = GetRecipesUseCaseMock();
+  final getRecipesDomainUseCase = GetRecipesDomainUseCaseMock();
   final getIngredientsUseCase = GetIngredientsUseCaseMock();
   when(() => getRecipeUseCase.execute(any()))
       .thenAnswer((_) async => const Right(null));
   when(() => getIngredientsUseCase.execute(any()))
       .thenAnswer((_) async => const Right([listingEggDto]));
-  when(() => getRecipesUseCase.execute(any()))
+  when(() => getRecipesUseCase.execute(any())).thenAnswer(
+      (_) async => Right([listingCakeRecipeDto, listingIceCreamRecipeDto]));
+  when(() => getRecipesDomainUseCase.execute(any()))
       .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
   initModule(FakeModule(
     getRecipeUseCase,
     getRecipesUseCase,
     getIngredientsUseCase,
+    getRecipesDomainUseCase,
   ));
 }
 
@@ -333,11 +363,13 @@ class FakeModule extends Module {
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipesUseCase getRecipesUseCase;
   final GetIngredientsUseCase getIngredientsUseCase;
+  final GetRecipesDomainUseCase getRecipesDomainUseCase;
 
   FakeModule(
     this.getRecipeUseCase,
     this.getRecipesUseCase,
     this.getIngredientsUseCase,
+    this.getRecipesDomainUseCase,
   );
 
   @override
@@ -345,5 +377,6 @@ class FakeModule extends Module {
         Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
         Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
         Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
+        Bind.instance<GetRecipesDomainUseCase>(getRecipesDomainUseCase),
       ];
 }

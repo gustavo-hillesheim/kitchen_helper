@@ -38,6 +38,11 @@ void main() {
         listingFlourDto,
         listingOrangeJuiceDto,
       ]);
+      verify(() => database.query(
+            table: repository.tableName,
+            columns: ['id', 'name', 'measurementUnit', 'quantity', 'cost'],
+            orderBy: 'name COLLATE NOCASE',
+          ));
     });
 
     test('WHEN database throws known Exception SHOULD return Failure',

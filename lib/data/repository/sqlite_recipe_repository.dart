@@ -130,4 +130,25 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
       return Right(ingredients);
     });
   }
+
+  @override
+  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing() async {
+    try {
+      final records = await database.query(
+        table: tableName,
+        columns: [
+          'id',
+          'name',
+          'quantityProduced',
+          'quantitySold',
+          'price',
+          'measurementUnit'
+        ],
+        orderBy: 'name COLLATE NOCASE',
+      );
+      return Right(records.map(ListingRecipeDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
 }

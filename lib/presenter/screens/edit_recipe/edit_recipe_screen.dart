@@ -22,8 +22,8 @@ class EditRecipeScreen extends StatefulWidget {
     this.bloc,
   }) : super(key: key);
 
-  static Future<bool?> navigate([Recipe? recipe]) {
-    return Modular.to.pushNamed<bool?>('/edit-recipe', arguments: recipe?.id);
+  static Future<bool?> navigate([int? id]) {
+    return Modular.to.pushNamed<bool?>('/edit-recipe', arguments: id);
   }
 
   @override

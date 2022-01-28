@@ -11,13 +11,13 @@ import '../../mocks.dart';
 void main() {
   late RecipeIngredientSelectorService service;
   late GetRecipeUseCase getRecipeUseCase;
-  late GetRecipesUseCase getRecipesUseCase;
+  late GetRecipesDomainUseCase getRecipesUseCase;
   late GetIngredientsUseCase getIngredientsUseCase;
 
   setUp(() {
     registerFallbackValue(const RecipeFilter());
     getRecipeUseCase = GetRecipeUseCaseMock();
-    getRecipesUseCase = GetRecipesUseCaseMock();
+    getRecipesUseCase = GetRecipesDomainUseCaseMock();
     getIngredientsUseCase = GetIngredientsUseCaseMock();
     service = RecipeIngredientSelectorService(
       getRecipeUseCase,

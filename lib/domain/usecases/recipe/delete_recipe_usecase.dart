@@ -3,7 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import '../../../core/core.dart';
 import '../../domain.dart';
 
-class DeleteRecipeUseCase extends UseCase<Recipe, void> {
+class DeleteRecipeUseCase extends UseCase<int, void> {
   static const cantDeleteRecipeWithoutIdMessage =
       'Não é possível excluir um  registro que não foi salvo';
 
@@ -12,10 +12,7 @@ class DeleteRecipeUseCase extends UseCase<Recipe, void> {
   DeleteRecipeUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> execute(Recipe recipe) async {
-    if (recipe.id == null) {
-      return const Left(BusinessFailure(cantDeleteRecipeWithoutIdMessage));
-    }
-    return repository.deleteById(recipe.id!);
+  Future<Either<Failure, void>> execute(int id) async {
+    return repository.deleteById(id);
   }
 }

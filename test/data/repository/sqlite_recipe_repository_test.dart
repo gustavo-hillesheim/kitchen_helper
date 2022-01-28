@@ -108,13 +108,13 @@ void main() {
           .thenAnswer((_) async => []);
 
       await repository.findAll(
-        filter: RecipeFilter(canBeSold: true),
+        filter: const RecipeFilter(canBeSold: true),
       );
       verify(() => database.findAll(repository.tableName, where: {
             'canBeSold': 1,
           }));
 
-      await repository.findAll(filter: RecipeFilter(canBeSold: false));
+      await repository.findAll(filter: const RecipeFilter(canBeSold: false));
       verify(() => database.findAll(repository.tableName, where: {
             'canBeSold': 0,
           }));
@@ -334,6 +334,68 @@ void main() {
       result = repository.fromMap(json);
 
       expect(result.canBeSold, true);
+    });
+  });
+
+  group('findAllListing', () {
+    When<Future<List<Map<String, dynamic>>>> mockQuery() {
+      return when(() => database.query(
+            table: repository.tableName,
+            columns: any(named: 'columns'),
+            orderBy: any(named: 'orderBy'),
+          ));
+    }
+
+    test('WHEN database has records SHOULD return DTOs', () async {
+      mockQuery().thenAnswer((_) async => [
+            cakeRecipe.toJson(),
+            sugarWithEggRecipeWithId.toJson(),
+          ]);
+
+      final result = await repository.findAllListing();
+
+      expect(result.isRight(), true);
+      expect(result.getRight().toNullable(), [
+        listingCakeRecipeDto,
+        listingSugarWithEggRecipeDto,
+      ]);
+      verify(() => database.query(
+            table: repository.tableName,
+            columns: [
+              'id',
+              'name',
+              'quantityProduced',
+              'quantitySold',
+              'price',
+              'measurementUnit'
+            ],
+            orderBy: 'name COLLATE NOCASE',
+          ));
+    });
+
+    test('WHEN database throws known Exception SHOULD return Failure',
+        () async {
+      mockQuery().thenThrow(FakeDatabaseException('database exception'));
+
+      final result = await repository.findAllListing();
+
+      expect(result.isLeft(), true);
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD throw Exception',
+        () async {
+      mockQuery().thenThrow(Exception('unknown exception'));
+
+      try {
+        await repository.findAllListing();
+        fail('Should have thrown Exception');
+      } catch (e) {
+        expect(e, isA<Exception>());
+      }
     });
   });
 }
