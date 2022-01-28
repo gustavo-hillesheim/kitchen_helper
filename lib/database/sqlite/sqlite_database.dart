@@ -183,6 +183,10 @@ class SQLiteDatabase {
     );
   }
 
+  Future<List<Map<String, dynamic>>> rawQuery(String query, [List? arguments]) {
+    return _executor.rawQuery(query, arguments);
+  }
+
   Future<void> delete({
     required String table,
     required Map<String, dynamic> where,

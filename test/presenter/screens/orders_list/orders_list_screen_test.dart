@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/orders_list/orders_list_bloc.dart';
@@ -18,7 +17,7 @@ import '../../finders.dart';
 
 void main() {
   late OrdersListBloc bloc;
-  late StreamController<ScreenState<List<Order>>> streamController;
+  late StreamController<ScreenState<List<ListingOrderDto>>> streamController;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
@@ -28,7 +27,7 @@ void main() {
   });
 
   testWidgets('WHEN has no orders SHOULD render empty', (tester) async {
-    when(() => bloc.load()).thenAnswer((_) async {
+    when(() => bloc.loadOrders()).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -38,10 +37,6 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    expect(
-      find.byWidgetPredicate((widget) => widget is ListPageTemplate<Order>),
-      findsOneWidget,
-    );
     expect(find.byType(OrderFilter), findsOneWidget);
     expect(find.text('Pedidos'), findsOneWidget);
     expect(find.text('Adicionar'), findsOneWidget);
@@ -54,10 +49,10 @@ void main() {
     );
   });
 
-  testWidgets('WHEN has orders SHOULD OrderListTile', (tester) async {
+  testWidgets('WHEN has orders SHOULD render OrderListTile', (tester) async {
     mockOrderListTile();
-    when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(SuccessState([batmanOrder]));
+    when(() => bloc.loadOrders()).thenAnswer((_) async {
+      streamController.sink.add(SuccessState([listingBatmanOrderDto]));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -65,7 +60,7 @@ void main() {
     ));
     // Renders empty
     await tester.pump();
-    verify(() => bloc.load());
+    verify(() => bloc.loadOrders());
 
     expect(find.byType(OrderListTile), findsOneWidget);
   });
@@ -78,8 +73,8 @@ void main() {
       () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => true);
 
-    when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(SuccessState([batmanOrder]));
+    when(() => bloc.loadOrders()).thenAnswer((_) async {
+      streamController.sink.add(SuccessState([listingBatmanOrderDto]));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -90,7 +85,7 @@ void main() {
 
     await tester.tap(find.byType(OrderListTile));
     verify(() => navigator.pushNamed('/edit-order', arguments: batmanOrder.id));
-    verify(() => bloc.load());
+    verify(() => bloc.loadOrders());
   });
 
   testWidgets('WHEN taps new order SHOULD navigate to EditOrderScreen',
@@ -100,7 +95,7 @@ void main() {
       () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => false);
 
-    when(() => bloc.load()).thenAnswer((_) async {
+    when(() => bloc.loadOrders()).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -109,15 +104,16 @@ void main() {
     ));
     // Renders empty
     await tester.pump();
-    verify(() => bloc.load());
+    verify(() => bloc.loadOrders());
 
     await tester.tap(find.text('Adicionar'));
     verify(() => navigator.pushNamed('/edit-order', arguments: null));
-    verifyNever(() => bloc.load());
+    verifyNever(() => bloc.loadOrders());
   });
 
   testWidgets('WHEN changes filter SHOULD reload', (tester) async {
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.loadOrders(status: any(named: 'status')))
+        .thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -126,10 +122,10 @@ void main() {
     ));
     // Renders empty
     await tester.pump();
-    verify(() => bloc.load());
+    verify(() => bloc.loadOrders());
 
     await tester.tap(ToggleableTagFinder(label: 'Não Entregue', value: false));
-    verify(() => bloc.load(status: OrderStatus.ordered));
+    verify(() => bloc.loadOrders(status: OrderStatus.ordered));
   });
 
   testWidgets(
@@ -137,7 +133,8 @@ void main() {
       'SHOULD reload with filter', (tester) async {
     final navigator = mockNavigator();
     when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.loadOrders(status: any(named: 'status')))
+        .thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
     await tester.pumpWidget(MaterialApp(
@@ -147,23 +144,21 @@ void main() {
     await tester.pump();
 
     await tester.tap(ToggleableTagFinder(label: 'Entregue', value: false));
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    verify(() => bloc.loadOrders(status: OrderStatus.delivered));
 
     await tester.tap(find.text('Adicionar'));
     await tester.pumpAndSettle();
 
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    verify(() => bloc.loadOrders(status: OrderStatus.delivered));
   });
 }
 
 void mockOrderListTile() {
-  final getOrderPriceUseCase = GetOrderPriceUseCaseMock();
-  when(() => getOrderPriceUseCase.execute(any()))
-      .thenAnswer((_) async => const Right(1));
+  final getListingOrderProductsUseCase = GetListingOrderProductsUseCaseMock();
 
   initModule(FakeModule([
-    Bind.instance<GetRecipeUseCase>(GetRecipeUseCaseMock()),
-    Bind.instance<GetOrderPriceUseCase>(getOrderPriceUseCase),
+    Bind.instance<GetListingOrderProductsUseCase>(
+        getListingOrderProductsUseCase),
   ]));
 }
 

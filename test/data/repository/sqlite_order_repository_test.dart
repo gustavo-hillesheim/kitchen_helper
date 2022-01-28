@@ -188,7 +188,7 @@ void main() {
     test('WHEN informs filter SHOULD call database correctly', () async {
       mockFindAll().thenAnswer((_) async => []);
       await repository.findAll(
-        filter: OrdersFilter(
+        filter: const OrdersFilter(
           status: OrderStatus.delivered,
         ),
       );
@@ -655,6 +655,113 @@ void main() {
       },
       batmanOrder,
     );
+  });
+
+  group('findAllListing', () {
+    test('WHEN database has records SHOULD return DTOs', () async {
+      when(() => database.rawQuery(any(), any())).thenAnswer((_) async => [
+            {
+              'id': 1,
+              'clientName': 'Test client',
+              'clientAddress': 'Test Address',
+              'deliveryDate': '2022-01-01 12:30',
+              'basePrice': 50,
+              'fixedDiscount': 5,
+              'percentageDiscount': 10,
+              'status': 'delivered',
+            }
+          ]);
+
+      final result = await repository.findAllListing(
+          filter: const OrdersFilter(status: OrderStatus.delivered));
+
+      expect(result.getRight().toNullable(), [
+        ListingOrderDto(
+          id: 1,
+          clientName: 'Test client',
+          clientAddress: 'Test Address',
+          deliveryDate: DateTime(2022, 1, 1, 12, 30),
+          price: 40,
+          status: OrderStatus.delivered,
+        ),
+      ]);
+      verify(() => database.rawQuery(
+            any(that: contains('WHERE status = ?')),
+            ['delivered'],
+          ));
+    });
+
+    test('WHEN database throws DatabaseException SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any()))
+          .thenThrow(FakeDatabaseException('error'));
+
+      final result = await repository.findAllListing();
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any())).thenThrow(Exception('error'));
+
+      try {
+        await repository.findAllListing();
+        fail('Should have thrown Exception');
+      } on Exception catch (e) {
+        expect(e, isA<Exception>());
+      }
+    });
+  });
+
+  group('findAllOrderProductsListing', () {
+    test('WHEN database has records SHOULD return DTOs', () async {
+      when(() => database.rawQuery(any(), any())).thenAnswer((_) async => [
+            {
+              'name': 'Cake',
+              'measurementUnit': 'units',
+              'quantity': 5,
+            }
+          ]);
+
+      final result = await repository.findAllOrderProductsListing(1);
+
+      expect(result.getRight().toNullable(), [
+        const ListingOrderProductDto(
+          quantity: 5,
+          measurementUnit: MeasurementUnit.units,
+          name: 'Cake',
+        ),
+      ]);
+    });
+
+    test('WHEN database throws DatabaseException SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any(), any()))
+          .thenThrow(FakeDatabaseException('error'));
+
+      final result = await repository.findAllOrderProductsListing(1);
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any(), any())).thenThrow(Exception('error'));
+
+      try {
+        await repository.findAllOrderProductsListing(1);
+        fail('Should have thrown Exception');
+      } on Exception catch (e) {
+        expect(e, isA<Exception>());
+      }
+    });
   });
 }
 

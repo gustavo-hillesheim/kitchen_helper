@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -6,10 +7,10 @@ import '../../../presenter.dart';
 import '../../states.dart';
 import 'order_list_tile_bloc.dart';
 
-typedef OrderListTileState = ScreenState<List<OrderProductData>>;
+typedef OrderListTileState = ScreenState<List<ListingOrderProductDto>>;
 
 class OrderListTile extends StatefulWidget {
-  final Order order;
+  final ListingOrderDto order;
   final VoidCallback onTap;
   final OrderListTileBloc? bloc;
 
@@ -26,20 +27,11 @@ class OrderListTile extends StatefulWidget {
 
 class _OrderListTileState extends State<OrderListTile> {
   late final OrderListTileBloc bloc;
-  double? _price;
 
   @override
   void initState() {
     super.initState();
-    bloc = widget.bloc ?? OrderListTileBloc(Modular.get(), Modular.get());
-    bloc.getPrice(widget.order).then((result) {
-      result.fold(
-        (failure) => debugPrint('Could not get order price ${failure.message}'),
-        (price) => setState(() {
-          _price = price;
-        }),
-      );
-    });
+    bloc = widget.bloc ?? OrderListTileBloc(Modular.get());
   }
 
   @override
@@ -89,20 +81,22 @@ class _OrderListTileState extends State<OrderListTile> {
           SizedBox(height: FlatTile.defaultPadding.top - kSmallSpace),
           Row(
             children: [
-              Text(
-                widget.order.clientName,
-                style: textTheme.headline6?.copyWith(
-                  fontWeight: FontWeight.w400,
+              Expanded(
+                child: AutoSizeText(
+                  widget.order.clientName,
+                  style: textTheme.headline6?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
-              if (_price != null)
-                Text(
-                  Formatter.currency(_price!),
-                  style: textTheme.headline6?.copyWith(
-                    fontWeight: FontWeight.w300,
-                  ),
+              Text(
+                Formatter.currency(widget.order.price),
+                style: textTheme.headline6?.copyWith(
+                  fontWeight: FontWeight.w300,
                 ),
+              ),
             ],
           ),
           kExtraSmallSpacerVertical,
@@ -112,7 +106,7 @@ class _OrderListTileState extends State<OrderListTile> {
 
   Widget buildFlexibleSection(OrderListTileState state, TextTheme textTheme) {
     if (state is EmptyState) {
-      bloc.loadProducts(widget.order);
+      bloc.loadProducts(widget.order.id);
     }
     if (state is EmptyState || state is LoadingState) {
       return const SizedBox.shrink();
@@ -127,7 +121,8 @@ class _OrderListTileState extends State<OrderListTile> {
         ),
       );
     }
-    final products = (state as SuccessState<List<OrderProductData>>).value;
+    final products =
+        (state as SuccessState<List<ListingOrderProductDto>>).value;
     if (products.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: kExtraSmallSpace),

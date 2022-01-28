@@ -23,8 +23,8 @@ class EditOrderScreen extends StatefulWidget {
     this.bloc,
   }) : super(key: key);
 
-  static Future<bool?> navigate([Order? order]) {
-    return Modular.to.pushNamed<bool?>('/edit-order', arguments: order?.id);
+  static Future<bool?> navigate([int? id]) {
+    return Modular.to.pushNamed<bool?>('/edit-order', arguments: id);
   }
 
   @override

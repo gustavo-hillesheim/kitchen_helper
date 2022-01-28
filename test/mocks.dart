@@ -61,7 +61,8 @@ class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
 
 class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
 
-class GetOrderPriceUseCaseMock extends Mock implements GetOrderPriceUseCase {}
+class GetListingOrderProductsUseCaseMock extends Mock
+    implements GetListingOrderProductsUseCase {}
 
 class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
 
@@ -316,6 +317,14 @@ final spidermanOrder = Order(
   ],
 );
 final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
+final listingSpidermanOrderDto = ListingOrderDto(
+  id: 1,
+  clientName: 'Test client',
+  clientAddress: 'New York Street, 123',
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  price: 25,
+);
 
 final batmanOrder = Order(
   id: 2,
@@ -328,6 +337,14 @@ final batmanOrder = Order(
   discounts: const [
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
   ],
+);
+final listingBatmanOrderDto = ListingOrderDto(
+  id: 2,
+  clientName: 'Batman',
+  clientAddress: 'Gotham',
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  price: 50,
 );
 
 IModularNavigator mockNavigator() {
