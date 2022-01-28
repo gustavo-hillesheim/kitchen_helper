@@ -106,6 +106,13 @@ const sugarWithId = Ingredient(
   measurementUnit: MeasurementUnit.grams,
   cost: 10,
 );
+const listingSugarDto = ListingIngredientDto(
+  id: 123,
+  name: 'Sugar',
+  quantity: 100,
+  measurementUnit: MeasurementUnit.grams,
+  cost: 10,
+);
 
 const sugarWithoutId = Ingredient(
   name: 'Sugar',
@@ -122,7 +129,22 @@ const flour = Ingredient(
   cost: 15.75,
 );
 
+const listingFlourDto = ListingIngredientDto(
+  id: 5,
+  name: 'Flour',
+  quantity: 1,
+  measurementUnit: MeasurementUnit.kilograms,
+  cost: 15.75,
+);
+
 const egg = Ingredient(
+  id: 6,
+  name: 'egg',
+  quantity: 12,
+  measurementUnit: MeasurementUnit.units,
+  cost: 10,
+);
+const listingEggDto = ListingIngredientDto(
   id: 6,
   name: 'egg',
   quantity: 12,
@@ -131,6 +153,13 @@ const egg = Ingredient(
 );
 
 const orangeJuice = Ingredient(
+  id: 7,
+  name: 'orange juice',
+  quantity: 250,
+  measurementUnit: MeasurementUnit.milliliters,
+  cost: 2.25,
+);
+const listingOrangeJuiceDto = ListingIngredientDto(
   id: 7,
   name: 'orange juice',
   quantity: 250,
@@ -227,6 +256,11 @@ const ingredientThree = Ingredient(
 );
 
 final ingredientList = [flour, egg, orangeJuice];
+final listingIngredientDtoList = [
+  listingFlourDto,
+  listingEggDto,
+  listingOrangeJuiceDto,
+];
 final ingredientsMap = {
   flour.id: flour,
   egg.id: egg,
@@ -285,7 +319,7 @@ void mockRecipeIngredientsSelectorService() {
   when(() => getRecipeUseCase.execute(any()))
       .thenAnswer((_) async => const Right(null));
   when(() => getIngredientsUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([egg]));
+      .thenAnswer((_) async => const Right([listingEggDto]));
   when(() => getRecipesUseCase.execute(any()))
       .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
   initModule(FakeModule(

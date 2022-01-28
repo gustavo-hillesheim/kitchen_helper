@@ -32,7 +32,11 @@ void main() {
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
-      (_) async => const Right([sugarWithId, egg, flour]),
+      (_) async => const Right([
+        listingSugarDto,
+        listingEggDto,
+        listingFlourDto,
+      ]),
     );
 
     final result = await service.getItems();
@@ -56,7 +60,8 @@ void main() {
       (_) async => Right([cakeRecipe, recipeWithIngredients]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
-      (_) async => const Right([sugarWithId, egg, flour]),
+      (_) async =>
+          const Right([listingSugarDto, listingEggDto, listingFlourDto]),
     );
 
     final result = await service.getItems(recipeToIgnore: cakeRecipe.id);
@@ -77,7 +82,8 @@ void main() {
       (_) async => Right([cakeRecipe, sugarWithEggRecipeWithId]),
     );
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
-      (_) async => const Right([sugarWithId, egg, flour]),
+      (_) async =>
+          const Right([listingSugarDto, listingEggDto, listingFlourDto]),
     );
 
     final result = await service.getItems(
@@ -108,7 +114,8 @@ void main() {
   test('WHEN getOnly is ingredients SHOULD only call getIngredientsUseCase',
       () async {
     when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
-      (_) async => const Right([sugarWithId, egg, flour]),
+      (_) async =>
+          const Right([listingSugarDto, listingEggDto, listingFlourDto]),
     );
 
     final result = await service.getItems(

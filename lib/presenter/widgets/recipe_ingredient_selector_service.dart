@@ -30,12 +30,12 @@ class RecipeIngredientSelectorService {
       shouldGetRecipes,
       recipeFilter,
     );
-    Either<Failure, List<Ingredient>> ingredients =
+    Either<Failure, List<ListingIngredientDto>> ingredients =
         await _getIngredients(shouldGetIngredients);
 
     final items = recipes.combine(
       ingredients,
-      (r, List<Ingredient> i) => _combineRecipesAndIngredients(r, i),
+      (r, List<ListingIngredientDto> i) => _combineRecipesAndIngredients(r, i),
     );
     return items.asyncFlatMap((items) async {
       if (recipeToIgnore != null) {
@@ -55,7 +55,7 @@ class RecipeIngredientSelectorService {
         : const Right([]);
   }
 
-  Future<Either<Failure, List<Ingredient>>> _getIngredients(
+  Future<Either<Failure, List<ListingIngredientDto>>> _getIngredients(
       bool shouldGet) async {
     return shouldGet
         ? (await getIngredientsUseCase.execute(const NoParams()))
@@ -63,7 +63,7 @@ class RecipeIngredientSelectorService {
   }
 
   List<RecipeIngredientSelectorItem> _combineRecipesAndIngredients(
-      List<Recipe> recipes, List<Ingredient> ingredients) {
+      List<Recipe> recipes, List<ListingIngredientDto> ingredients) {
     final recipeItems = _recipesAsSelectorItems(recipes);
     final ingredientItems = _ingredientsAsSelectorItems(ingredients);
     final items = [...recipeItems, ...ingredientItems];
@@ -84,10 +84,10 @@ class RecipeIngredientSelectorService {
   }
 
   Iterable<RecipeIngredientSelectorItem> _ingredientsAsSelectorItems(
-    List<Ingredient> ingredients,
+    List<ListingIngredientDto> ingredients,
   ) {
     return ingredients.map((i) => RecipeIngredientSelectorItem(
-          id: i.id!,
+          id: i.id,
           name: i.name,
           type: RecipeIngredientType.ingredient,
           measurementUnit: i.measurementUnit,

@@ -1,16 +1,16 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/domain/domain.dart';
 
 import '../../../core/core.dart';
-import '../../models/ingredient.dart';
-import '../../repository/ingredient_repository.dart';
 
-class GetIngredientsUseCase extends UseCase<NoParams, List<Ingredient>> {
+class GetIngredientsUseCase
+    extends UseCase<NoParams, List<ListingIngredientDto>> {
   final IngredientRepository repository;
 
   GetIngredientsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<Ingredient>>> execute(NoParams input) {
-    return repository.findAll();
+  Future<Either<Failure, List<ListingIngredientDto>>> execute(NoParams input) {
+    return repository.findAllListing();
   }
 }

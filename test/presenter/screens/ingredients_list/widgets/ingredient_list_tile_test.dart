@@ -13,16 +13,16 @@ void main() {
       tapped = true;
     }
 
-    final tile = IngredientListTile(egg, onTap: onTap);
+    final tile = IngredientListTile(listingEggDto, onTap: onTap);
     await tester.pumpWidget(MaterialApp(
       home: tile,
     ));
 
-    expect(find.text(egg.name), findsOneWidget);
-    expect(find.text(Formatter.currency(egg.cost)), findsOneWidget);
+    expect(find.text(listingEggDto.name), findsOneWidget);
+    expect(find.text(Formatter.currency(listingEggDto.cost)), findsOneWidget);
     expect(
       find.text(
-          '${Formatter.simpleNumber(egg.quantity)} ${egg.measurementUnit.label}'),
+          '${Formatter.simpleNumber(listingEggDto.quantity)} ${listingEggDto.measurementUnit.label}'),
       findsOneWidget,
     );
 
