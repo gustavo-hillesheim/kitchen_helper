@@ -6,7 +6,7 @@ import '../../../extensions.dart';
 import '../states.dart';
 import 'models/editing_recipe_ingredient.dart';
 
-class EditRecipeBloc extends AppCubit<void> {
+class EditRecipeBloc extends AppCubit<Recipe> {
   final SaveRecipeUseCase saveRecipeUseCase;
   final GetIngredientUseCase getIngredientUseCase;
   final GetRecipeUseCase getRecipeUseCase;
@@ -22,6 +22,23 @@ class EditRecipeBloc extends AppCubit<void> {
   Future<ScreenState<void>> save(Recipe recipe) async {
     await runEither(() => saveRecipeUseCase.execute(recipe));
     return state;
+  }
+
+  Future<void> loadRecipe(int id) async {
+    emit(const LoadingRecipeState());
+    final result = await getRecipeUseCase.execute(id);
+    result.fold(
+      (f) => emit(FailureState(f)),
+      (recipe) {
+        if (recipe == null) {
+          emit(const FailureState(
+            BusinessFailure('Não foi possível encontrar a receita'),
+          ));
+        } else {
+          emit(SuccessState(recipe));
+        }
+      },
+    );
   }
 
   Future<Either<Failure, double>> getCost(Recipe recipe) {
@@ -74,4 +91,8 @@ class EditRecipeBloc extends AppCubit<void> {
           ),
         );
   }
+}
+
+class LoadingRecipeState extends ScreenState<Recipe> {
+  const LoadingRecipeState();
 }

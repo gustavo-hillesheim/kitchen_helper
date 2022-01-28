@@ -20,11 +20,14 @@ void main() {
       name: 'Custo', type: TextInputType.number, prefix: 'R\$');
   late EditIngredientBloc bloc;
   late StreamController<ScreenState<Ingredient>> streamController;
+  ScreenState<Ingredient> state = const EmptyState();
 
   setUp(() {
     bloc = EditIngredientBlocMock();
     streamController = StreamController.broadcast();
+    streamController.stream.listen((newState) => state = newState);
     when(() => bloc.stream).thenAnswer((_) => streamController.stream);
+    when(() => bloc.state).thenAnswer((_) => state);
   });
 
   testWidgets(

@@ -68,15 +68,15 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
       body: StreamBuilder(
         stream: bloc.stream,
         builder: (context, snapshot) {
-          final state = snapshot.data;
+          final state = bloc.state;
           return Stack(
             children: [
               if (state is FailureState)
-                _buildFailureState(state.failure)
+                _buildFailureState((state as FailureState).failure)
               else if (state is LoadingIngredientState)
                 const Center(child: CircularProgressIndicator())
               else
-                _buildForm(state is SuccessState ? state.value : null),
+                _buildForm(),
               if (state is LoadingState) _buildLoadingOverlay(),
             ],
           );
@@ -89,7 +89,7 @@ class _EditIngredientScreenState extends State<EditIngredientScreen> {
         child: Text(failure.message, style: const TextStyle(color: Colors.red)),
       );
 
-  Widget _buildForm([Ingredient? ingredient]) {
+  Widget _buildForm() {
     return Form(
       key: _formKey,
       child: Column(

@@ -39,7 +39,7 @@ void main() {
       );
     },
     build: () => bloc,
-    expect: () => <ScreenState<void>>[
+    expect: () => <ScreenState<Recipe>>[
       const LoadingState(),
       // The BLoC actually emits the recipe being saved,
       // this is allowed because any type can fill a void field
@@ -57,7 +57,7 @@ void main() {
       );
     },
     build: () => bloc,
-    expect: () => <ScreenState<void>>[
+    expect: () => <ScreenState<Recipe>>[
       const LoadingState(),
       const FailureState(FakeFailure('some error')),
     ],

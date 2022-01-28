@@ -68,7 +68,8 @@ void main() {
 
   testWidgets('WHEN in FailureState SHOULD show error message', (tester) async {
     when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(FailureState(FakeFailure('failure on load')));
+      streamController.sink
+          .add(const FailureState(FakeFailure('failure on load')));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -164,9 +165,11 @@ void main() {
       await tester.drag(find.byType(RecipeListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, cakeRecipe, result: Left(FakeFailure('error')));
+      await delete(tester, cakeRecipe,
+          result: const Left(FakeFailure('error')));
       await retryDelete(tester, cakeRecipe, result: const Right(null));
-      await undoDelete(tester, cakeRecipe, result: Left(FakeFailure('error')));
+      await undoDelete(tester, cakeRecipe,
+          result: const Left(FakeFailure('error')));
       await retryUndoDelete(tester, cakeRecipe, result: Right(cakeRecipe));
     },
   );
@@ -206,7 +209,7 @@ void main() {
     await tap(find.byType(RecipeListTile), tester);
     await tester.pumpAndSettle();
 
-    verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe));
+    verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe.id));
     verify(() => bloc.load()).called(2);
   });
 }
