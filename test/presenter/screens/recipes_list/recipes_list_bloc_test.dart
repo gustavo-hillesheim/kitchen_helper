@@ -52,8 +52,8 @@ void main() {
       const FailureState(FakeFailure('get error')),
     ],
     act: (bloc) async {
-      await bloc.loadRecipes();
-      await bloc.loadRecipes();
+      await bloc.load();
+      await bloc.load();
     },
     verify: (_) {
       verify(() => getRecipesUseCase.execute(const NoParams()));
