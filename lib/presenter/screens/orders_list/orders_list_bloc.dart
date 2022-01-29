@@ -1,13 +1,16 @@
-import 'package:fpdart/fpdart.dart' hide Order;
-
-import '../../../core/core.dart';
 import '../../../domain/domain.dart';
+import '../../presenter.dart';
 import '../states.dart';
 
-class OrdersListBloc extends AppCubit<List<ListingOrderDto>> {
+class OrdersListBloc extends AppCubit<List<ListingOrderDto>>
+    with ListPageBloc<ListingOrderDto, Order> {
+  @override
   final GetOrdersUseCase getAllUseCase;
+  @override
   final DeleteOrderUseCase deleteUseCase;
+  @override
   final SaveOrderUseCase saveUseCase;
+  @override
   final GetOrderUseCase getUseCase;
 
   OrdersListBloc(
@@ -17,29 +20,10 @@ class OrdersListBloc extends AppCubit<List<ListingOrderDto>> {
     this.getUseCase,
   ) : super(const LoadingState());
 
-  Future<void> loadOrders({OrderStatus? status}) async {
+  @override
+  Future<void> load({OrderStatus? status}) async {
     runEither(() => getAllUseCase.execute(OrdersFilter(
           status: status,
         )));
-  }
-
-  Future<Either<Failure, Order>> delete(int id) async {
-    final getResult = await getUseCase.execute(id);
-    return getResult.bindFuture<Order>((order) async {
-      if (order == null) {
-        return const Left(BusinessFailure('Ingrediente não encontrado'));
-      }
-      return deleteUseCase.execute(id).then((result) {
-        loadOrders();
-        return result.map((_) => order);
-      });
-    }).run();
-  }
-
-  Future<Either<Failure, Order>> save(Order order) async {
-    return saveUseCase.execute(order).then((result) {
-      loadOrders();
-      return result;
-    });
   }
 }

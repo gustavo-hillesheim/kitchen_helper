@@ -36,7 +36,7 @@ void main() {
             const LoadingState(),
             SuccessState([listingBatmanOrderDto]),
           ],
-      act: (bloc) => bloc.loadOrders(status: OrderStatus.delivered),
+      act: (bloc) => bloc.load(status: OrderStatus.delivered),
       verify: (_) {
         verify(
           () => getAllUseCase.execute(const OrdersFilter(

@@ -11,6 +11,7 @@ import 'widgets.dart';
 
 typedef TileBuilder<T> = Widget Function(BuildContext context, T entity);
 typedef DeletedMessageFn<T> = String Function(T entity);
+typedef OnLoadFn = Future<void> Function();
 
 class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
     extends StatelessWidget {
@@ -22,9 +23,10 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
   final String emptySubtext;
   final String emptyActionText;
   final VoidCallback onAdd;
+  final OnLoadFn onLoad;
   final Widget? headerBottom;
 
-  const ListPageTemplate({
+  ListPageTemplate({
     Key? key,
     required this.title,
     required this.bloc,
@@ -34,8 +36,10 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
     required this.emptySubtext,
     required this.emptyActionText,
     required this.onAdd,
+    OnLoadFn? onLoad,
     this.headerBottom,
-  }) : super(key: key);
+  })  : onLoad = onLoad ?? (() => bloc.load()),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +69,7 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
             return _buildEmptyState();
           }
           return RefreshIndicator(
-            onRefresh: bloc.load,
+            onRefresh: onLoad,
             child: ListView.builder(
               padding: kSmallEdgeInsets,
               itemCount: recipes.length,
@@ -93,7 +97,7 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
         text: 'Erro',
         subtext: message,
         action: ElevatedButton(
-          onPressed: bloc.load,
+          onPressed: onLoad,
           child: const Text('Tente novamente'),
         ),
       );
