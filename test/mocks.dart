@@ -182,6 +182,11 @@ final sugarWithEggRecipeWithoutId = Recipe(
   ],
 );
 
+const sugarWithEggRecipeDomain = RecipeDomainDto(
+  id: 1,
+  label: 'Sugar with egg',
+  measurementUnit: MeasurementUnit.milliliters,
+);
 final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
 final listingSugarWithEggRecipeDto = ListingRecipeDto(
   id: sugarWithEggRecipeWithId.id!,
@@ -190,6 +195,11 @@ final listingSugarWithEggRecipeDto = ListingRecipeDto(
   quantityProduced: sugarWithEggRecipeWithId.quantityProduced,
 );
 
+const cakeRecipeDomain = RecipeDomainDto(
+  id: 5,
+  label: 'Cake',
+  measurementUnit: MeasurementUnit.units,
+);
 final cakeRecipe = cakeRecipeWithoutId.copyWith(id: 5);
 final cakeRecipeWithoutId = Recipe(
   name: 'Cake',
@@ -212,6 +222,11 @@ final listingCakeRecipeDto = ListingRecipeDto(
   measurementUnit: cakeRecipe.measurementUnit,
 );
 
+const iceCreamRecipeDomain = RecipeDomainDto(
+  id: 4,
+  label: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+);
 final iceCreamRecipe = Recipe(
   id: 4,
   name: 'Ice cream',
@@ -366,8 +381,8 @@ void mockRecipeIngredientsSelectorService() {
       .thenAnswer((_) async => const Right([listingEggDto]));
   when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => Right([listingCakeRecipeDto, listingIceCreamRecipeDto]));
-  when(() => getRecipesDomainUseCase.execute(any()))
-      .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
+  when(() => getRecipesDomainUseCase.execute(any())).thenAnswer(
+      (_) async => const Right([cakeRecipeDomain, iceCreamRecipeDomain]));
   initModule(FakeModule(
     getRecipeUseCase,
     getRecipesUseCase,

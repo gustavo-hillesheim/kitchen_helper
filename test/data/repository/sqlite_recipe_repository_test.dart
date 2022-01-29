@@ -398,6 +398,109 @@ void main() {
       }
     });
   });
+
+  group('findAllDomain', () {
+    test('WHEN database has records SHOULD return DTOs', () async {
+      when(() => database.query(
+              table: repository.tableName,
+              columns: ['id', 'name label', 'measurementUnit']))
+          .thenAnswer((_) async => [
+                {
+                  'label': 'Cake',
+                  'id': 1,
+                  'measurementUnit': 'units',
+                }
+              ]);
+
+      final result = await repository.findAllDomain();
+
+      expect(result.getRight().toNullable(), [
+        const RecipeDomainDto(
+          id: 1,
+          label: 'Cake',
+          measurementUnit: MeasurementUnit.units,
+        ),
+      ]);
+    });
+
+    test('WHEN database throws DatabaseException SHOULD return Failure',
+        () async {
+      when(() => database.query(
+          table: repository.tableName,
+          columns: ['id', 'name label', 'measurementUnit'],
+          where: {'canBeSold': 1})).thenThrow(FakeDatabaseException('error'));
+
+      final result = await repository.findAllDomain(
+        filter: const RecipeFilter(canBeSold: true),
+      );
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD return Failure',
+        () async {
+      when(() => database.query(
+              table: repository.tableName,
+              columns: ['id', 'name label', 'measurementUnit']))
+          .thenThrow(Exception('error'));
+
+      try {
+        await repository.findAllDomain();
+        fail('Should have thrown Exception');
+      } on Exception catch (e) {
+        expect(e, isA<Exception>());
+      }
+    });
+  });
+
+  group('getRecipesThatDependOn', () {
+    test('WHEN database has records SHOULD return ids', () async {
+      final answers = <List<Map<String, dynamic>>>[
+        [
+          {'id': 2},
+          {'id': 3}
+        ],
+        [
+          {'id': 5}
+        ],
+        []
+      ];
+      when(() => database.rawQuery(any(), any()))
+          .thenAnswer((_) async => answers.removeAt(0));
+
+      final result = await repository.getRecipesThatDependOn(1);
+
+      expect(result.getRight().toNullable(), {2, 3, 5});
+    });
+
+    test('WHEN database throws DatabaseException SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any(), any()))
+          .thenThrow(FakeDatabaseException('error'));
+
+      final result = await repository.getRecipesThatDependOn(1);
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotQueryMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD return Failure',
+        () async {
+      when(() => database.rawQuery(any(), any())).thenThrow(Exception('error'));
+
+      try {
+        await repository.getRecipesThatDependOn(1);
+        fail('Should have thrown Exception');
+      } on Exception catch (e) {
+        expect(e, isA<Exception>());
+      }
+    });
+  });
 }
 
 class FakeRecipeIngredientEntity extends Fake
