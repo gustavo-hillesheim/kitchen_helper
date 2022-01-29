@@ -57,7 +57,7 @@ void main() {
                 [listingFlourDto, listingEggDto, listingOrangeJuiceDto]),
           ],
       act: (bloc) async {
-        await bloc.loadIngredients();
+        await bloc.load();
         await bloc.delete(orangeJuice.id!);
         await bloc.save(orangeJuice);
       },
@@ -80,7 +80,7 @@ void main() {
       const LoadingState(),
       const FailureState(FakeFailure('Some error on load')),
     ],
-    act: (bloc) async => await bloc.loadIngredients(),
+    act: (bloc) async => await bloc.load(),
   );
 
   test(

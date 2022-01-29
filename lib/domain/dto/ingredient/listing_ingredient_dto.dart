@@ -6,7 +6,8 @@ import '../../domain.dart';
 part 'listing_ingredient_dto.g.dart';
 
 @JsonSerializable(createToJson: false)
-class ListingIngredientDto extends Equatable {
+class ListingIngredientDto extends Equatable implements ListingDto {
+  @override
   final int id;
   final String name;
   final double quantity;

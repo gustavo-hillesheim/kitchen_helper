@@ -31,7 +31,7 @@ void main() {
       final navigator = mockNavigator();
       when(() => navigator.pushNamed('/edit-ingredient'))
           .thenAnswer((_) async => false);
-      when(() => bloc.loadIngredients()).thenAnswer((_) async {});
+      when(() => bloc.load()).thenAnswer((_) async {});
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -49,7 +49,7 @@ void main() {
       final navigator = mockNavigator();
       when(() => navigator.pushNamed('/edit-ingredient'))
           .thenAnswer((_) async => true);
-      when(() => bloc.loadIngredients()).thenAnswer((_) async {});
+      when(() => bloc.load()).thenAnswer((_) async {});
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -58,12 +58,12 @@ void main() {
       await tester.tap(find.text('Adicionar'));
 
       verify(() => navigator.pushNamed('/edit-ingredient', arguments: null));
-      verify(() => bloc.loadIngredients()).called(2);
+      verify(() => bloc.load()).called(2);
     },
   );
 
   testWidgets('Should show loader while in LoadingState', (tester) async {
-    when(() => bloc.loadIngredients()).thenAnswer(
+    when(() => bloc.load()).thenAnswer(
         (_) async => streamController.sink.add(const LoadingState()));
 
     await tester.pumpWidget(
@@ -77,7 +77,7 @@ void main() {
     final navigator = mockNavigator();
     when(() => navigator.pushNamed('/edit-ingredient'))
         .thenAnswer((_) async => false);
-    when(() => bloc.loadIngredients()).thenAnswer(
+    when(() => bloc.load()).thenAnswer(
         (_) async => streamController.sink.add(const SuccessState([])));
 
     await tester.pumpWidget(
@@ -95,8 +95,7 @@ void main() {
 
   testWidgets('Should show Empty with error message if there is a Failure',
       (tester) async {
-    when(() => bloc.loadIngredients()).thenAnswer((_) async => streamController
-        .sink
+    when(() => bloc.load()).thenAnswer((_) async => streamController.sink
         .add(const FailureState(FakeFailure('fake error'))));
 
     await tester.pumpWidget(
@@ -108,7 +107,7 @@ void main() {
   });
 
   testWidgets('Should show Ingredient list', (tester) async {
-    when(() => bloc.loadIngredients()).thenAnswer((_) async =>
+    when(() => bloc.load()).thenAnswer((_) async =>
         streamController.sink.add(SuccessState(listingIngredientDtoList)));
 
     await tester.pumpWidget(
@@ -125,7 +124,7 @@ void main() {
       final navigator = mockNavigator();
       when(() => navigator.pushNamed(any(), arguments: egg.id))
           .thenAnswer((_) async => false);
-      when(() => bloc.loadIngredients()).thenAnswer((_) async =>
+      when(() => bloc.load()).thenAnswer((_) async =>
           streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(
@@ -193,7 +192,7 @@ void main() {
   testWidgets(
     'Should be able to delete and undelete ingredient',
     (tester) async {
-      when(() => bloc.loadIngredients()).thenAnswer((_) async =>
+      when(() => bloc.load()).thenAnswer((_) async =>
           streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(
@@ -212,7 +211,7 @@ void main() {
   testWidgets(
     'If delete or undelete fail the user should be able to retry',
     (tester) async {
-      when(() => bloc.loadIngredients()).thenAnswer((_) async =>
+      when(() => bloc.load()).thenAnswer((_) async =>
           streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(

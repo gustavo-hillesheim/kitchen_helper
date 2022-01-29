@@ -1,13 +1,16 @@
-import 'package:fpdart/fpdart.dart';
-
-import '../../../core/core.dart';
 import '../../../domain/domain.dart';
+import '../../presenter.dart';
 import '../states.dart';
 
-class IngredientsListBloc extends AppCubit<List<ListingIngredientDto>> {
+class IngredientsListBloc extends AppCubit<List<ListingIngredientDto>>
+    with ListPageBloc<ListingIngredientDto, Ingredient> {
+  @override
   final GetIngredientsUseCase getAllUseCase;
+  @override
   final SaveIngredientUseCase saveUseCase;
+  @override
   final DeleteIngredientUseCase deleteUseCase;
+  @override
   final GetIngredientUseCase getUseCase;
 
   IngredientsListBloc(
@@ -16,28 +19,4 @@ class IngredientsListBloc extends AppCubit<List<ListingIngredientDto>> {
     this.deleteUseCase,
     this.getUseCase,
   ) : super(const LoadingState());
-
-  Future<void> loadIngredients() async {
-    await runEither(() => getAllUseCase.execute(const NoParams()));
-  }
-
-  Future<Either<Failure, Ingredient>> delete(int id) async {
-    final getResult = await getUseCase.execute(id);
-    return getResult.bindFuture<Ingredient>((ingredient) async {
-      if (ingredient == null) {
-        return const Left(BusinessFailure('Ingrediente não encontrado'));
-      }
-      return deleteUseCase.execute(id).then((result) {
-        loadIngredients();
-        return result.map((_) => ingredient);
-      });
-    }).run();
-  }
-
-  Future<Either<Failure, Ingredient>> save(Ingredient ingredient) async {
-    return saveUseCase.execute(ingredient).then((result) {
-      loadIngredients();
-      return result;
-    });
-  }
 }

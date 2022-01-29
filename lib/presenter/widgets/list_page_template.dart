@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../core/core.dart';
+import '../../database/database.dart';
+import '../../domain/domain.dart';
 import '../constants.dart';
 import '../screens/states.dart';
 import 'widgets.dart';
@@ -10,9 +12,10 @@ import 'widgets.dart';
 typedef TileBuilder<T> = Widget Function(BuildContext context, T entity);
 typedef DeletedMessageFn<T> = String Function(T entity);
 
-class ListPageTemplate<T> extends StatelessWidget {
+class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
+    extends StatelessWidget {
   final String title;
-  final ListPageBloc<T> bloc;
+  final ListPageBloc<T, E> bloc;
   final TileBuilder<T> tileBuilder;
   final DeletedMessageFn<T> deletedMessage;
   final String emptyText;
@@ -103,22 +106,22 @@ class ListPageTemplate<T> extends StatelessWidget {
         ),
       );
 
-  void _tryDelete(BuildContext context, T entity) async {
-    final result = await bloc.delete(entity);
+  void _tryDelete(BuildContext context, T listingEntity) async {
+    final result = await bloc.delete(listingEntity.id);
     result.fold((failure) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(failure.message),
           action: SnackBarAction(
             label: 'Tentar novamente',
-            onPressed: () => _tryDelete(context, entity),
+            onPressed: () => _tryDelete(context, listingEntity),
           ),
         ),
       );
-    }, (_) {
+    }, (entity) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(deletedMessage(entity)),
+          content: Text(deletedMessage(listingEntity)),
           action: SnackBarAction(
             label: 'Desfazer',
             onPressed: () => _trySave(context, entity),
@@ -128,7 +131,7 @@ class ListPageTemplate<T> extends StatelessWidget {
     });
   }
 
-  void _trySave(BuildContext context, T entity) async {
+  void _trySave(BuildContext context, E entity) async {
     final result = await bloc.save(entity);
     result.fold(
       (failure) {
@@ -147,30 +150,39 @@ class ListPageTemplate<T> extends StatelessWidget {
   }
 }
 
-mixin ListPageBloc<T> implements BlocBase<ScreenState<List<T>>> {
-  UseCase<Object?, List<T>> get getUseCase;
+mixin ListPageBloc<T, E extends Entity<int>>
+    implements BlocBase<ScreenState<List<T>>> {
+  UseCase<Object?, List<T>> get getAllUseCase;
 
-  UseCase<T, void> get deleteUseCase;
+  UseCase<int, E?> get getUseCase;
 
-  UseCase<T, T> get saveUseCase;
+  UseCase<int, void> get deleteUseCase;
+
+  UseCase<E, E> get saveUseCase;
 
   Future<void> load() async {
     emit(LoadingState<List<T>>());
-    final result = await getUseCase.execute(const NoParams());
+    final result = await getAllUseCase.execute(const NoParams());
     result.fold(
       (failure) => emit(FailureState<List<T>>(failure)),
       (value) => emit(SuccessState<List<T>>(value)),
     );
   }
 
-  Future<Either<Failure, void>> delete(T entity) async {
-    return deleteUseCase.execute(entity).then((result) {
-      load();
-      return result;
-    });
+  Future<Either<Failure, E>> delete(int id) async {
+    final getResult = await getUseCase.execute(id);
+    return getResult.bindFuture<E>((entity) async {
+      if (entity == null) {
+        return const Left(BusinessFailure('Registro não encontrado'));
+      }
+      return deleteUseCase.execute(id).then((result) {
+        load();
+        return result.map((_) => entity);
+      });
+    }).run();
   }
 
-  Future<Either<Failure, T>> save(T entity) async {
+  Future<Either<Failure, E>> save(E entity) async {
     return saveUseCase.execute(entity).then((result) {
       load();
       return result;
