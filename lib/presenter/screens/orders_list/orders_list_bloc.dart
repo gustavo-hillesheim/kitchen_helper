@@ -2,23 +2,27 @@ import '../../../domain/domain.dart';
 import '../../presenter.dart';
 import '../states.dart';
 
-class OrdersListBloc extends AppCubit<List<Order>> with ListPageBloc<Order> {
+class OrdersListBloc extends AppCubit<List<ListingOrderDto>>
+    with ListPageBloc<ListingOrderDto, Order> {
   @override
-  final GetOrdersUseCase getUseCase;
+  final GetOrdersUseCase getAllUseCase;
   @override
   final DeleteOrderUseCase deleteUseCase;
   @override
   final SaveOrderUseCase saveUseCase;
+  @override
+  final GetOrderUseCase getUseCase;
 
   OrdersListBloc(
-    this.getUseCase,
+    this.getAllUseCase,
     this.deleteUseCase,
     this.saveUseCase,
+    this.getUseCase,
   ) : super(const LoadingState());
 
   @override
   Future<void> load({OrderStatus? status}) async {
-    runEither(() => getUseCase.execute(OrdersFilter(
+    runEither(() => getAllUseCase.execute(OrdersFilter(
           status: status,
         )));
   }

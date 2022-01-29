@@ -51,11 +51,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   void initState() {
     super.initState();
     service = widget.service ??
-        RecipeIngredientSelectorService(
-          Modular.get(),
-          Modular.get(),
-          Modular.get(),
-        );
+        RecipeIngredientSelectorService(Modular.get(), Modular.get());
     if (widget.initialValue != null) {
       initialValue = RecipeIngredientSelectorItem(
         id: widget.initialValue!.id,

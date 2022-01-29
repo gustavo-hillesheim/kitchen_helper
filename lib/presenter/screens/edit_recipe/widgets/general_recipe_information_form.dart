@@ -18,7 +18,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
   final ValueNotifier<MeasurementUnit?> measurementUnitNotifier;
   final double cost;
   final EditRecipeBloc bloc;
-  final Recipe? initialValue;
 
   const GeneralRecipeInformationForm({
     Key? key,
@@ -30,7 +29,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
     required this.measurementUnitNotifier,
     required this.cost,
     required this.bloc,
-    required this.initialValue,
   }) : super(key: key);
 
   @override
@@ -49,7 +47,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
                     Expanded(
                       child: AppTextFormField.number(
                         name: 'Quantidade produzida',
-                        initialValue: initialValue?.quantityProduced,
                         controller: quantityProducedController,
                       ),
                     ),
@@ -71,7 +68,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
                   ),
                   child: AppTextFormField(
                     name: 'Anotações',
-                    initialValue: initialValue?.notes,
                     multiline: true,
                     controller: notesController,
                     required: false,
@@ -97,7 +93,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
                                   child: AppTextFormField.number(
                                     required: canBeSold,
                                     name: 'Quantidade vendida',
-                                    initialValue: initialValue?.quantitySold,
                                     controller: quantitySoldController,
                                   ),
                                 ),
@@ -106,7 +101,6 @@ class GeneralRecipeInformationForm extends StatelessWidget {
                                   child: AppTextFormField.money(
                                     required: canBeSold,
                                     name: 'Preço de venda',
-                                    initialValue: initialValue?.price,
                                     controller: priceController,
                                   ),
                                 ),

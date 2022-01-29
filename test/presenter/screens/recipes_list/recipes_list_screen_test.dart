@@ -16,7 +16,7 @@ import '../../finders.dart';
 
 void main() {
   late RecipesListBloc bloc;
-  late StreamController<ScreenState<List<Recipe>>> streamController;
+  late StreamController<ScreenState<List<ListingRecipeDto>>> streamController;
 
   setUp(() {
     streamController = StreamController();
@@ -40,8 +40,8 @@ void main() {
   testWidgets('WHEN in SuccessState AND has recipes SHOULD show recipes',
       (tester) async {
     when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink
-          .add(SuccessState([cakeRecipe, sugarWithEggRecipeWithId]));
+      streamController.sink.add(
+          SuccessState([listingCakeRecipeDto, listingSugarWithEggRecipeDto]));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -68,7 +68,8 @@ void main() {
 
   testWidgets('WHEN in FailureState SHOULD show error message', (tester) async {
     when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(FailureState(FakeFailure('failure on load')));
+      streamController.sink
+          .add(const FailureState(FakeFailure('failure on load')));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -83,13 +84,13 @@ void main() {
   Future<void> delete(
     WidgetTester tester,
     Recipe recipe, {
-    required Either<Failure, void> result,
+    required Either<Failure, Recipe> result,
   }) async {
     final deleteIconFinder = find.byIcon(Icons.delete);
     expect(deleteIconFinder, findsOneWidget);
-    when(() => bloc.delete(recipe)).thenAnswer((_) async => result);
+    when(() => bloc.delete(recipe.id!)).thenAnswer((_) async => result);
     await tester.tap(deleteIconFinder);
-    verify(() => bloc.delete(recipe));
+    verify(() => bloc.delete(recipe.id!));
   }
 
   Future<void> retry(WidgetTester tester) async {
@@ -101,11 +102,11 @@ void main() {
   Future<void> retryDelete(
     WidgetTester tester,
     Recipe recipe, {
-    required Either<Failure, void> result,
+    required Either<Failure, Recipe> result,
   }) async {
-    when(() => bloc.delete(cakeRecipe)).thenAnswer((_) async => result);
+    when(() => bloc.delete(recipe.id!)).thenAnswer((_) async => result);
     await retry(tester);
-    verify(() => bloc.delete(cakeRecipe));
+    verify(() => bloc.delete(recipe.id!));
   }
 
   Future<void> undoDelete(
@@ -134,8 +135,8 @@ void main() {
   testWidgets(
     'SHOULD be able to delete and undelete recipe',
     (tester) async {
-      when(() => bloc.load()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([cakeRecipe])));
+      when(() => bloc.load()).thenAnswer((_) async =>
+          streamController.sink.add(SuccessState([listingCakeRecipeDto])));
 
       await tester.pumpWidget(
         MaterialApp(home: RecipesListScreen(bloc: bloc)),
@@ -145,7 +146,7 @@ void main() {
       await tester.drag(find.byType(RecipeListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, cakeRecipe, result: const Right(null));
+      await delete(tester, cakeRecipe, result: Right(cakeRecipe));
       await undoDelete(tester, cakeRecipe, result: Right(cakeRecipe));
     },
   );
@@ -153,8 +154,8 @@ void main() {
   testWidgets(
     'WHEN delete or undelete fail the user SHOULD be able to retry',
     (tester) async {
-      when(() => bloc.load()).thenAnswer(
-          (_) async => streamController.sink.add(SuccessState([cakeRecipe])));
+      when(() => bloc.load()).thenAnswer((_) async =>
+          streamController.sink.add(SuccessState([listingCakeRecipeDto])));
 
       await tester.pumpWidget(
         MaterialApp(home: RecipesListScreen(bloc: bloc)),
@@ -164,9 +165,11 @@ void main() {
       await tester.drag(find.byType(RecipeListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, cakeRecipe, result: Left(FakeFailure('error')));
-      await retryDelete(tester, cakeRecipe, result: const Right(null));
-      await undoDelete(tester, cakeRecipe, result: Left(FakeFailure('error')));
+      await delete(tester, cakeRecipe,
+          result: const Left(FakeFailure('error')));
+      await retryDelete(tester, cakeRecipe, result: Right(cakeRecipe));
+      await undoDelete(tester, cakeRecipe,
+          result: const Left(FakeFailure('error')));
       await retryUndoDelete(tester, cakeRecipe, result: Right(cakeRecipe));
     },
   );
@@ -197,7 +200,8 @@ void main() {
           arguments: any(named: 'arguments'),
         )).thenAnswer((_) async => true);
     when(() => bloc.load()).thenAnswer(
-      (_) async => streamController.sink.add(SuccessState([cakeRecipe])),
+      (_) async =>
+          streamController.sink.add(SuccessState([listingCakeRecipeDto])),
     );
 
     await tester.pumpWidget(MaterialApp(home: RecipesListScreen(bloc: bloc)));
@@ -206,7 +210,7 @@ void main() {
     await tap(find.byType(RecipeListTile), tester);
     await tester.pumpAndSettle();
 
-    verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe));
+    verify(() => navigator.pushNamed('/edit-recipe', arguments: cakeRecipe.id));
     verify(() => bloc.load()).called(2);
   });
 }

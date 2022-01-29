@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/orders_list/orders_list_bloc.dart';
@@ -18,7 +17,7 @@ import '../../finders.dart';
 
 void main() {
   late OrdersListBloc bloc;
-  late StreamController<ScreenState<List<Order>>> streamController;
+  late StreamController<ScreenState<List<ListingOrderDto>>> streamController;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
@@ -38,10 +37,6 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    expect(
-      find.byWidgetPredicate((widget) => widget is ListPageTemplate<Order>),
-      findsOneWidget,
-    );
     expect(find.byType(OrderFilter), findsOneWidget);
     expect(find.text('Pedidos'), findsOneWidget);
     expect(find.text('Adicionar'), findsOneWidget);
@@ -54,10 +49,10 @@ void main() {
     );
   });
 
-  testWidgets('WHEN has orders SHOULD OrderListTile', (tester) async {
+  testWidgets('WHEN has orders SHOULD render OrderListTile', (tester) async {
     mockOrderListTile();
     when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(SuccessState([batmanOrder]));
+      streamController.sink.add(SuccessState([listingBatmanOrderDto]));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -79,7 +74,7 @@ void main() {
     ).thenAnswer((_) async => true);
 
     when(() => bloc.load()).thenAnswer((_) async {
-      streamController.sink.add(SuccessState([batmanOrder]));
+      streamController.sink.add(SuccessState([listingBatmanOrderDto]));
     });
 
     await tester.pumpWidget(MaterialApp(
@@ -89,7 +84,7 @@ void main() {
     await tester.pump();
 
     await tester.tap(find.byType(OrderListTile));
-    verify(() => navigator.pushNamed('/edit-order', arguments: batmanOrder));
+    verify(() => navigator.pushNamed('/edit-order', arguments: batmanOrder.id));
     verify(() => bloc.load());
   });
 
@@ -157,13 +152,11 @@ void main() {
 }
 
 void mockOrderListTile() {
-  final getOrderPriceUseCase = GetOrderPriceUseCaseMock();
-  when(() => getOrderPriceUseCase.execute(any()))
-      .thenAnswer((_) async => const Right(1));
+  final getListingOrderProductsUseCase = GetListingOrderProductsUseCaseMock();
 
   initModule(FakeModule([
-    Bind.instance<GetRecipeUseCase>(GetRecipeUseCaseMock()),
-    Bind.instance<GetOrderPriceUseCase>(getOrderPriceUseCase),
+    Bind.instance<GetListingOrderProductsUseCase>(
+        getListingOrderProductsUseCase),
   ]));
 }
 

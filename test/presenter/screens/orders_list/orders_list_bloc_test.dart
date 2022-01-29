@@ -9,34 +9,37 @@ import '../../../mocks.dart';
 
 void main() {
   late OrdersListBloc bloc;
-  late GetOrdersUseCase getUseCase;
+  late GetOrdersUseCase getAllUseCase;
+  late GetOrderUseCase getUseCase;
 
   void setup() {
     registerFallbackValue(FakeOrdersFilter());
-    getUseCase = GetOrdersUseCaseMock();
+    getAllUseCase = GetOrdersUseCaseMock();
+    getUseCase = GetOrderUseCaseMock();
     bloc = OrdersListBloc(
-      getUseCase,
+      getAllUseCase,
       DeleteOrderUseCaseMock(),
       SaveOrderUseCaseMock(),
+      getUseCase,
     );
   }
 
-  blocTest<OrdersListBloc, ScreenState<List<Order>>>(
+  blocTest<OrdersListBloc, ScreenState<List<ListingOrderDto>>>(
       'WHEN load is called SHOULD call getUseCase with filter',
       setUp: () {
         setup();
-        when(() => getUseCase.execute(any()))
-            .thenAnswer((_) async => Right([batmanOrder]));
+        when(() => getAllUseCase.execute(any()))
+            .thenAnswer((_) async => Right([listingBatmanOrderDto]));
       },
       build: () => bloc,
-      expect: () => <ScreenState<List<Order>>>[
+      expect: () => <ScreenState<List<ListingOrderDto>>>[
             const LoadingState(),
-            SuccessState([batmanOrder]),
+            SuccessState([listingBatmanOrderDto]),
           ],
       act: (bloc) => bloc.load(status: OrderStatus.delivered),
       verify: (_) {
         verify(
-          () => getUseCase.execute(const OrdersFilter(
+          () => getAllUseCase.execute(const OrdersFilter(
             status: OrderStatus.delivered,
           )),
         );

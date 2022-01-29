@@ -14,14 +14,20 @@ void main() {
   late SaveOrderUseCase saveOrderUseCase;
   late GetRecipeUseCase getRecipeUseCase;
   late GetRecipeCostUseCase getRecipeCostUseCase;
+  late GetOrderUseCase getOrderUseCase;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
     saveOrderUseCase = SaveOrderUseCaseMock();
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipeCostUseCase = GetRecipeCostUseCaseMock();
-    bloc =
-        EditOrderBloc(saveOrderUseCase, getRecipeUseCase, getRecipeCostUseCase);
+    getOrderUseCase = GetOrderUseCaseMock();
+    bloc = EditOrderBloc(
+      saveOrderUseCase,
+      getRecipeUseCase,
+      getRecipeCostUseCase,
+      getOrderUseCase,
+    );
   });
 
   test('SHOULD start with EmptyState', () {

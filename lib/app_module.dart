@@ -32,11 +32,12 @@ class AppModule extends Module {
         Bind((i) => GetRecipeUseCase(i())),
         Bind((i) => DeleteRecipeUseCase(i())),
         Bind((i) => GetRecipeCostUseCase(i(), i())),
+        Bind((i) => GetRecipesDomainUseCase(i())),
         Bind((i) => SaveOrderUseCase(i())),
         Bind((i) => GetOrdersUseCase(i())),
         Bind((i) => GetOrderUseCase(i())),
         Bind((i) => DeleteOrderUseCase(i())),
-        Bind((i) => GetOrderPriceUseCase(i())),
+        Bind((i) => GetListingOrderProductsUseCase(i())),
       ];
 
   @override
@@ -50,13 +51,11 @@ class AppModule extends Module {
         ChildRoute(
           '/edit-ingredient',
           child: (_, route) {
-            if (route.data is! Ingredient?) {
+            if (route.data is! int?) {
               throw Exception('The route /edit-ingredient only accepts values'
-                  ' of type Ingredient? as argument');
+                  ' of type int? as argument');
             }
-            return EditIngredientScreen(
-              initialValue: route.data as Ingredient?,
-            );
+            return EditIngredientScreen(id: route.data as int?);
           },
           guards: [AppGuard()],
         ),
@@ -66,13 +65,11 @@ class AppModule extends Module {
           guards: [AppGuard()],
         ),
         ChildRoute('/edit-recipe', child: (_, route) {
-          if (route.data is! Recipe?) {
+          if (route.data is! int?) {
             throw Exception('The route /edit-recipe only accepts values'
-                ' of type Recipe? as argument');
+                ' of type int? as argument');
           }
-          return EditRecipeScreen(
-            initialValue: route.data as Recipe?,
-          );
+          return EditRecipeScreen(id: route.data as int?);
         }),
         ChildRoute(
           '/orders',
@@ -80,13 +77,11 @@ class AppModule extends Module {
           guards: [AppGuard()],
         ),
         ChildRoute('/edit-order', child: (_, route) {
-          if (route.data is! Order?) {
+          if (route.data is! int?) {
             throw Exception('The route /edit-order only accepts values'
-                ' of type Order? as argument');
+                ' of type int? as argument');
           }
-          return EditOrderScreen(
-            initialValue: route.data as Order?,
-          );
+          return EditOrderScreen(id: route.data as int?);
         }),
       ];
 }

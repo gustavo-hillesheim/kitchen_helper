@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' show Right;
+import 'package:kitchen_helper/core/core.dart';
 
 import '../../../domain/domain.dart';
 import '../../../extensions.dart';
@@ -13,16 +14,16 @@ import 'widgets/ingredients_list.dart';
 
 class EditRecipeScreen extends StatefulWidget {
   final EditRecipeBloc? bloc;
-  final Recipe? initialValue;
+  final int? id;
 
   const EditRecipeScreen({
     Key? key,
-    this.initialValue,
+    this.id,
     this.bloc,
   }) : super(key: key);
 
-  static Future<bool?> navigate([Recipe? recipe]) {
-    return Modular.to.pushNamed<bool?>('/edit-recipe', arguments: recipe);
+  static Future<bool?> navigate([int? id]) {
+    return Modular.to.pushNamed<bool?>('/edit-recipe', arguments: id);
   }
 
   @override
@@ -54,10 +55,15 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
           Modular.get(),
           Modular.get(),
         );
-    if (widget.initialValue != null) {
-      final recipe = widget.initialValue!;
-      _fillControllers(recipe);
-      _fillCost(recipe);
+    if (widget.id != null) {
+      bloc.stream
+          .where((state) => state is SuccessState<Recipe>)
+          .map((state) => (state as SuccessState<Recipe>).value)
+          .listen((recipe) {
+        _fillControllers(recipe);
+        _fillCost(recipe);
+      });
+      bloc.loadRecipe(widget.id!);
     }
   }
 
@@ -75,13 +81,22 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
   }
 
   Future<void> _fillControllers(Recipe recipe) async {
+    _nameController.text = recipe.name;
+    _quantityProducedController.text =
+        Formatter.simpleNumber(recipe.quantityProduced);
+    _quantitySoldController.text = recipe.quantitySold != null
+        ? Formatter.simpleNumber(recipe.quantitySold!)
+        : '';
+    _priceController.text = recipe.price?.toStringAsFixed(2) ?? '';
+    _notesController.text = recipe.notes ?? '';
+    _canBeSoldNotifier.value = recipe.canBeSold;
+    _measurementUnitNotifier.value = recipe.measurementUnit;
+    _canBeSoldNotifier.value = recipe.canBeSold;
     final ingredientsResult = await bloc.getEditingRecipeIngredients(recipe);
     ingredientsResult.fold(
       (f) => debugPrint('Could not find ingredients: ${f.message}'),
       (i) => _ingredients.addAll(i),
     );
-    _measurementUnitNotifier.value = recipe.measurementUnit;
-    _canBeSoldNotifier.value = recipe.canBeSold;
   }
 
   Future<void> _fillCost(Recipe recipe) async {
@@ -103,10 +118,30 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.initialValue != null ? 'Editar receita' : 'Nova receita',
+          widget.id != null ? 'Editar receita' : 'Nova receita',
         ),
       ),
-      body: Form(
+      body: StreamBuilder(
+        stream: bloc.stream,
+        builder: (context, snapshot) {
+          final state = bloc.state;
+          return Stack(
+            children: [
+              if (state is FailureState)
+                _buildFailureState((state as FailureState).failure)
+              else if (state is LoadingRecipeState)
+                const Center(child: CircularProgressIndicator())
+              else
+                _buildForm(),
+              if (state is LoadingState) _buildLoadingOverlay(),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildForm() => Form(
         key: _formKey,
         child: Column(
           children: [
@@ -114,7 +149,6 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
               padding: kMediumEdgeInsets.copyWith(bottom: kSmallSpace),
               child: AppTextFormField(
                 name: 'Nome',
-                initialValue: widget.initialValue?.name,
                 controller: _nameController,
               ),
             ),
@@ -133,7 +167,6 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                 controller: _tabsController,
                 children: [
                   GeneralRecipeInformationForm(
-                    initialValue: widget.initialValue,
                     quantityProducedController: _quantityProducedController,
                     notesController: _notesController,
                     quantitySoldController: _quantitySoldController,
@@ -148,7 +181,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                     onAdd: _onAddIngredient,
                     onEdit: _onEditIngredient,
                     onDelete: _onDeleteIngredient,
-                    recipeId: widget.initialValue?.id,
+                    recipeId: widget.id,
                   ),
                 ],
               ),
@@ -166,9 +199,20 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
+
+  Widget _buildFailureState(Failure failure) => Center(
+        child: Text(failure.message, style: const TextStyle(color: Colors.red)),
+      );
+
+  Widget _buildLoadingOverlay() => Positioned.fill(
+        child: Container(
+          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
 
   void _save() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -194,7 +238,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
         .toList();
 
     return Recipe(
-      id: widget.initialValue?.id,
+      id: widget.id,
       name: _nameController.text,
       notes: _notesController.text,
       measurementUnit: _measurementUnitNotifier.value!,

@@ -16,7 +16,8 @@ import '../../finders.dart';
 
 void main() {
   late IngredientsListBloc bloc;
-  late StreamController<ScreenState<List<Ingredient>>> streamController;
+  late StreamController<ScreenState<List<ListingIngredientDto>>>
+      streamController;
 
   setUp(() {
     bloc = IngredientsListBlocMock();
@@ -106,8 +107,8 @@ void main() {
   });
 
   testWidgets('Should show Ingredient list', (tester) async {
-    when(() => bloc.load()).thenAnswer(
-        (_) async => streamController.sink.add(SuccessState(ingredientList)));
+    when(() => bloc.load()).thenAnswer((_) async =>
+        streamController.sink.add(SuccessState(listingIngredientDtoList)));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -121,10 +122,10 @@ void main() {
     'Should navigate to EditIngredientScreen when IngredientListTile is tapped',
     (tester) async {
       final navigator = mockNavigator();
-      when(() => navigator.pushNamed(any(), arguments: egg))
+      when(() => navigator.pushNamed(any(), arguments: egg.id))
           .thenAnswer((_) async => false);
-      when(() => bloc.load()).thenAnswer(
-          (_) async => streamController.sink.add(const SuccessState([egg])));
+      when(() => bloc.load()).thenAnswer((_) async =>
+          streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -133,20 +134,20 @@ void main() {
 
       await tester.tap(find.byType(IngredientListTile));
 
-      verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg));
+      verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg.id));
     },
   );
 
   Future<void> delete(
     WidgetTester tester,
-    Ingredient ingredient, {
-    required Either<Failure, void> result,
+    ListingIngredientDto ingredient, {
+    required Either<Failure, Ingredient> result,
   }) async {
     final deleteIconFinder = find.byIcon(Icons.delete);
     expect(deleteIconFinder, findsOneWidget);
-    when(() => bloc.delete(ingredient)).thenAnswer((_) async => result);
+    when(() => bloc.delete(ingredient.id)).thenAnswer((_) async => result);
     await tester.tap(deleteIconFinder);
-    verify(() => bloc.delete(ingredient));
+    verify(() => bloc.delete(ingredient.id));
   }
 
   Future<void> retry(WidgetTester tester) async {
@@ -157,12 +158,12 @@ void main() {
 
   Future<void> retryDelete(
     WidgetTester tester,
-    Ingredient ingredient, {
-    required Either<Failure, void> result,
+    ListingIngredientDto ingredient, {
+    required Either<Failure, Ingredient> result,
   }) async {
-    when(() => bloc.delete(ingredient)).thenAnswer((_) async => result);
+    when(() => bloc.delete(ingredient.id)).thenAnswer((_) async => result);
     await retry(tester);
-    verify(() => bloc.delete(ingredient));
+    verify(() => bloc.delete(ingredient.id));
   }
 
   Future<void> undoDelete(
@@ -191,8 +192,8 @@ void main() {
   testWidgets(
     'Should be able to delete and undelete ingredient',
     (tester) async {
-      when(() => bloc.load()).thenAnswer(
-          (_) async => streamController.sink.add(const SuccessState([egg])));
+      when(() => bloc.load()).thenAnswer((_) async =>
+          streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -202,7 +203,7 @@ void main() {
       await tester.drag(find.byType(IngredientListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, egg, result: const Right(null));
+      await delete(tester, listingEggDto, result: const Right(egg));
       await undoDelete(tester, egg, result: const Right(egg));
     },
   );
@@ -210,8 +211,8 @@ void main() {
   testWidgets(
     'If delete or undelete fail the user should be able to retry',
     (tester) async {
-      when(() => bloc.load()).thenAnswer(
-          (_) async => streamController.sink.add(const SuccessState([egg])));
+      when(() => bloc.load()).thenAnswer((_) async =>
+          streamController.sink.add(const SuccessState([listingEggDto])));
 
       await tester.pumpWidget(
         MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -221,8 +222,9 @@ void main() {
       await tester.drag(find.byType(IngredientListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, egg, result: const Left(FakeFailure('error')));
-      await retryDelete(tester, egg, result: const Right(null));
+      await delete(tester, listingEggDto,
+          result: const Left(FakeFailure('error')));
+      await retryDelete(tester, listingEggDto, result: const Right(egg));
       await undoDelete(tester, egg, result: const Left(FakeFailure('error')));
       await retryUndoDelete(tester, egg, result: const Right(egg));
     },

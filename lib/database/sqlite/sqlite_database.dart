@@ -171,14 +171,20 @@ class SQLiteDatabase {
   Future<List<Map<String, dynamic>>> query(
       {required String table,
       required List<String> columns,
-      Map<String, dynamic>? where}) {
+      Map<String, dynamic>? where,
+      String? orderBy}) {
     final whereObj = _Where.fromMap(where ?? {});
     return _executor.query(
       table,
       columns: columns,
       where: whereObj.where,
       whereArgs: whereObj.whereArgs,
+      orderBy: orderBy,
     );
+  }
+
+  Future<List<Map<String, dynamic>>> rawQuery(String query, [List? arguments]) {
+    return _executor.rawQuery(query, arguments);
   }
 
   Future<void> delete({

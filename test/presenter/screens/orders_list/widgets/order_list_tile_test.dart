@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/orders_list/widgets/order_list_tile.dart';
@@ -15,37 +14,34 @@ import '../../../finders.dart';
 
 void main() {
   late OrderListTileBloc bloc;
-  late StreamController<ScreenState<List<OrderProductData>>> streamController;
-  ScreenState<List<OrderProductData>>? state;
+  late StreamController<ScreenState<List<ListingOrderProductDto>>>
+      streamController;
+  late ScreenState<List<ListingOrderProductDto>> state;
 
-  void setState(ScreenState<List<OrderProductData>> newState) {
+  void setState(ScreenState<List<ListingOrderProductDto>> newState) {
     state = newState;
     streamController.sink.add(newState);
   }
 
   setUp(() {
+    state = const EmptyState();
     bloc = OrderListTileBlocMock();
     streamController = StreamController();
-    when(() => bloc.stream).thenAnswer((_) {
-      setState(const EmptyState());
-      return streamController.stream;
-    });
-    when(() => bloc.state).thenAnswer((_) => state!);
+    when(() => bloc.stream).thenAnswer((_) => streamController.stream);
+    when(() => bloc.state).thenAnswer((_) => state);
   });
 
   testWidgets('SHOULD render order data', (tester) async {
-    when(() => bloc.getPrice(batmanOrder))
-        .thenAnswer((_) async => const Right(1));
-    when(() => bloc.loadProducts(batmanOrder)).thenAnswer((_) async {
+    when(() => bloc.loadProducts(batmanOrder.id!)).thenAnswer((_) async {
       setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
-      setState(SuccessState(_productData(batmanOrder.products)));
+      setState(SuccessState(_listingOrderProducts(batmanOrder.products)));
     });
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
           body: OrderListTile(
-        batmanOrder,
+        listingBatmanOrderDto,
         onTap: () {},
         bloc: bloc,
       )),
@@ -57,7 +53,7 @@ void main() {
     expect(find.text(batmanOrder.clientAddress), findsOneWidget);
     expect(find.text(Formatter.completeDate(batmanOrder.deliveryDate)),
         findsOneWidget);
-    expect(find.text(Formatter.currency(1)), findsOneWidget);
+    expect(find.text(Formatter.currency(50)), findsOneWidget);
     expect(TagFinder(label: 'Entregue'), findsOneWidget);
 
     // Expands Expandable
@@ -79,9 +75,8 @@ void main() {
 
   testWidgets('WHEN bloc returns Failure SHOULD render failure',
       (tester) async {
-    when(() => bloc.getPrice(spidermanOrder))
-        .thenAnswer((_) async => const Left(FakeFailure('price failure')));
-    when(() => bloc.loadProducts(spidermanOrder)).thenAnswer((_) async {
+    when(() => bloc.loadProducts(listingSpidermanOrderDto.id))
+        .thenAnswer((_) async {
       setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
       setState(const FailureState(FakeFailure('failure')));
@@ -89,11 +84,16 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
-          body: OrderListTile(spidermanOrder, onTap: () {}, bloc: bloc)),
+          body: OrderListTile(
+        listingSpidermanOrderDto,
+        onTap: () {},
+        bloc: bloc,
+      )),
     ));
     // Renders price
     await tester.pump();
-    expect(find.text(Formatter.currency(1)), findsNothing);
+
+    expect(find.text(Formatter.currency(25)), findsOneWidget);
     expect(TagFinder(label: 'Entregue'), findsNothing);
 
     // Expands Expandable
@@ -104,9 +104,10 @@ void main() {
   });
 }
 
-List<OrderProductData> _productData(List<OrderProduct> products) {
+List<ListingOrderProductDto> _listingOrderProducts(
+    List<OrderProduct> products) {
   return products
-      .map((p) => OrderProductData(
+      .map((p) => ListingOrderProductDto(
             quantity: p.quantity,
             measurementUnit: recipesMap[p.id]!.measurementUnit,
             name: recipesMap[p.id]!.name,

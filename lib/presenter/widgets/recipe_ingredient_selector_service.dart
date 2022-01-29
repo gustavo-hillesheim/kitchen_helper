@@ -6,13 +6,11 @@ import '../../extensions.dart';
 import 'recipe_ingredient_selector.dart';
 
 class RecipeIngredientSelectorService {
-  final GetRecipeUseCase getRecipeUseCase;
-  final GetRecipesUseCase getRecipesUseCase;
+  final GetRecipesDomainUseCase getRecipesDomainUseCase;
   final GetIngredientsUseCase getIngredientsUseCase;
 
   RecipeIngredientSelectorService(
-    this.getRecipeUseCase,
-    this.getRecipesUseCase,
+    this.getRecipesDomainUseCase,
     this.getIngredientsUseCase,
   );
 
@@ -26,36 +24,35 @@ class RecipeIngredientSelectorService {
     final shouldGetIngredients =
         getOnly != RecipeIngredientSelectorItems.recipes;
 
-    Either<Failure, List<Recipe>> recipes = await _getRecipes(
+    Either<Failure, List<RecipeDomainDto>> recipes = await _getRecipes(
       shouldGetRecipes,
       recipeFilter,
+      recipeToIgnore,
     );
-    Either<Failure, List<Ingredient>> ingredients =
+    Either<Failure, List<ListingIngredientDto>> ingredients =
         await _getIngredients(shouldGetIngredients);
 
     final items = recipes.combine(
       ingredients,
-      (r, List<Ingredient> i) => _combineRecipesAndIngredients(r, i),
+      (r, List<ListingIngredientDto> i) => _combineRecipesAndIngredients(r, i),
     );
-    return items.asyncFlatMap((items) async {
-      if (recipeToIgnore != null) {
-        return _deepRemoveIgnoredRecipe(items, recipeToIgnore)
-            .onRightThen((_) => Right(items));
-      }
-      return Right(items);
-    });
+    return items;
   }
 
-  Future<Either<Failure, List<Recipe>>> _getRecipes(
+  Future<Either<Failure, List<RecipeDomainDto>>> _getRecipes(
     bool shouldGet,
     RecipeFilter? recipeFilter,
+    int? recipeToIgnore,
   ) async {
     return shouldGet
-        ? (await getRecipesUseCase.execute(recipeFilter))
+        ? (await getRecipesDomainUseCase.execute(RecipeDomainFilter(
+            canBeSold: recipeFilter?.canBeSold,
+            ignoreRecipesThatDependOn: recipeToIgnore,
+          )))
         : const Right([]);
   }
 
-  Future<Either<Failure, List<Ingredient>>> _getIngredients(
+  Future<Either<Failure, List<ListingIngredientDto>>> _getIngredients(
       bool shouldGet) async {
     return shouldGet
         ? (await getIngredientsUseCase.execute(const NoParams()))
@@ -63,7 +60,7 @@ class RecipeIngredientSelectorService {
   }
 
   List<RecipeIngredientSelectorItem> _combineRecipesAndIngredients(
-      List<Recipe> recipes, List<Ingredient> ingredients) {
+      List<RecipeDomainDto> recipes, List<ListingIngredientDto> ingredients) {
     final recipeItems = _recipesAsSelectorItems(recipes);
     final ingredientItems = _ingredientsAsSelectorItems(ingredients);
     final items = [...recipeItems, ...ingredientItems];
@@ -74,78 +71,23 @@ class RecipeIngredientSelectorService {
   }
 
   Iterable<RecipeIngredientSelectorItem> _recipesAsSelectorItems(
-      List<Recipe> recipes) {
+      List<RecipeDomainDto> recipes) {
     return recipes.map((r) => RecipeIngredientSelectorItem(
-          id: r.id!,
-          name: r.name,
+          id: r.id,
+          name: r.label,
           type: RecipeIngredientType.recipe,
           measurementUnit: r.measurementUnit,
         ));
   }
 
   Iterable<RecipeIngredientSelectorItem> _ingredientsAsSelectorItems(
-    List<Ingredient> ingredients,
+    List<ListingIngredientDto> ingredients,
   ) {
     return ingredients.map((i) => RecipeIngredientSelectorItem(
-          id: i.id!,
+          id: i.id,
           name: i.name,
           type: RecipeIngredientType.ingredient,
           measurementUnit: i.measurementUnit,
         ));
-  }
-
-  Future<Either<Failure, void>> _deepRemoveIgnoredRecipe(
-    List<RecipeIngredientSelectorItem> items,
-    int ignoredRecipe,
-  ) async {
-    try {
-      final itemsToRemove = <RecipeIngredientSelectorItem>[];
-      for (final item in items) {
-        if (item.type != RecipeIngredientType.recipe) {
-          continue;
-        }
-        if (item.id == ignoredRecipe) {
-          itemsToRemove.add(item);
-        }
-        final dependsOnRecipe =
-            await _dependsOnRecipe(item.id, ignoredRecipe).throwOnFailure();
-        if (dependsOnRecipe) {
-          itemsToRemove.add(item);
-        }
-      }
-      for (var item in itemsToRemove) {
-        items.remove(item);
-      }
-      return const Right(null);
-    } on Failure catch (f) {
-      return Left(f);
-    }
-  }
-
-  Future<Either<Failure, bool>> _dependsOnRecipe(
-    int parentRecipeId,
-    int recipeId,
-  ) async {
-    final recipe =
-        await getRecipeUseCase.execute(parentRecipeId).throwOnFailure();
-    if (recipe == null) {
-      return const Right(false);
-    }
-    var dependsOnRecipe = false;
-    for (final ingredient in recipe.ingredients) {
-      if (ingredient.type != RecipeIngredientType.recipe) {
-        continue;
-      }
-      if (ingredient.id == recipeId) {
-        dependsOnRecipe = true;
-      } else {
-        dependsOnRecipe =
-            await _dependsOnRecipe(ingredient.id, recipeId).throwOnFailure();
-      }
-      if (dependsOnRecipe) {
-        break;
-      }
-    }
-    return Right(dependsOnRecipe);
   }
 }

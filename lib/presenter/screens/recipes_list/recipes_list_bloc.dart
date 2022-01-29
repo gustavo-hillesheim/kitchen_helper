@@ -2,22 +2,21 @@ import '../../../domain/domain.dart';
 import '../../presenter.dart';
 import '../states.dart';
 
-class RecipesListBloc extends AppCubit<List<Recipe>> with ListPageBloc<Recipe> {
+class RecipesListBloc extends AppCubit<List<ListingRecipeDto>>
+    with ListPageBloc<ListingRecipeDto, Recipe> {
   @override
-  final GetRecipesUseCase getUseCase;
+  final GetRecipesUseCase getAllUseCase;
   @override
   final DeleteRecipeUseCase deleteUseCase;
   @override
   final SaveRecipeUseCase saveUseCase;
+  @override
+  final GetRecipeUseCase getUseCase;
 
   RecipesListBloc(
-    this.getUseCase,
+    this.getAllUseCase,
     this.deleteUseCase,
     this.saveUseCase,
+    this.getUseCase,
   ) : super(const LoadingState());
-
-  @override
-  Future<void> load() {
-    return runEither(() => getUseCase.execute(const RecipeFilter()));
-  }
 }

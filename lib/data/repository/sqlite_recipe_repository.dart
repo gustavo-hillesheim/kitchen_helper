@@ -130,4 +130,74 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
       return Right(ingredients);
     });
   }
+
+  @override
+  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing() async {
+    try {
+      final records = await database.query(
+        table: tableName,
+        columns: [
+          'id',
+          'name',
+          'quantityProduced',
+          'quantitySold',
+          'price',
+          'measurementUnit'
+        ],
+        orderBy: 'name COLLATE NOCASE',
+      );
+      return Right(records.map(ListingRecipeDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<RecipeDomainDto>>> findAllDomain(
+      {RecipeFilter? filter}) async {
+    try {
+      final where = filter != null ? _filterToMap(filter) : null;
+      final records = await database.query(
+        table: tableName,
+        columns: [
+          'id',
+          'name label',
+          'measurementUnit',
+        ],
+        where: where,
+      );
+      return Right(records.map(RecipeDomainDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Set<int>>> getRecipesThatDependOn(int recipeId) async {
+    try {
+      final result = <int>{};
+      var filter = [recipeId];
+      while (true) {
+        final recipes = await _getRecipesThatDependOn(filter);
+        result.addAll(recipes);
+        if (recipes.isEmpty) {
+          break;
+        }
+        filter = recipes;
+      }
+      return Right(result);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+    }
+  }
+
+  Future<List<int>> _getRecipesThatDependOn(List<int> recipesId) async {
+    final result = await database.rawQuery('''
+    SELECT parentRecipeId id
+    FROM recipeIngredients
+    WHERE recipeIngredientId IN (${recipesId.map((_) => '?').join(', ')})
+    AND type = 'recipe'
+    ''', recipesId);
+    return result.map((data) => data['id'] as int).toList();
+  }
 }

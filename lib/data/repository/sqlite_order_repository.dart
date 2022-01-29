@@ -62,6 +62,58 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
     }
   }
 
+  @override
+  Future<Either<Failure, List<ListingOrderDto>>> findAllListing(
+      {OrdersFilter? filter}) async {
+    try {
+      final where = filter != null ? _filterToWhereMap(filter) : null;
+      final result = await database.rawQuery('''
+      SELECT o.id id, o.clientName clientName, o.clientAddress clientAddress,
+        o.deliveryDate deliveryDate, o.status status,
+        (r.quantitySold / r.quantityProduced * r.price * op.quantity) basePrice, 
+        sum(case when d.type = 'fixed' then d.value else 0 end) fixedDiscount, 
+        sum(case when d.type = 'percentage' then d.value else 0 end) 
+        percentageDiscount
+      FROM orders o
+      INNER JOIN orderProducts op ON o.id = op.orderId
+      INNER JOIN recipes r ON r.id = op.productId
+      INNER JOIN orderDiscounts d ON o.id = d.orderId
+      ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
+      GROUP BY o.id
+      ORDER BY o.deliveryDate
+      ''', where?.values.toList());
+      final dtos = result.map((json) {
+        // Creates muttable map
+        json = Map.from(json);
+        final basePrice = json['basePrice'];
+        final fixedDiscount = json['fixedDiscount'];
+        final percentageDiscount = json['percentageDiscount'];
+        json['price'] =
+            basePrice - fixedDiscount - percentageDiscount / 100 * basePrice;
+        return ListingOrderDto.fromJson(json);
+      }).toList();
+      return Right(dtos);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ListingOrderProductDto>>>
+      findAllOrderProductsListing(int orderId) async {
+    try {
+      final result = await database.rawQuery('''
+    SELECT r.name name, r.measurementUnit measurementUnit, op.quantity quantity
+    FROM orderProducts op
+    INNER JOIN recipes r ON r.id = op.productId
+    WHERE op.orderId = ?
+    ''', [orderId]);
+      return Right(result.map(ListingOrderProductDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
+  }
+
   Map<String, dynamic> _filterToWhereMap(OrdersFilter filter) {
     final where = <String, dynamic>{};
     if (filter.status != null) {

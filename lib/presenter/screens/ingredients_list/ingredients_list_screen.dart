@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../domain/domain.dart';
-import '../../widgets/widgets.dart';
-import '../edit_ingredient/edit_ingredient_screen.dart';
+import '../../presenter.dart';
 import 'ingredients_list_bloc.dart';
 import 'widgets/ingredient_list_tile.dart';
 
@@ -23,13 +22,18 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
   void initState() {
     super.initState();
     bloc = widget.bloc ??
-        IngredientsListBloc(Modular.get(), Modular.get(), Modular.get());
+        IngredientsListBloc(
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
     bloc.load();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListPageTemplate<Ingredient>(
+    return ListPageTemplate<ListingIngredientDto, Ingredient>(
       title: 'Ingredientes',
       bloc: bloc,
       tileBuilder: (_, ingredient) => IngredientListTile(
@@ -40,12 +44,12 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
       emptyText: 'Sem ingredientes',
       emptySubtext: 'Adicione ingredientes e eles aparecerão aqui',
       emptyActionText: 'Adicionar ingrediente',
-      onAdd: () => _goToEditIngredientScreen(),
+      onAdd: _goToEditIngredientScreen,
     );
   }
 
-  void _goToEditIngredientScreen([Ingredient? ingredient]) async {
-    final reload = await EditIngredientScreen.navigate(ingredient);
+  void _goToEditIngredientScreen([ListingIngredientDto? ingredient]) async {
+    final reload = await EditIngredientScreen.navigate(ingredient?.id);
     if (reload ?? false) {
       bloc.load();
     }

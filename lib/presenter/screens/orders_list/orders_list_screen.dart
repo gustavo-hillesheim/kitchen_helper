@@ -24,37 +24,47 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
   void initState() {
     super.initState();
     bloc = widget.bloc ??
-        OrdersListBloc(Modular.get(), Modular.get(), Modular.get());
-    bloc.load();
+        OrdersListBloc(
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
+    _load();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListPageTemplate<Order>(
+    return ListPageTemplate<ListingOrderDto, Order>(
       title: 'Pedidos',
       bloc: bloc,
       tileBuilder: (_, order) => OrderListTile(
         order,
         onTap: () => _goToEditScreen(order),
       ),
-      deletedMessage: (order) => 'Pedido excluído',
+      deletedMessage: (order) => 'Pedido de ${order.clientName} excluído',
       emptyText: 'Sem pedidos',
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',
       emptyActionText: 'Adicionar pedido',
-      onAdd: () => _goToEditScreen(),
       headerBottom: OrderFilter(
-        onChange: (filter) {
-          lastFilter = filter;
-          bloc.load(status: filter.status);
-        },
+        onChange: (newFilter) => _load(filter: newFilter),
       ),
+      onAdd: _goToEditScreen,
+      onLoad: _load,
     );
   }
 
-  void _goToEditScreen([Order? order]) async {
-    final shouldReload = await EditOrderScreen.navigate(order);
+  Future<void> _load({OrdersFilter? filter}) {
+    if (filter != null) {
+      lastFilter = filter;
+    }
+    return bloc.load(status: lastFilter?.status);
+  }
+
+  void _goToEditScreen([ListingOrderDto? order]) async {
+    final shouldReload = await EditOrderScreen.navigate(order?.id);
     if (shouldReload ?? false) {
-      bloc.load(status: lastFilter?.status);
+      _load();
     }
   }
 }

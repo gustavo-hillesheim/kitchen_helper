@@ -17,20 +17,17 @@ import 'helpers.dart';
 
 void main() {
   late EditRecipeBloc bloc;
-  late StreamController<ScreenState<void>> streamController;
+  late StreamController<ScreenState<Recipe>> streamController;
   final nameFieldFinder = AppTextFormFieldFinder(name: 'Nome');
+  ScreenState<Recipe> state = const EmptyState();
 
-  setUp(() {
-    streamController = StreamController();
-    bloc = EditRecipeBlocMock();
+  void defaultMocks() {
     when(() => bloc.stream).thenAnswer((_) => streamController.stream);
-    registerFallbackValue(FakeRecipe());
-    registerFallbackValue(const RecipeIngredient(
-      id: 1,
-      type: RecipeIngredientType.ingredient,
-      quantity: 1,
-    ));
-    mockRecipeIngredientsSelectorService();
+    when(() => bloc.state).thenAnswer((_) => state);
+    when(() => bloc.loadRecipe(sugarWithEggRecipeWithId.id!))
+        .thenAnswer((_) async {
+      streamController.sink.add(SuccessState(sugarWithEggRecipeWithId));
+    });
     when(() => bloc.getEditingRecipeIngredient(any())).thenAnswer(
       (invocation) async {
         final ingredient = invocation.positionalArguments[0];
@@ -40,6 +37,20 @@ void main() {
         ));
       },
     );
+  }
+
+  setUp(() {
+    streamController = StreamController.broadcast();
+    bloc = EditRecipeBlocMock();
+    registerFallbackValue(FakeRecipe());
+    registerFallbackValue(const RecipeIngredient(
+      id: 1,
+      type: RecipeIngredientType.ingredient,
+      quantity: 1,
+    ));
+    mockRecipeIngredientsSelectorService();
+    streamController.stream.listen((newState) => state = newState);
+    defaultMocks();
   });
 
   Future<void> fillRecipeInformation(WidgetTester tester) async {
@@ -127,7 +138,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: EditRecipeScreen(
       bloc: bloc,
-      initialValue: sugarWithEggRecipeWithId,
+      id: sugarWithEggRecipeWithId.id!,
     )));
     await tester.pumpAndSettle();
 
@@ -195,7 +206,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: EditRecipeScreen(
       bloc: bloc,
-      initialValue: sugarWithEggRecipeWithId,
+      id: sugarWithEggRecipeWithId.id!,
     )));
 
     await tester.tap(find.text('Ingredientes'));

@@ -3,7 +3,7 @@ import 'package:fpdart/fpdart.dart' as fp;
 import '../../../core/core.dart';
 import '../../domain.dart';
 
-class DeleteOrderUseCase extends UseCase<Order, void> {
+class DeleteOrderUseCase extends UseCase<int, void> {
   static const cantDeleteOrderWithoutIdMessage =
       'Não é possível excluir um  registro que não foi salvo';
 
@@ -12,10 +12,7 @@ class DeleteOrderUseCase extends UseCase<Order, void> {
   DeleteOrderUseCase(this.repository);
 
   @override
-  Future<fp.Either<Failure, void>> execute(Order order) async {
-    if (order.id == null) {
-      return const fp.Left(BusinessFailure(cantDeleteOrderWithoutIdMessage));
-    }
-    return repository.deleteById(order.id!);
+  Future<fp.Either<Failure, void>> execute(int id) async {
+    return repository.deleteById(id);
   }
 }

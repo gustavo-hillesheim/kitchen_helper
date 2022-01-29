@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
 
+import '../../../core/core.dart';
 import '../../../domain/domain.dart';
 import '../../../extensions.dart';
 import '../../presenter.dart';
@@ -13,17 +14,17 @@ import 'widgets/general_order_information_form.dart';
 import 'widgets/order_products_list.dart';
 
 class EditOrderScreen extends StatefulWidget {
-  final Order? initialValue;
+  final int? id;
   final EditOrderBloc? bloc;
 
   const EditOrderScreen({
     Key? key,
-    this.initialValue,
+    this.id,
     this.bloc,
   }) : super(key: key);
 
-  static Future<bool?> navigate([Order? order]) {
-    return Modular.to.pushNamed<bool?>('/edit-order', arguments: order);
+  static Future<bool?> navigate([int? id]) {
+    return Modular.to.pushNamed<bool?>('/edit-order', arguments: id);
   }
 
   @override
@@ -49,11 +50,22 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   void initState() {
     super.initState();
     bloc = widget.bloc ??
-        EditOrderBloc(Modular.get(), Modular.get(), Modular.get());
-    if (widget.initialValue != null) {
-      _fillControllers(widget.initialValue!);
-      _fillCostPriceAndProducts(widget.initialValue!);
-      _discounts.addAll(widget.initialValue!.discounts);
+        EditOrderBloc(
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
+    if (widget.id != null) {
+      bloc.stream
+          .where((state) => state is SuccessState<Order>)
+          .map((state) => (state as SuccessState<Order>).value)
+          .listen((order) {
+        _fillControllers(order);
+        _fillCostPriceAndProducts(order);
+        _discounts.addAll(order.discounts);
+      });
+      bloc.loadOrder(widget.id!);
     }
   }
 
@@ -89,10 +101,42 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(widget.initialValue != null ? 'Editar pedido' : 'Novo pedido'),
+        title: Text(widget.id != null ? 'Editar pedido' : 'Novo pedido'),
       ),
-      body: Form(
+      body: StreamBuilder(
+        stream: bloc.stream,
+        builder: (context, snapshot) {
+          final state = bloc.state;
+          return Stack(
+            children: [
+              if (state is FailureState)
+                _buildFailureState((state as FailureState).failure)
+              else if (state is LoadingOrderState)
+                const Center(child: CircularProgressIndicator())
+              else
+                _buildForm(),
+              if (state is LoadingState) _buildLoadingOverlay(),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFailureState(Failure failure) => Center(
+        child: Text(failure.message, style: const TextStyle(color: Colors.red)),
+      );
+
+  Widget _buildLoadingOverlay() => Positioned.fill(
+        child: Container(
+          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+
+  Widget _buildForm() => Form(
         key: _formKey,
         child: Column(
           children: [
@@ -145,9 +189,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
 
   void _save() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -173,7 +215,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
 
   Order _createOrder() {
     return Order(
-      id: widget.initialValue?.id,
+      id: widget.id,
       clientName: _clientNameController.text,
       clientAddress: _clientAddressController.text,
       deliveryDate: _deliveryDateNotifier.value!,

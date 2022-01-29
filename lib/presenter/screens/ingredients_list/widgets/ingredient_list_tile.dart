@@ -7,7 +7,7 @@ import '../../../utils/formatter.dart';
 import '../../../widgets/widgets.dart';
 
 class IngredientListTile extends StatelessWidget {
-  final Ingredient ingredient;
+  final ListingIngredientDto ingredient;
   final VoidCallback? onTap;
 
   const IngredientListTile(

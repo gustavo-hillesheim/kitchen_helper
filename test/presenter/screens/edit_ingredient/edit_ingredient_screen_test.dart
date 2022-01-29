@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:kitchen_helper/presenter/presenter.dart';
 import 'package:kitchen_helper/presenter/screens/edit_ingredient/edit_ingredient_bloc.dart';
+import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
@@ -17,12 +19,15 @@ void main() {
   final emptyCostFieldFinder = AppTextFormFieldFinder(
       name: 'Custo', type: TextInputType.number, prefix: 'R\$');
   late EditIngredientBloc bloc;
-  late StreamController<EditIngredientState> streamController;
+  late StreamController<ScreenState<Ingredient>> streamController;
+  ScreenState<Ingredient> state = const EmptyState();
 
   setUp(() {
     bloc = EditIngredientBlocMock();
-    streamController = StreamController();
+    streamController = StreamController.broadcast();
+    streamController.stream.listen((newState) => state = newState);
     when(() => bloc.stream).thenAnswer((_) => streamController.stream);
+    when(() => bloc.state).thenAnswer((_) => state);
   });
 
   testWidgets(
@@ -44,13 +49,16 @@ void main() {
   testWidgets(
     'Should render fields with initial value correctly',
     (tester) async {
+      when(() => bloc.loadIngredient(egg.id!)).thenAnswer(
+          (_) async => streamController.sink.add(const SuccessState(egg)));
       await tester.pumpWidget(
         MaterialApp(
             home: EditIngredientScreen(
           bloc: bloc,
-          initialValue: egg,
+          id: egg.id!,
         )),
       );
+      await tester.pumpAndSettle();
 
       expect(
         AppTextFormFieldFinder(name: 'Nome', value: egg.name),
@@ -80,47 +88,15 @@ void main() {
     },
   );
 
-  testWidgets('Save button SHOULD update according to State', (tester) async {
-    void verifyButtonIsEnabled() {
-      expect(
-          find.byWidgetPredicate(
-              (widget) => widget is ElevatedButton && widget.enabled),
-          findsOneWidget);
-      expect(find.text('Salvar'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-    }
-
-    void verifyButtonIsLoading() {
-      expect(
-          find.byWidgetPredicate(
-              (widget) => widget is ElevatedButton && !widget.enabled),
-          findsOneWidget);
-      expect(find.text('Salvar'), findsNothing);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    }
-
-    await tester
-        .pumpWidget(MaterialApp(home: EditIngredientScreen(bloc: bloc)));
-
-    verifyButtonIsEnabled();
-
-    streamController.sink.add(LoadingState());
-    await tester.pump();
-
-    verifyButtonIsLoading();
-
-    streamController.sink.add(SuccessState(egg));
-    await tester.pump();
-
-    verifyButtonIsEnabled();
-  });
-
   testWidgets('Should not call bloc.save if input values are invalid',
       (tester) async {
+    when(() => bloc.loadIngredient(egg.id!)).thenAnswer(
+        (_) async => streamController.sink.add(const SuccessState(egg)));
     registerFallbackValue(egg);
 
     await tester
         .pumpWidget(MaterialApp(home: EditIngredientScreen(bloc: bloc)));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
@@ -137,7 +113,7 @@ void main() {
       cost: 10.5,
     );
     when(() => bloc.save(expectedIngredient))
-        .thenAnswer((_) async => SuccessState(egg));
+        .thenAnswer((_) async => const Right(null));
     await tester
         .pumpWidget(MaterialApp(home: EditIngredientScreen(bloc: bloc)));
 
@@ -157,13 +133,16 @@ void main() {
 
   testWidgets('Should exit screen if save is successful', (tester) async {
     final navigator = mockNavigator();
-    when(() => bloc.save(egg)).thenAnswer((_) async => SuccessState(egg));
+    when(() => bloc.loadIngredient(egg.id!)).thenAnswer(
+        (_) async => streamController.sink.add(const SuccessState(egg)));
+    when(() => bloc.save(egg)).thenAnswer((_) async => const Right(null));
 
     await tester.pumpWidget(MaterialApp(
         home: EditIngredientScreen(
       bloc: bloc,
-      initialValue: egg,
+      id: egg.id,
     )));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
@@ -174,21 +153,25 @@ void main() {
 
   testWidgets('Should show error text if save fails', (tester) async {
     final navigator = mockNavigator();
+    when(() => bloc.loadIngredient(egg.id!)).thenAnswer(
+        (_) async => streamController.sink.add(const SuccessState(egg)));
     when(() => bloc.save(egg))
-        .thenAnswer((_) async => FailureState(const FakeFailure('Error text')));
+        .thenAnswer((_) async => const Left(FakeFailure('Error text')));
 
     await tester.pumpWidget(MaterialApp(
         home: EditIngredientScreen(
       bloc: bloc,
-      initialValue: egg,
+      id: egg.id,
     )));
+    await tester.pump();
+    await tester.pump();
 
     await tester.tap(find.text('Salvar'));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    expect(find.text('Error text'), findsOneWidget);
     verify(() => bloc.save(egg));
     verifyNever(() => navigator.pop(any()));
+    expect(find.text('Error text'), findsOneWidget);
   });
 
   test('Should navigate to ingredients route', () async {
@@ -197,9 +180,9 @@ void main() {
     when(() => navigator.pushNamed(any(), arguments: any(named: 'arguments')))
         .thenAnswer((_) async => false);
 
-    EditIngredientScreen.navigate(egg);
+    EditIngredientScreen.navigate(egg.id);
 
-    verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg));
+    verify(() => navigator.pushNamed('/edit-ingredient', arguments: egg.id));
   });
 }
 

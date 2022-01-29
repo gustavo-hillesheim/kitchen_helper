@@ -24,6 +24,9 @@ class DeleteIngredientUseCaseMock extends Mock
 
 class GetRecipesUseCaseMock extends Mock implements GetRecipesUseCase {}
 
+class GetRecipesDomainUseCaseMock extends Mock
+    implements GetRecipesDomainUseCase {}
+
 class SaveRecipeUseCaseMock extends Mock implements SaveRecipeUseCase {}
 
 class DeleteRecipeUseCaseMock extends Mock implements DeleteRecipeUseCase {}
@@ -58,7 +61,8 @@ class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
 
 class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
 
-class GetOrderPriceUseCaseMock extends Mock implements GetOrderPriceUseCase {}
+class GetListingOrderProductsUseCaseMock extends Mock
+    implements GetListingOrderProductsUseCase {}
 
 class GetIngredientUseCaseMock extends Mock implements GetIngredientUseCase {}
 
@@ -106,6 +110,13 @@ const sugarWithId = Ingredient(
   measurementUnit: MeasurementUnit.grams,
   cost: 10,
 );
+const listingSugarDto = ListingIngredientDto(
+  id: 123,
+  name: 'Sugar',
+  quantity: 100,
+  measurementUnit: MeasurementUnit.grams,
+  cost: 10,
+);
 
 const sugarWithoutId = Ingredient(
   name: 'Sugar',
@@ -122,7 +133,22 @@ const flour = Ingredient(
   cost: 15.75,
 );
 
+const listingFlourDto = ListingIngredientDto(
+  id: 5,
+  name: 'Flour',
+  quantity: 1,
+  measurementUnit: MeasurementUnit.kilograms,
+  cost: 15.75,
+);
+
 const egg = Ingredient(
+  id: 6,
+  name: 'egg',
+  quantity: 12,
+  measurementUnit: MeasurementUnit.units,
+  cost: 10,
+);
+const listingEggDto = ListingIngredientDto(
   id: 6,
   name: 'egg',
   quantity: 12,
@@ -131,6 +157,13 @@ const egg = Ingredient(
 );
 
 const orangeJuice = Ingredient(
+  id: 7,
+  name: 'orange juice',
+  quantity: 250,
+  measurementUnit: MeasurementUnit.milliliters,
+  cost: 2.25,
+);
+const listingOrangeJuiceDto = ListingIngredientDto(
   id: 7,
   name: 'orange juice',
   quantity: 250,
@@ -149,8 +182,24 @@ final sugarWithEggRecipeWithoutId = Recipe(
   ],
 );
 
+const sugarWithEggRecipeDomain = RecipeDomainDto(
+  id: 1,
+  label: 'Sugar with egg',
+  measurementUnit: MeasurementUnit.milliliters,
+);
 final sugarWithEggRecipeWithId = sugarWithEggRecipeWithoutId.copyWith(id: 1);
+final listingSugarWithEggRecipeDto = ListingRecipeDto(
+  id: sugarWithEggRecipeWithId.id!,
+  name: sugarWithEggRecipeWithId.name,
+  measurementUnit: sugarWithEggRecipeWithId.measurementUnit,
+  quantityProduced: sugarWithEggRecipeWithId.quantityProduced,
+);
 
+const cakeRecipeDomain = RecipeDomainDto(
+  id: 5,
+  label: 'Cake',
+  measurementUnit: MeasurementUnit.units,
+);
 final cakeRecipe = cakeRecipeWithoutId.copyWith(id: 5);
 final cakeRecipeWithoutId = Recipe(
   name: 'Cake',
@@ -164,7 +213,20 @@ final cakeRecipeWithoutId = Recipe(
     RecipeIngredient.recipe(sugarWithEggRecipeWithId.id!, quantity: 5),
   ],
 );
+final listingCakeRecipeDto = ListingRecipeDto(
+  id: cakeRecipe.id!,
+  name: cakeRecipe.name,
+  quantityProduced: cakeRecipe.quantityProduced,
+  quantitySold: cakeRecipe.quantitySold,
+  price: cakeRecipe.price,
+  measurementUnit: cakeRecipe.measurementUnit,
+);
 
+const iceCreamRecipeDomain = RecipeDomainDto(
+  id: 4,
+  label: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+);
 final iceCreamRecipe = Recipe(
   id: 4,
   name: 'Ice cream',
@@ -176,6 +238,14 @@ final iceCreamRecipe = Recipe(
   ingredients: [
     RecipeIngredient.ingredient(sugarWithId.id!, quantity: 200),
   ],
+);
+const listingIceCreamRecipeDto = ListingRecipeDto(
+  id: 4,
+  name: 'Ice cream',
+  measurementUnit: MeasurementUnit.liters,
+  quantityProduced: 2,
+  quantitySold: 2,
+  price: 20,
 );
 
 const recipeWithRecipeAndIngredients = Recipe(
@@ -227,6 +297,11 @@ const ingredientThree = Ingredient(
 );
 
 final ingredientList = [flour, egg, orangeJuice];
+final listingIngredientDtoList = [
+  listingFlourDto,
+  listingEggDto,
+  listingOrangeJuiceDto,
+];
 final ingredientsMap = {
   flour.id: flour,
   egg.id: egg,
@@ -257,6 +332,14 @@ final spidermanOrder = Order(
   ],
 );
 final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
+final listingSpidermanOrderDto = ListingOrderDto(
+  id: 1,
+  clientName: 'Test client',
+  clientAddress: 'New York Street, 123',
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  price: 25,
+);
 
 final batmanOrder = Order(
   id: 2,
@@ -270,6 +353,14 @@ final batmanOrder = Order(
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
   ],
 );
+final listingBatmanOrderDto = ListingOrderDto(
+  id: 2,
+  clientName: 'Batman',
+  clientAddress: 'Gotham',
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  price: 50,
+);
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();
@@ -279,19 +370,24 @@ IModularNavigator mockNavigator() {
 
 void mockRecipeIngredientsSelectorService() {
   registerFallbackValue(const NoParams());
+  registerFallbackValue(const RecipeFilter());
   final getRecipeUseCase = GetRecipeUseCaseMock();
   final getRecipesUseCase = GetRecipesUseCaseMock();
+  final getRecipesDomainUseCase = GetRecipesDomainUseCaseMock();
   final getIngredientsUseCase = GetIngredientsUseCaseMock();
   when(() => getRecipeUseCase.execute(any()))
       .thenAnswer((_) async => const Right(null));
   when(() => getIngredientsUseCase.execute(any()))
-      .thenAnswer((_) async => const Right([egg]));
-  when(() => getRecipesUseCase.execute(any()))
-      .thenAnswer((_) async => Right([cakeRecipe, iceCreamRecipe]));
+      .thenAnswer((_) async => const Right([listingEggDto]));
+  when(() => getRecipesUseCase.execute(any())).thenAnswer(
+      (_) async => Right([listingCakeRecipeDto, listingIceCreamRecipeDto]));
+  when(() => getRecipesDomainUseCase.execute(any())).thenAnswer(
+      (_) async => const Right([cakeRecipeDomain, iceCreamRecipeDomain]));
   initModule(FakeModule(
     getRecipeUseCase,
     getRecipesUseCase,
     getIngredientsUseCase,
+    getRecipesDomainUseCase,
   ));
 }
 
@@ -299,11 +395,13 @@ class FakeModule extends Module {
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipesUseCase getRecipesUseCase;
   final GetIngredientsUseCase getIngredientsUseCase;
+  final GetRecipesDomainUseCase getRecipesDomainUseCase;
 
   FakeModule(
     this.getRecipeUseCase,
     this.getRecipesUseCase,
     this.getIngredientsUseCase,
+    this.getRecipesDomainUseCase,
   );
 
   @override
@@ -311,5 +409,6 @@ class FakeModule extends Module {
         Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
         Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
         Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
+        Bind.instance<GetRecipesDomainUseCase>(getRecipesDomainUseCase),
       ];
 }

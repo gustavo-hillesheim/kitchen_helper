@@ -22,13 +22,14 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
   void initState() {
     super.initState();
     bloc = widget.bloc ??
-        RecipesListBloc(Modular.get(), Modular.get(), Modular.get());
+        RecipesListBloc(
+            Modular.get(), Modular.get(), Modular.get(), Modular.get());
     bloc.load();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListPageTemplate<Recipe>(
+    return ListPageTemplate<ListingRecipeDto, Recipe>(
       title: 'Receitas',
       bloc: bloc,
       tileBuilder: (_, recipe) => RecipeListTile(
@@ -39,12 +40,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
       emptyText: 'Sem receitas',
       emptySubtext: 'Adicione receitas e elas aparecerão aqui',
       emptyActionText: 'Adicionar receita',
-      onAdd: () => _goToEditRecipeScreen(),
+      onAdd: _goToEditRecipeScreen,
     );
   }
 
-  void _goToEditRecipeScreen([Recipe? recipe]) async {
-    final reload = await EditRecipeScreen.navigate(recipe);
+  void _goToEditRecipeScreen([ListingRecipeDto? recipe]) async {
+    final reload = await EditRecipeScreen.navigate(recipe?.id);
     if (reload ?? false) {
       bloc.load();
     }

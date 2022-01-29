@@ -6,10 +6,9 @@ import 'package:kitchen_helper/presenter/screens/recipes_list/widgets/recipe_lis
 
 void main() {
   testWidgets('SHOULD display basic recipe info', (tester) async {
-    const recipe = Recipe(
+    const recipe = ListingRecipeDto(
+      id: 1,
       name: 'Chocolate topping',
-      canBeSold: false,
-      ingredients: [],
       measurementUnit: MeasurementUnit.milliliters,
       quantityProduced: 650,
     );
@@ -35,10 +34,9 @@ void main() {
   testWidgets(
       'WHEN rendering a recipe that can be sold '
       'SHOULD display selling info', (tester) async {
-    const recipe = Recipe(
+    const recipe = ListingRecipeDto(
+      id: 2,
       name: 'Cake',
-      canBeSold: true,
-      ingredients: [],
       measurementUnit: MeasurementUnit.units,
       quantityProduced: 2,
       quantitySold: 1,

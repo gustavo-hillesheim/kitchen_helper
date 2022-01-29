@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../mocks.dart';
-import '../crud_usecase_tests.dart';
 
 void main() {
   late GetOrdersUseCase usecase;
@@ -14,16 +14,23 @@ void main() {
     usecase = GetOrdersUseCase(repository);
   });
 
-  getAllUseCaseTests<Order, int>(
-    usecaseFn: () => usecase,
-    executeUseCaseFn: (usecase) => usecase.execute(OrdersFilter()),
-    repositoryFn: () => repository,
-    mockRepositoryFn: (repository) => when(
-      () =>
-          (repository as OrderRepository).findAll(filter: any(named: 'filter')),
-    ),
-    verifyRepositoryFn: (repository) => verify(() =>
-        (repository as OrderRepository).findAll(filter: any(named: 'filter'))),
-    entities: [spidermanOrder],
-  );
+  test('WHEN called SHOULD get entities', () async {
+    when(() => repository.findAllListing(filter: any(named: 'filter')))
+        .thenAnswer((_) async => Right([listingBatmanOrderDto]));
+
+    final result = await usecase.execute(const OrdersFilter());
+
+    expect(result.getRight().toNullable(), [listingBatmanOrderDto]);
+    verify(() => repository.findAllListing(filter: const OrdersFilter()));
+  });
+
+  test('WHEN repository returns Failure SHOULD return Failure', () async {
+    when(() => repository.findAllListing(filter: any(named: 'filter')))
+        .thenAnswer((_) async => const Left(FakeFailure('error')));
+
+    final result = await usecase.execute(const OrdersFilter());
+
+    expect(result.getLeft().toNullable()?.message, 'error');
+    verify(() => repository.findAllListing(filter: const OrdersFilter()));
+  });
 }

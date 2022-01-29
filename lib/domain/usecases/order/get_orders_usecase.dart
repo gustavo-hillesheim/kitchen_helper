@@ -1,15 +1,15 @@
-import 'package:fpdart/fpdart.dart' as fp;
+import 'package:fpdart/fpdart.dart';
 
 import '../../../core/core.dart';
 import '../../domain.dart';
 
-class GetOrdersUseCase extends UseCase<OrdersFilter, List<Order>> {
+class GetOrdersUseCase extends UseCase<OrdersFilter, List<ListingOrderDto>> {
   final OrderRepository repository;
 
   GetOrdersUseCase(this.repository);
 
   @override
-  Future<fp.Either<Failure, List<Order>>> execute(OrdersFilter filter) {
-    return repository.findAll(filter: filter);
+  Future<Either<Failure, List<ListingOrderDto>>> execute(OrdersFilter filter) {
+    return repository.findAllListing(filter: filter);
   }
 }
