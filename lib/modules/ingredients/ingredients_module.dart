@@ -8,9 +8,12 @@ import 'presenter/screen/ingredients_list/ingredients_list_screen.dart';
 class IngredientsModule extends Module {
   @override
   List<Bind<Object>> get binds => [
-        Bind<IngredientRepository>((i) => SQLiteIngredientRepository(i())),
-        Bind((i) => GetIngredientUseCase(i())),
-        Bind((i) => GetIngredientsUseCase(i())),
+        Bind<IngredientRepository>(
+          (i) => SQLiteIngredientRepository(i()),
+          export: true,
+        ),
+        Bind((i) => GetIngredientUseCase(i()), export: true),
+        Bind((i) => GetIngredientsUseCase(i()), export: true),
         Bind((i) => SaveIngredientUseCase(i())),
         Bind((i) => DeleteIngredientUseCase(i())),
       ];

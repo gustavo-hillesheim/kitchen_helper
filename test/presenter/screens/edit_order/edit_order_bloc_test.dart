@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:kitchen_helper/presenter/screens/edit_order/edit_order_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';

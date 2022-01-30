@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../domain/domain.dart';
+import '../../../../modules/recipes/recipes.dart';
 
 class EditingOrderProduct extends Equatable {
   final String name;

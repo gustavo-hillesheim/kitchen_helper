@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';

@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../domain/domain.dart';
 import '../../extensions.dart';
+import '../../modules/recipes/recipes.dart';
 import '../presenter.dart';
 import 'recipe_ingredient_selector_service.dart';
 
