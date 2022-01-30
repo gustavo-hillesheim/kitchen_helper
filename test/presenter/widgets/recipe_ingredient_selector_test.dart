@@ -2,7 +2,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/ingredients/presenter/screen/edit_ingredient/edit_ingredient_bloc.dart';
 import 'package:kitchen_helper/modules/ingredients/presenter/screen/edit_ingredient/edit_ingredient_screen.dart';

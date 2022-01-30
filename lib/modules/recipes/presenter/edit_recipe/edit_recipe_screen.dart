@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' show Right;
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
 import '../../../../core/core.dart';
-import '../../../../domain/domain.dart';
 import '../../../../extensions.dart';
 import '../../../../presenter/presenter.dart';
 import '../../../../presenter/screens/states.dart';

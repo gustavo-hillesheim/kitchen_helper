@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
-import '../../../../../domain/domain.dart';
 import '../../../../ingredients/ingredients.dart';
 import '../../../recipes.dart';
 

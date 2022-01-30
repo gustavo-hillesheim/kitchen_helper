@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../domain/usecases/crud_usecase_tests.dart';
+import '../../../../crud_usecase_tests.dart';
 import '../../../../mocks.dart';
 
 void main() {

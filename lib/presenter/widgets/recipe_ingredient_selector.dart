@@ -2,8 +2,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
-import '../../domain/domain.dart';
 import '../../extensions.dart';
 import '../../modules/recipes/recipes.dart';
 import '../presenter.dart';

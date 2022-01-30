@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:kitchen_helper/modules/recipes/presenter/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/presenter/edit_recipe/widgets/general_recipe_information_form.dart';
 

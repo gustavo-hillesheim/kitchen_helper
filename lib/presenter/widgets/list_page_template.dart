@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../core/core.dart';
 import '../../database/database.dart';
-import '../../domain/domain.dart';
+import '../../domain/dto/listing_dto.dart';
 import '../constants.dart';
 import '../screens/states.dart';
 import 'widgets.dart';

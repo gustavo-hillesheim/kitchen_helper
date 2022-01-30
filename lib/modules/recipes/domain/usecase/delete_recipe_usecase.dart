@@ -1,12 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/core.dart';
-import '../../../../domain/domain.dart';
+import '../../recipes.dart';
 
 class DeleteRecipeUseCase extends UseCase<int, void> {
-  static const cantDeleteRecipeWithoutIdMessage =
-      'Não é possível excluir um  registro que não foi salvo';
-
   final RecipeRepository repository;
 
   DeleteRecipeUseCase(this.repository);

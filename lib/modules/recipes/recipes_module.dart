@@ -14,14 +14,19 @@ class RecipesModule extends Module {
   @override
   List<Bind<Object>> get binds => [
         Bind<RecipeIngredientRepository>(
-            (i) => SQLiteRecipeIngredientRepository(i())),
-        Bind<RecipeRepository>((i) => SQLiteRecipeRepository(i(), i())),
+          (i) => SQLiteRecipeIngredientRepository(i()),
+          export: true,
+        ),
+        Bind<RecipeRepository>(
+          (i) => SQLiteRecipeRepository(i(), i()),
+          export: true,
+        ),
         Bind((i) => SaveRecipeUseCase(i())),
         Bind((i) => GetRecipesUseCase(i())),
-        Bind((i) => GetRecipeUseCase(i())),
+        Bind((i) => GetRecipeUseCase(i()), export: true),
         Bind((i) => DeleteRecipeUseCase(i())),
-        Bind((i) => GetRecipeCostUseCase(i(), i())),
-        Bind((i) => GetRecipesDomainUseCase(i())),
+        Bind((i) => GetRecipeCostUseCase(i(), i()), export: true),
+        Bind((i) => GetRecipesDomainUseCase(i()), export: true),
       ];
 
   @override

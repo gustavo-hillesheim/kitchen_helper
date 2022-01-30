@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
 import '../../../../database/database.dart';
-import '../../../../domain/models/models.dart';
 import 'recipe_ingredient.dart';
 
 part 'recipe.g.dart';

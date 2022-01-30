@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
-import '../../../../../domain/domain.dart';
 import '../../../../../extensions.dart';
 import '../../../../../presenter/presenter.dart';
 import '../edit_recipe_bloc.dart';
