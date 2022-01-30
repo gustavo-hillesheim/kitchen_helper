@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/data/repository/sqlite_ingredient_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/ingredients/data/repository/sqlite_ingredient_repository.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../mocks.dart';

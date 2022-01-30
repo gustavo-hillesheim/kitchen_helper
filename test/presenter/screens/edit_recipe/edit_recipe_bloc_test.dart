@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/modules/ingredients/domain/usecase/usecase.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/presenter/screens/states.dart';

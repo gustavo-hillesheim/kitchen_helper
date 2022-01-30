@@ -1,7 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'app_guard.dart';
-import 'data/repository/sqlite_ingredient_repository.dart';
 import 'data/repository/sqlite_order_discount_repository.dart';
 import 'data/repository/sqlite_order_product_repository.dart';
 import 'data/repository/sqlite_order_repository.dart';
@@ -9,13 +8,13 @@ import 'data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'data/repository/sqlite_recipe_repository.dart';
 import 'database/sqlite/sqlite.dart';
 import 'domain/domain.dart';
+import 'modules/ingredients/ingredients_module.dart';
 import 'presenter/presenter.dart';
 
 class AppModule extends Module {
   @override
   List<Bind<Object>> get binds => [
         AsyncBind((i) => SQLiteDatabase.getInstance()),
-        Bind<IngredientRepository>((i) => SQLiteIngredientRepository(i())),
         Bind<RecipeIngredientRepository>(
             (i) => SQLiteRecipeIngredientRepository(i())),
         Bind<RecipeRepository>((i) => SQLiteRecipeRepository(i(), i())),
@@ -23,10 +22,6 @@ class AppModule extends Module {
         Bind<OrderDiscountRepository>(
             (i) => SQLiteOrderDiscountRepository(i())),
         Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i())),
-        Bind((i) => SaveIngredientUseCase(i())),
-        Bind((i) => GetIngredientsUseCase(i())),
-        Bind((i) => GetIngredientUseCase(i())),
-        Bind((i) => DeleteIngredientUseCase(i())),
         Bind((i) => SaveRecipeUseCase(i())),
         Bind((i) => GetRecipesUseCase(i())),
         Bind((i) => GetRecipeUseCase(i())),
@@ -43,20 +38,9 @@ class AppModule extends Module {
   @override
   List<ModularRoute> get routes => [
         ChildRoute(Modular.initialRoute, child: (_, __) => const MenuScreen()),
-        ChildRoute(
+        ModuleRoute(
           '/ingredients',
-          child: (_, __) => const IngredientsListScreen(),
-          guards: [AppGuard()],
-        ),
-        ChildRoute(
-          '/edit-ingredient',
-          child: (_, route) {
-            if (route.data is! int?) {
-              throw Exception('The route /edit-ingredient only accepts values'
-                  ' of type int? as argument');
-            }
-            return EditIngredientScreen(id: route.data as int?);
-          },
+          module: IngredientsModule(),
           guards: [AppGuard()],
         ),
         ChildRoute(

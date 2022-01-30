@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../domain/domain.dart';
+import '../../../../modules/ingredients/ingredients.dart';
 
 class EditingRecipeIngredient extends Equatable {
   final String name;

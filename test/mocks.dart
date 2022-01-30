@@ -7,6 +7,7 @@ import 'package:kitchen_helper/data/repository/sqlite_order_product_repository.d
 import 'package:kitchen_helper/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/domain/domain.dart';
+import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/presenter/screens/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';
