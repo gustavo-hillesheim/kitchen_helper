@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
-import '../../../../../../domain/models/measurement_unit.dart';
+import '../../../../../../common/common.dart';
 import '../../../../../../extensions.dart';
-import '../../../../../../presenter/presenter.dart';
 import '../edit_recipe_bloc.dart';
 
 class GeneralRecipeInformationForm extends StatelessWidget {

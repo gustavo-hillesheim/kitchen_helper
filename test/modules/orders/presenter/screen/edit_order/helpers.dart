@@ -2,13 +2,12 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/models/editing_order_product.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 
+import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
-import '../../../../../presenter/finders.dart';
 
 const discountOne =
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 
-import '../../../../../../presenter/finders.dart';
+import '../../../../../../finders.dart';
 import '../helpers.dart';
 
 void main() {

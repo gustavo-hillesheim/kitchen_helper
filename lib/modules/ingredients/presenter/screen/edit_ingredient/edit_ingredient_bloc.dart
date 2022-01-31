@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
-import '../../../../../presenter/screens/states.dart';
 import '../../../ingredients.dart';
 
 class EditIngredientBloc extends AppCubit<Ingredient> {

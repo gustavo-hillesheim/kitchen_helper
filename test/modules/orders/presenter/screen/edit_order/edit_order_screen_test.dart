@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/edit_order_bloc.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/edit_order_screen.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/discount_list.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/order_products_list.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../../mocks.dart';

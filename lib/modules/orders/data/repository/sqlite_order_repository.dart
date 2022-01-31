@@ -75,9 +75,9 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
         sum(case when d.type = 'percentage' then d.value else 0 end) 
         percentageDiscount
       FROM orders o
-      INNER JOIN orderProducts op ON o.id = op.orderId
-      INNER JOIN recipes r ON r.id = op.productId
-      INNER JOIN orderDiscounts d ON o.id = d.orderId
+      LEFT JOIN orderProducts op ON o.id = op.orderId
+      LEFT JOIN recipes r ON r.id = op.productId
+      LEFT JOIN orderDiscounts d ON o.id = d.orderId
       ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
       GROUP BY o.id
       ORDER BY o.deliveryDate
@@ -85,9 +85,9 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       final dtos = result.map((json) {
         // Creates muttable map
         json = Map.from(json);
-        final basePrice = json['basePrice'];
-        final fixedDiscount = json['fixedDiscount'];
-        final percentageDiscount = json['percentageDiscount'];
+        final basePrice = json['basePrice'] ?? 0;
+        final fixedDiscount = json['fixedDiscount'] ?? 0;
+        final percentageDiscount = json['percentageDiscount'] ?? 0;
         json['price'] =
             basePrice - fixedDiscount - percentageDiscount / 100 * basePrice;
         return ListingOrderDto.fromJson(json);

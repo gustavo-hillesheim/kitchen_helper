@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../../../domain/models/measurement_unit.dart';
+import '../../../../../../common/common.dart';
 import '../../../../../recipes/recipes.dart';
 import '../../../../domain/domain.dart';
 

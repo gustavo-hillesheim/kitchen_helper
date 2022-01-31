@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/recipes/presenter/screen/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
 
+import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
-import '../../../../../presenter/finders.dart';
 
 final quantityProducedFieldFinder = AppTextFormFieldFinder(
   name: 'Quantidade produzida',

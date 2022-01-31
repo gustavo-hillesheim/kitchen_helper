@@ -1,5 +1,4 @@
-import '../../../../../presenter/screens/states.dart';
-import '../../../../../presenter/widgets/widgets.dart';
+import '../../../../../common/common.dart';
 import '../../../recipes.dart';
 
 class RecipesListBloc extends AppCubit<List<ListingRecipeDto>>

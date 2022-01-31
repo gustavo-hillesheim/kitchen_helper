@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/ingredients/presenter/screen/ingredients_list/ingredients_list_bloc.dart';
 import 'package:kitchen_helper/modules/ingredients/presenter/screen/ingredients_list/ingredients_list_screen.dart';
 import 'package:kitchen_helper/modules/ingredients/presenter/screen/ingredients_list/widgets/ingredient_list_tile.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
-import '../../../../../presenter/finders.dart';
 
 void main() {
   late IngredientsListBloc bloc;

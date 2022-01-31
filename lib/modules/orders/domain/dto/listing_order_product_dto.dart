@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../domain/models/measurement_unit.dart';
+import '../../../../common/common.dart';
 
 part 'listing_order_product_dto.g.dart';
 

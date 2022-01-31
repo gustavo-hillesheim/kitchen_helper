@@ -1,8 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/orders_list_bloc.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../../mocks.dart';

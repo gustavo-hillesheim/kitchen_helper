@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile_bloc.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../../../finders.dart';
 import '../../../../../../mocks.dart';
-import '../../../../../../presenter/finders.dart';
 
 void main() {
   late OrderListTileBloc bloc;

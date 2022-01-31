@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
 
+import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
-import '../../../../../presenter/presenter.dart';
-import '../../../../../presenter/screens/states.dart';
 import '../../../domain/domain.dart';
 import 'edit_order_bloc.dart';
 import 'models/editing_order_product.dart';

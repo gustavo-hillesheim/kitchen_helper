@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/domain/dto/listing_dto.dart';
-import 'package:kitchen_helper/domain/models/measurement_unit.dart';
+
+import '../../../../common/common.dart';
 
 part 'listing_recipe_dto.g.dart';
 

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../domain/dto/listing_dto.dart';
+import '../../../../common/common.dart';
 import '../domain.dart';
 
 part 'listing_order_dto.g.dart';

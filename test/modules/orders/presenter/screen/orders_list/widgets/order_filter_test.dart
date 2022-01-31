@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_filter.dart';
 
-import '../../../../../../presenter/finders.dart';
+import '../../../../../../finders.dart';
 
 void main() {
   testWidgets('WHEN change filter SHOULD call onChange', (tester) async {

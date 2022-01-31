@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../database/database.dart';
-import '../../../../domain/models/measurement_unit.dart';
+import '../../../../common/common.dart';
 
 part 'ingredient.g.dart';
 
