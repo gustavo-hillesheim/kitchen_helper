@@ -8,8 +8,8 @@ import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../data/repository/sqlite_repository_tests.dart';
 import '../../mocks.dart';
+import '../../sqlite_repository_tests.dart';
 
 void main() {
   const idColumn = 'id';
