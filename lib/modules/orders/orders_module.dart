@@ -1,13 +1,13 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/modules/ingredients/ingredients_module.dart';
 
+import '../ingredients/ingredients_module.dart';
 import '../recipes/recipes_module.dart';
 import 'data/repository/sqlite_order_discount_repository.dart';
 import 'data/repository/sqlite_order_product_repository.dart';
 import 'data/repository/sqlite_order_repository.dart';
 import 'domain/domain.dart';
-import 'presenter/edit_order/edit_order_screen.dart';
-import 'presenter/orders_list/orders_list_screen.dart';
+import 'presenter/screen/edit_order/edit_order_screen.dart';
+import 'presenter/screen/orders_list/orders_list_screen.dart';
 
 class OrdersModule extends Module {
   @override
