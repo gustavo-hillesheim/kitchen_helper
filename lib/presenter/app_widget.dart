@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/presenter/screens/menu/menu_screen.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -12,7 +11,6 @@ class AppWidget extends StatelessWidget {
       title: 'Ajudante de cozinha',
       debugShowCheckedModeBanner: false,
       theme: theme,
-      home: MenuScreen(),
     ).modular();
   }
 

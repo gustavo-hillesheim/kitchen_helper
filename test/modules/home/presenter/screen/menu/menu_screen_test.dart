@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/presenter.dart';
-import 'package:kitchen_helper/presenter/screens/menu/widgets/page_description_tile.dart';
+import 'package:kitchen_helper/modules/home/presenter/screen/menu/menu_screen.dart';
+import 'package:kitchen_helper/modules/home/presenter/screen/menu/widgets/page_description_tile.dart';
 
 void main() {
   testWidgets('Should render PageDescriptionTiles for all main pages',

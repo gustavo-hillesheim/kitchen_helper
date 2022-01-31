@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/presenter/screens/menu/widgets/page_description_tile.dart';
+import 'package:kitchen_helper/modules/home/presenter/screen/menu/widgets/page_description_tile.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../mocks.dart';
+import '../../../../../../mocks.dart';
 
 void main() {
   const tile = PageDescriptionTile(
