@@ -391,6 +391,12 @@ const batmanClient = Client(
     Contact(contact: '(99) 99999-9999'),
   ],
 );
+const spidermanClient = Client(
+  id: 2,
+  name: 'Spider man',
+  addresses: [],
+  contacts: [],
+);
 
 const listingBatmanDto = ListingClientDto(id: 1, name: 'Batman');
 const listingSpidermanDto = ListingClientDto(id: 2, name: 'Spider man');

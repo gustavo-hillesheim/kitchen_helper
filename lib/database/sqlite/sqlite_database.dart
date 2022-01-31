@@ -129,6 +129,20 @@ class SQLiteDatabase {
         FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
       )
       ''');
+      await db.execute('''
+      CREATE TABLE clientAddresses(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientId INTEGER NOT NULL,
+        cep INTEGER NOT NULL,
+        street TEXT NOT NULL,
+        number INTEGER NOT NULL,
+        complement TEXT,
+        neighborhood TEXT NOT NULL,
+        city TEXT NOT NULL,
+        state TEXT NOT NULL,
+        FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
+      )
+      ''');
     }
   }
 
