@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../presenter/presenter.dart';
-import '../../recipes.dart';
+import '../../../../../presenter/presenter.dart';
+import '../../../recipes.dart';
 import '../edit_recipe/edit_recipe_screen.dart';
 import 'recipes_list_bloc.dart';
 import 'widgets/recipe_list_tile.dart';

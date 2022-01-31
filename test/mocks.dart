@@ -9,7 +9,7 @@ import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_disco
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_product_repository.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/recipes/data/repository/sqlite_recipe_ingredient_repository.dart';
-import 'package:kitchen_helper/modules/recipes/presenter/edit_recipe/edit_recipe_bloc.dart';
+import 'package:kitchen_helper/modules/recipes/presenter/screen/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:kitchen_helper/presenter/widgets/recipe_ingredient_selector_service.dart';
 import 'package:mocktail/mocktail.dart';

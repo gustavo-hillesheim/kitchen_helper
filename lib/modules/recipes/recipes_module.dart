@@ -4,8 +4,8 @@ import '../ingredients/ingredients_module.dart';
 import 'data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'data/repository/sqlite_recipe_repository.dart';
 import 'domain/domain.dart';
-import 'presenter/edit_recipe/edit_recipe_screen.dart';
-import 'presenter/recipes_list/recipes_list_screen.dart';
+import 'presenter/screen/edit_recipe/edit_recipe_screen.dart';
+import 'presenter/screen/recipes_list/recipes_list_screen.dart';
 
 class RecipesModule extends Module {
   @override

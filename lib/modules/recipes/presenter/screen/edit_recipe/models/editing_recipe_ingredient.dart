@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
-import '../../../../ingredients/ingredients.dart';
-import '../../../recipes.dart';
+import '../../../../../ingredients/ingredients.dart';
+import '../../../../recipes.dart';
 
 class EditingRecipeIngredient extends Equatable {
   final String name;

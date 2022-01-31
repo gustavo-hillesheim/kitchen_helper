@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/modules/recipes/presenter/edit_recipe/models/editing_recipe_ingredient.dart';
+import 'package:kitchen_helper/modules/recipes/presenter/screen/edit_recipe/models/editing_recipe_ingredient.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 
-import '../../../../../mocks.dart';
+import '../../../../../../mocks.dart';
 
 void main() {
   test('SHOULD create EditingRecipeIngredient from recipe', () {

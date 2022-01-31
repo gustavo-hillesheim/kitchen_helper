@@ -2,12 +2,12 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/modules/recipes/presenter/recipes_list/recipes_list_bloc.dart';
+import 'package:kitchen_helper/modules/recipes/presenter/screen/recipes_list/recipes_list_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:kitchen_helper/presenter/screens/states.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../mocks.dart';
+import '../../../../../mocks.dart';
 
 void main() {
   late SaveRecipeUseCase saveRecipeUseCase;

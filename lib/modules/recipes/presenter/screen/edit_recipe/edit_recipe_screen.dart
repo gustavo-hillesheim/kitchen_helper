@@ -3,11 +3,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' show Right;
 import 'package:kitchen_helper/domain/models/measurement_unit.dart';
 
-import '../../../../core/core.dart';
-import '../../../../extensions.dart';
-import '../../../../presenter/presenter.dart';
-import '../../../../presenter/screens/states.dart';
-import '../../recipes.dart';
+import '../../../../../core/core.dart';
+import '../../../../../extensions.dart';
+import '../../../../../presenter/presenter.dart';
+import '../../../../../presenter/screens/states.dart';
+import '../../../recipes.dart';
 import 'edit_recipe_bloc.dart';
 import 'models/editing_recipe_ingredient.dart';
 import 'widgets/general_recipe_information_form.dart';

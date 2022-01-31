@@ -1,6 +1,6 @@
-import '../../../../presenter/screens/states.dart';
-import '../../../../presenter/widgets/widgets.dart';
-import '../../recipes.dart';
+import '../../../../../presenter/screens/states.dart';
+import '../../../../../presenter/widgets/widgets.dart';
+import '../../../recipes.dart';
 
 class RecipesListBloc extends AppCubit<List<ListingRecipeDto>>
     with ListPageBloc<ListingRecipeDto, Recipe> {

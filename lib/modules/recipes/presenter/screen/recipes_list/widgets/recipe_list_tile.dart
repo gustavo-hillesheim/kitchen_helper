@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../domain/models/measurement_unit.dart';
-import '../../../../../presenter/presenter.dart';
-import '../../../recipes.dart';
+import '../../../../../../domain/models/measurement_unit.dart';
+import '../../../../../../presenter/presenter.dart';
+import '../../../../recipes.dart';
 
 class RecipeListTile extends StatelessWidget {
   final ListingRecipeDto recipe;
