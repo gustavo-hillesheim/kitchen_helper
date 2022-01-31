@@ -9,12 +9,14 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../core/core.dart';
 
+const kInitialDatabaseVersion = 1;
+const kClientModuleDatabaseVersion = 2;
 typedef TransactionCallback<T> = FutureOr<T> Function();
 
 class SQLiteDatabase {
   static SQLiteDatabase? _instance;
   static const _databaseName = 'KitchenHelper.db';
-  static const _databaseVersion = 1;
+  static const _databaseVersion = kClientModuleDatabaseVersion;
 
   final Database _database;
   DatabaseExecutor _executor;
@@ -40,7 +42,12 @@ class SQLiteDatabase {
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
     Sqflite.setDebugModeOn(true);
-    return openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   static Future _onCreate(Database db, int version) async {
@@ -99,6 +106,30 @@ class SQLiteDatabase {
       value REAL NOT NULL,
       FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE
     )''');
+  }
+
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < kClientModuleDatabaseVersion &&
+        newVersion >= kClientModuleDatabaseVersion) {
+      await db.execute('''
+      CREATE TABLE clients(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+      )
+      ''');
+      await db.execute('''
+      CREATE TABLE clientContacts(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contact TEXT NOT NULL,
+        clientId INTEGER NOT NULL,
+        FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
+      )
+      ''');
+    }
   }
 
   Future<T> insideTransaction<T>(TransactionCallback<T> action) async {

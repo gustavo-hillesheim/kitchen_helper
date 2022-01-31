@@ -5,6 +5,7 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/common/widget/recipe_ingredient_selector_service.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
@@ -390,6 +391,11 @@ const batmanClient = Client(
     Contact(contact: '(99) 99999-9999'),
   ],
 );
+
+const listingBatmanDto = ListingClientDto(id: 1, name: 'Batman');
+const listingSpidermanDto = ListingClientDto(id: 2, name: 'Spider man');
+
+const listingClientDtos = [listingBatmanDto, listingSpidermanDto];
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

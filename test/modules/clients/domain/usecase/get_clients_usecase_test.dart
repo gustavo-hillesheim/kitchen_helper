@@ -18,16 +18,12 @@ void main() {
   });
 
   test('WHEN repository returns DTOs SHOULD return DTOs', () async {
-    const dtos = [
-      ListingClientDto(id: 1, name: 'Batman'),
-      ListingClientDto(id: 2, name: 'Spider man'),
-    ];
     when(() => repository.findAllListing())
-        .thenAnswer((_) async => const Right(dtos));
+        .thenAnswer((_) async => const Right(listingClientDtos));
 
     final result = await usecase.execute(const NoParams());
 
-    expect(result.getRight().toNullable(), dtos);
+    expect(result.getRight().toNullable(), listingClientDtos);
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
