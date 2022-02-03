@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/modules/clients/presenter/clients_list/clients_list_screen.dart';
 
 import 'data/repository/sqlite_address_repository.dart';
 import 'data/repository/sqlite_client_repository.dart';
@@ -15,5 +16,13 @@ class ClientsModule extends Module {
         Bind((i) => GetClientUseCase(i())),
         Bind((i) => SaveClientUseCase(i())),
         Bind((i) => DeleteClientUseCase(i())),
+      ];
+
+  @override
+  List<ModularRoute> get routes => [
+        ChildRoute(
+          Modular.initialRoute,
+          child: (_, __) => const ClientsListScreen(),
+        ),
       ];
 }

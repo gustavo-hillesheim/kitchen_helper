@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../../common/common.dart';
 part 'listing_client_dto.g.dart';
 
 @JsonSerializable(createToJson: false)
-class ListingClientDto extends Equatable {
+class ListingClientDto extends Equatable implements ListingDto {
+  @override
   final int id;
   final String name;
 
