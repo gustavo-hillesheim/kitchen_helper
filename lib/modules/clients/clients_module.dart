@@ -1,6 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/modules/clients/presenter/clients_list/clients_list_screen.dart';
+import 'package:kitchen_helper/modules/clients/presenter/edit_client/edit_client_screen.dart';
 
+import 'presenter/clients_list/clients_list_screen.dart';
 import 'data/repository/sqlite_address_repository.dart';
 import 'data/repository/sqlite_client_repository.dart';
 import 'data/repository/sqlite_contact_repository.dart';
@@ -24,5 +25,12 @@ class ClientsModule extends Module {
           Modular.initialRoute,
           child: (_, __) => const ClientsListScreen(),
         ),
+        ChildRoute('/edit', child: (_, route) {
+          if (route.data is! int?) {
+            throw Exception(
+                'The route /edit only accepts values of type int? as argument');
+          }
+          return EditClientScreen(id: route.data as int?);
+        }),
       ];
 }

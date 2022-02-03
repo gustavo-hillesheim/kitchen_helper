@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/modules/clients/presenter/edit_client/edit_client_screen.dart';
 
 import 'widgets/client_list_tile.dart';
 import '../../clients.dart';
@@ -49,6 +50,9 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
   }
 
   void _goToEditClientScreen([ListingClientDto? client]) async {
-    print('Going to edit client screen');
+    final shouldReload = await EditClientScreen.navigate(client?.id);
+    if (shouldReload ?? false) {
+      bloc.load();
+    }
   }
 }
