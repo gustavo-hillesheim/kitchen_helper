@@ -6,6 +6,7 @@ import 'modules/home/home_module.dart';
 import 'modules/ingredients/ingredients_module.dart';
 import 'modules/orders/orders_module.dart';
 import 'modules/recipes/recipes_module.dart';
+import 'modules/clients/clients_module.dart';
 
 class AppModule extends Module {
   @override
@@ -32,6 +33,11 @@ class AppModule extends Module {
         ModuleRoute(
           '/orders',
           module: OrdersModule(),
+          guards: [AppGuard()],
+        ),
+        ModuleRoute(
+          '/clients',
+          module: ClientsModule(),
           guards: [AppGuard()],
         ),
       ];
