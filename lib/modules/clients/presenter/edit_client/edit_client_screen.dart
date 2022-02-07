@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
+import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/contacts_list.dart';
 
 import 'edit_client_bloc.dart';
 
@@ -21,6 +22,9 @@ class EditClientScreen extends StatefulWidget {
 
 class _EditClientScreenState extends State<EditClientScreen> {
   final _formKey = GlobalKey<FormState>();
+  List<Contact> _contacts = [
+    Contact(contact: '(12) 34567-8910'),
+  ];
   late EditClientBloc bloc;
 
   @override
@@ -36,7 +40,9 @@ class _EditClientScreenState extends State<EditClientScreen> {
     }
   }
 
-  void _setControllersValues(Client client) {}
+  void _setControllersValues(Client client) {
+    _contacts = client.contacts;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +95,11 @@ class _EditClientScreenState extends State<EditClientScreen> {
                     padding: kMediumEdgeInsets,
                     child: AppTextFormField(name: 'Nome'),
                   ),
-                  ExpansionTile(
-                    tilePadding: kMediumEdgeInsets.copyWith(top: 0, bottom: 0),
-                    title: Text('Contatos'),
+                  ContactsList(
+                    _contacts,
+                    onAdd: _onAddContact,
+                    onEdit: _onEditContact,
+                    onDelete: _onDeleteContact,
                   ),
                   ExpansionTile(
                     tilePadding: kMediumEdgeInsets.copyWith(top: 0, bottom: 0),
@@ -112,4 +120,24 @@ class _EditClientScreenState extends State<EditClientScreen> {
       ));
 
   void _save() {}
+
+  void _onAddContact(Contact contact) {
+    setState(() {
+      _contacts.add(contact);
+    });
+  }
+
+  void _onEditContact(Contact oldValue, Contact newValue) {
+    setState(() {
+      final index = _contacts.indexOf(oldValue);
+      _contacts[index] = newValue;
+    });
+  }
+
+  void _onDeleteContact(Contact contact) {
+    setState(() {
+      final index = _contacts.indexOf(contact);
+      _contacts.removeAt(index);
+    });
+  }
 }
