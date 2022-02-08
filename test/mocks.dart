@@ -378,6 +378,7 @@ const batmanClient = Client(
   name: 'Batman',
   addresses: [
     Address(
+      identifier: 'Test street, 1',
       cep: 123,
       street: 'Test street',
       number: 1,

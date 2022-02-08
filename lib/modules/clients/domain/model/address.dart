@@ -5,22 +5,24 @@ part 'address.g.dart';
 
 @JsonSerializable()
 class Address extends Equatable {
-  final int cep;
-  final String street;
-  final int number;
+  final String identifier;
+  final int? cep;
+  final String? street;
+  final int? number;
   final String? complement;
-  final String neighborhood;
-  final String city;
-  final String state;
+  final String? neighborhood;
+  final String? city;
+  final String? state;
 
   const Address({
-    required this.cep,
-    required this.street,
-    required this.number,
-    required this.complement,
-    required this.neighborhood,
-    required this.city,
-    required this.state,
+    required this.identifier,
+    this.cep,
+    this.street,
+    this.number,
+    this.complement,
+    this.neighborhood,
+    this.city,
+    this.state,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +32,7 @@ class Address extends Equatable {
 
   @override
   List<Object?> get props => [
+        identifier,
         cep,
         street,
         number,

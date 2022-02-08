@@ -56,6 +56,7 @@ void main() {
         AddressEntity(
           id: 1,
           clientId: 1,
+          identifier: 'Test street, 1',
           cep: 12345678,
           street: 'Test street',
           number: 1,

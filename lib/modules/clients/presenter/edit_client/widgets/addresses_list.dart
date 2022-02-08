@@ -80,7 +80,7 @@ class AddressListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(address.city),
+      title: Text(address.identifier),
       onTap: onTap,
     );
   }

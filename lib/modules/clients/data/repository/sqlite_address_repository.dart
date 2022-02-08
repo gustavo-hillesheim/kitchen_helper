@@ -28,6 +28,7 @@ class SQLiteAddressRepository extends SQLiteRepository<AddressEntity> {
         columns: [
           'id',
           'clientId',
+          'identifier',
           'cep',
           'street',
           'number',
@@ -59,28 +60,31 @@ class AddressEntity extends Equatable implements Entity<int> {
   @override
   final int? id;
   final int? clientId;
-  final int cep;
-  final String street;
-  final int number;
+  final String identifier;
+  final int? cep;
+  final String? street;
+  final int? number;
   final String? complement;
-  final String neighborhood;
-  final String city;
-  final String state;
+  final String? neighborhood;
+  final String? city;
+  final String? state;
 
   const AddressEntity({
+    required this.identifier,
     this.id,
     this.clientId,
-    required this.cep,
-    required this.street,
-    required this.number,
-    required this.complement,
-    required this.neighborhood,
-    required this.city,
-    required this.state,
+    this.cep,
+    this.street,
+    this.number,
+    this.complement,
+    this.neighborhood,
+    this.city,
+    this.state,
   });
 
   AddressEntity.fromAddress(Address address, {this.clientId})
       : id = null,
+        identifier = address.identifier,
         cep = address.cep,
         street = address.street,
         number = address.number,
@@ -95,6 +99,7 @@ class AddressEntity extends Equatable implements Entity<int> {
   Map<String, dynamic> toJson() => _$AddressEntityToJson(this);
 
   Address toAddress() => Address(
+        identifier: identifier,
         cep: cep,
         street: street,
         number: number,
@@ -108,6 +113,7 @@ class AddressEntity extends Equatable implements Entity<int> {
   List<Object?> get props => [
         id,
         clientId,
+        identifier,
         cep,
         street,
         number,
