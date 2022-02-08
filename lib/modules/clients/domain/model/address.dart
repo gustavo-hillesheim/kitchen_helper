@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'states.dart';
+
 part 'address.g.dart';
 
 @JsonSerializable()
@@ -12,7 +14,7 @@ class Address extends Equatable {
   final String? complement;
   final String? neighborhood;
   final String? city;
-  final String? state;
+  final States? state;
 
   const Address({
     required this.identifier,

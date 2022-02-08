@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../domain/model/address.dart';
+import '../../domain/model/states.dart';
 import '../../../../core/core.dart';
 import '../../../../database/database.dart';
 import '../../../../database/sqlite/sqlite.dart';
@@ -67,7 +68,7 @@ class AddressEntity extends Equatable implements Entity<int> {
   final String? complement;
   final String? neighborhood;
   final String? city;
-  final String? state;
+  final States? state;
 
   const AddressEntity({
     required this.identifier,
