@@ -9,6 +9,7 @@ import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dar
 import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_discount_repository.dart';
@@ -388,7 +389,7 @@ const batmanClient = Client(
       complement: 'Mansion',
       neighborhood: 'Neighborhood',
       city: 'Gotham',
-      state: 'state',
+      state: States.SP,
     ),
   ],
   contacts: [

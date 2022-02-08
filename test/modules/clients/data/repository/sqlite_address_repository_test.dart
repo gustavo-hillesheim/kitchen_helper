@@ -1,5 +1,6 @@
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -47,7 +48,7 @@ void main() {
               'complement': 'House',
               'neighborhood': 'Test neighborhood',
               'city': 'Test city',
-              'state': 'TS',
+              'state': 'SP',
             },
           ]);
 
@@ -64,7 +65,7 @@ void main() {
           complement: 'House',
           neighborhood: 'Test neighborhood',
           city: 'Test city',
-          state: 'TS',
+          state: States.SP,
         ),
       ]);
     });
