@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
+import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/addresses_list.dart';
 import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/contacts_list.dart';
 
 import 'edit_client_bloc.dart';
@@ -22,9 +23,8 @@ class EditClientScreen extends StatefulWidget {
 
 class _EditClientScreenState extends State<EditClientScreen> {
   final _formKey = GlobalKey<FormState>();
-  List<Contact> _contacts = [
-    Contact(contact: '(12) 34567-8910'),
-  ];
+  List<Contact> _contacts = [];
+  List<Address> _addresses = [];
   late EditClientBloc bloc;
 
   @override
@@ -42,6 +42,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
 
   void _setControllersValues(Client client) {
     _contacts = client.contacts;
+    _addresses = client.addresses;
   }
 
   @override
@@ -101,9 +102,11 @@ class _EditClientScreenState extends State<EditClientScreen> {
                     onEdit: _onEditContact,
                     onDelete: _onDeleteContact,
                   ),
-                  ExpansionTile(
-                    tilePadding: kMediumEdgeInsets.copyWith(top: 0, bottom: 0),
-                    title: Text('Endereços'),
+                  AddressesList(
+                    _addresses,
+                    onAdd: _onAddAddress,
+                    onEdit: _onEditAddress,
+                    onDelete: _onDeleteAddress,
                   ),
                 ],
               ),
@@ -138,6 +141,26 @@ class _EditClientScreenState extends State<EditClientScreen> {
     setState(() {
       final index = _contacts.indexOf(contact);
       _contacts.removeAt(index);
+    });
+  }
+
+  void _onAddAddress(Address address) {
+    setState(() {
+      _addresses.add(address);
+    });
+  }
+
+  void _onEditAddress(Address oldValue, Address newValue) {
+    setState(() {
+      final index = _addresses.indexOf(oldValue);
+      _addresses[index] = newValue;
+    });
+  }
+
+  void _onDeleteAddress(Address address) {
+    setState(() {
+      final index = _addresses.indexOf(address);
+      _addresses.removeAt(index);
     });
   }
 }
