@@ -30,6 +30,7 @@ dependencies:
   device_preview: ^1.0.0
   sqflite_common_ffi: ^2.1.0+2
   build_runner: ^2.1.7
+  dio: ^4.0.4
 
 dev_dependencies:
   flutter_test:
