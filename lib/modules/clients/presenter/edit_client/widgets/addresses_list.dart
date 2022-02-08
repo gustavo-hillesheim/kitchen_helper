@@ -112,25 +112,60 @@ class _EditAddressFormState extends State<EditAddressForm> {
   final _complementController = TextEditingController();
   final _identifierController = TextEditingController();
   final _stateNotifier = ValueNotifier<States?>(null);
+  bool _isUpdatingIdentifierAutomatically = false;
+  bool _userUpdatedIdentifier = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.initialValue != null) {
-      final address = widget.initialValue!;
-      if (address.cep != null) {
-        _cepController.text = Formatter.simpleNumber(address.cep!);
-      }
-      if (address.number != null) {
-        _numberController.text = Formatter.simpleNumber(address.number!);
-      }
-      _stateNotifier.value = address.state;
-      _cityController.text = address.city ?? '';
-      _neighborhoodController.text = address.neighborhood ?? '';
-      _streetController.text = address.street ?? '';
-      _complementController.text = address.complement ?? '';
-      _identifierController.text = address.identifier;
+      _fillControllers(widget.initialValue!);
     }
+    _streetController.addListener(_updateIdentifier);
+    _numberController.addListener(_updateIdentifier);
+    _complementController.addListener(_updateIdentifier);
+    _identifierController.addListener(_onUpdateIdentifier);
+  }
+
+  void _fillControllers(Address address) {
+    if (address.cep != null) {
+      _cepController.text = Formatter.simpleNumber(address.cep!);
+    }
+    if (address.number != null) {
+      _numberController.text = Formatter.simpleNumber(address.number!);
+    }
+    _stateNotifier.value = address.state;
+    _cityController.text = address.city ?? '';
+    _neighborhoodController.text = address.neighborhood ?? '';
+    _streetController.text = address.street ?? '';
+    _complementController.text = address.complement ?? '';
+    _identifierController.text = address.identifier;
+  }
+
+  void _updateIdentifier() {
+    if (_userUpdatedIdentifier) {
+      return;
+    }
+    final street = _streetController.text;
+    final number = _numberController.text;
+    final complement = _complementController.text;
+    var identifier = street;
+    if (number.isNotEmpty) {
+      identifier += ', $number';
+    }
+    if (complement.isNotEmpty) {
+      identifier += ' ($complement)';
+    }
+    _isUpdatingIdentifierAutomatically = true;
+    _identifierController.text = identifier;
+    _isUpdatingIdentifierAutomatically = false;
+  }
+
+  void _onUpdateIdentifier() {
+    if (_isUpdatingIdentifierAutomatically) {
+      return;
+    }
+    _userUpdatedIdentifier = true;
   }
 
   @override
