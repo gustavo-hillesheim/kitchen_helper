@@ -170,7 +170,6 @@ class _EditAddressFormState extends State<EditAddressForm> {
                   Row(
                     children: [
                       Expanded(
-                        flex: 2,
                         child: AppTextFormField.number(
                           name: 'CEP',
                           controller: _cepController,

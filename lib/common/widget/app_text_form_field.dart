@@ -75,8 +75,20 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       keyboardType: widget.keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       maxLines: widget.multiline ?? false ? null : 1,
+      onEditingComplete: () {
+        FocusScope.of(context).nextFocus();
+      },
       decoration: InputDecoration(
-        label: Text(widget.name),
+        label: Wrap(
+          alignment: WrapAlignment.start,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: kExtraSmallSpace,
+          spacing: kExtraSmallSpace,
+          children: [
+            Text(widget.name),
+            if (!widget.required) const Text('(Opcional)', textScaleFactor: 0.8)
+          ],
+        ),
         prefixText: widget.prefixText,
         hintText: widget.example != null ? 'Ex.: ${widget.example}' : null,
       ),
