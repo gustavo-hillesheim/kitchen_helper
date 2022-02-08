@@ -1,6 +1,5 @@
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
-import 'package:kitchen_helper/modules/clients/data/repository/sqlite_contact_repository.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -23,6 +22,7 @@ void main() {
             columns: [
               'id',
               'clientId',
+              'identifier',
               'cep',
               'street',
               'number',
@@ -40,6 +40,7 @@ void main() {
             {
               'id': 1,
               'clientId': 1,
+              'identifier': 'Test street, 1',
               'cep': 12345678,
               'street': 'Test street',
               'number': 1,

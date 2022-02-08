@@ -113,6 +113,9 @@ class FakeDatabaseException extends DatabaseException with EquatableMixin {
 
   @override
   List<Object?> get props => [message];
+
+  @override
+  Object? get result => null;
 }
 
 const sugarWithId = Ingredient(
