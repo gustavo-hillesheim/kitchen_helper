@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../common.dart';
 
@@ -11,6 +12,7 @@ class AppTextFormField extends StatefulWidget {
   final String? example;
   final bool? multiline;
   final String? initialValue;
+  final int? maxLength;
 
   const AppTextFormField({
     Key? key,
@@ -22,6 +24,7 @@ class AppTextFormField extends StatefulWidget {
     this.example,
     this.multiline,
     this.initialValue,
+    this.maxLength,
   }) : super(key: key);
 
   AppTextFormField.number({
@@ -32,6 +35,7 @@ class AppTextFormField extends StatefulWidget {
     this.prefixText,
     this.example = '10',
     this.multiline,
+    this.maxLength,
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         initialValue =
@@ -45,6 +49,7 @@ class AppTextFormField extends StatefulWidget {
     this.controller,
     this.example = '9.90',
     this.multiline,
+    this.maxLength,
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         prefixText = 'R\$',
@@ -72,6 +77,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       validator: widget.required ? Validator.required : null,
+      maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       maxLines: widget.multiline ?? false ? null : 1,
@@ -79,6 +85,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         FocusScope.of(context).nextFocus();
       },
       decoration: InputDecoration(
+        counterText: "",
         label: Wrap(
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,

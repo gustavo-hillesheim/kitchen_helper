@@ -26,3 +26,12 @@ class DatabaseFailure extends Failure {
   @override
   List<Object?> get props => [message, exception];
 }
+
+class UnexpectedFailure extends Failure {
+  final Object error;
+
+  const UnexpectedFailure(this.error) : super('Um erro inesperado aconteceu');
+
+  @override
+  List<Object?> get props => [message, error];
+}

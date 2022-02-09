@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'app_guard.dart';
@@ -12,6 +13,7 @@ class AppModule extends Module {
   @override
   List<Bind<Object>> get binds => [
         AsyncBind((i) => SQLiteDatabase.getInstance()),
+        Bind((i) => Dio()),
       ];
 
   @override

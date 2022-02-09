@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/modules/clients/presenter/edit_client/edit_client_screen.dart';
 
+import 'presenter/edit_client/edit_client_screen.dart';
 import 'presenter/clients_list/clients_list_screen.dart';
 import 'data/repository/sqlite_address_repository.dart';
 import 'data/repository/sqlite_client_repository.dart';
@@ -17,6 +17,7 @@ class ClientsModule extends Module {
         Bind((i) => GetClientUseCase(i())),
         Bind((i) => SaveClientUseCase(i())),
         Bind((i) => DeleteClientUseCase(i())),
+        Bind((i) => GetAddressDataByCepUseCase(i())),
       ];
 
   @override
