@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,7 +41,9 @@ class SQLiteDatabase {
     }
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
-    Sqflite.setDebugModeOn(true);
+    if (kDebugMode) {
+      Sqflite.setDebugModeOn(true);
+    }
     return openDatabase(
       path,
       version: _databaseVersion,
