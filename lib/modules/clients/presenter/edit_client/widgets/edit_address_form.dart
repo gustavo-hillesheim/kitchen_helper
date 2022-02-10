@@ -60,6 +60,9 @@ class _EditAddressFormState extends State<EditAddressForm> {
     _streetController.text = address.street ?? '';
     _complementController.text = address.complement ?? '';
     _identifierController.text = address.identifier;
+    // When the address is saved we can't know is the user updated the identifier,
+    // so it's better to assume they did
+    _userUpdatedIdentifier = true;
   }
 
   void _updateIdentifier() {
