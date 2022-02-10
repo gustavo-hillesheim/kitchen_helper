@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/models/editing_order_product.dart';
+import 'package:kitchen_helper/modules/orders/domain/domain.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/order_products_list.dart';
 
 import '../../../../../../mocks.dart';
@@ -46,7 +46,7 @@ void main() {
   });
 
   testWidgets('WHEN user adds product SHOULD call onAdd', (tester) async {
-    final products = <EditingOrderProduct>[];
+    final products = <EditingOrderProductDto>[];
     await pumpWidget(tester, products);
     expect(find.byType(OrderProductListTile), findsNothing);
 
@@ -62,7 +62,7 @@ void main() {
     expect(products.length, 1);
     expect(
       products[0],
-      EditingOrderProduct(
+      EditingOrderProductDto(
         name: cakeRecipe.name,
         quantity: cakeOrderProduct.quantity,
         measurementUnit: cakeRecipe.measurementUnit,
@@ -97,7 +97,7 @@ void main() {
     expect(products.length, 1);
     expect(
       products[0],
-      EditingOrderProduct(
+      EditingOrderProductDto(
         name: cakeRecipe.name,
         quantity: cakeOrderProduct.quantity,
         measurementUnit: cakeRecipe.measurementUnit,
@@ -110,7 +110,7 @@ void main() {
 }
 
 Future<void> pumpWidget(
-    WidgetTester tester, List<EditingOrderProduct> products) async {
+    WidgetTester tester, List<EditingOrderProductDto> products) async {
   await tester.pumpWidget(MaterialApp(
     home: OrderProductsList(
       products: products,

@@ -5,7 +5,6 @@ import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
 import '../../../../recipes/recipes.dart';
 import '../../../domain/domain.dart';
-import 'models/editing_order_product.dart';
 
 class EditOrderBloc extends AppCubit<Order> {
   final SaveOrderUseCase saveOrderUseCase;
@@ -44,24 +43,24 @@ class EditOrderBloc extends AppCubit<Order> {
     );
   }
 
-  Future<Either<Failure, List<EditingOrderProduct>>> getEditingOrderProducts(
+  Future<Either<Failure, List<EditingOrderProductDto>>> getEditingOrderProducts(
       List<OrderProduct> products) async {
     final futures = products.map(getEditingOrderProduct);
     final values = (await Future.wait(futures)).asEitherList();
     return values;
   }
 
-  Future<Either<Failure, EditingOrderProduct>> getEditingOrderProduct(
+  Future<Either<Failure, EditingOrderProductDto>> getEditingOrderProduct(
       OrderProduct orderProduct) async {
     return _getEditingOrderProductFromRecipe(orderProduct);
   }
 
-  Future<Either<Failure, EditingOrderProduct>>
+  Future<Either<Failure, EditingOrderProductDto>>
       _getEditingOrderProductFromRecipe(OrderProduct orderProduct) {
     return getRecipeUseCase.execute(orderProduct.id).onRightThen(
           (recipe) => getRecipeCostUseCase.execute(recipe!).onRightThen(
                 (recipeCost) => Right(
-                  EditingOrderProduct.fromModels(
+                  EditingOrderProductDto.fromModels(
                     orderProduct,
                     recipe,
                     recipeCost,

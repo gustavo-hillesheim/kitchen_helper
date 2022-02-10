@@ -10,8 +10,9 @@ part 'order.g.dart';
 class Order extends Equatable implements Entity<int> {
   @override
   final int? id;
-  final String clientName;
-  final String clientAddress;
+  final int clientId;
+  final int? contactId;
+  final int? addressId;
   final DateTime orderDate;
   final DateTime deliveryDate;
   final OrderStatus status;
@@ -20,8 +21,9 @@ class Order extends Equatable implements Entity<int> {
 
   const Order({
     this.id,
-    required this.clientName,
-    required this.clientAddress,
+    required this.clientId,
+    required this.contactId,
+    required this.addressId,
     required this.orderDate,
     required this.deliveryDate,
     required this.status,
@@ -35,6 +37,9 @@ class Order extends Equatable implements Entity<int> {
 
   Order copyWith({
     int? id,
+    int? clientId,
+    int? contactId,
+    int? addressId,
     String? clientName,
     String? clientAddress,
     DateTime? orderDate,
@@ -45,8 +50,9 @@ class Order extends Equatable implements Entity<int> {
   }) {
     return Order(
       id: id ?? this.id,
-      clientName: clientName ?? this.clientName,
-      clientAddress: clientAddress ?? this.clientAddress,
+      clientId: clientId ?? this.clientId,
+      contactId: contactId ?? this.contactId,
+      addressId: addressId ?? this.addressId,
       orderDate: orderDate ?? this.orderDate,
       deliveryDate: deliveryDate ?? this.deliveryDate,
       status: status ?? this.status,
@@ -58,8 +64,9 @@ class Order extends Equatable implements Entity<int> {
   @override
   List<Object?> get props => [
         id,
-        clientName,
-        clientAddress,
+        clientId,
+        contactId,
+        addressId,
         orderDate,
         deliveryDate,
         status,

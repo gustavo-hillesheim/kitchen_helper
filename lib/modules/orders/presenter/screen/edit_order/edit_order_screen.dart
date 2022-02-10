@@ -7,7 +7,6 @@ import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
 import '../../../domain/domain.dart';
 import 'edit_order_bloc.dart';
-import 'models/editing_order_product.dart';
 import 'widgets/discount_list.dart';
 import 'widgets/general_order_information_form.dart';
 import 'widgets/order_products_list.dart';
@@ -41,7 +40,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
-  final _products = <EditingOrderProduct>[];
+  final _products = <EditingOrderProductDto>[];
   final _discounts = <Discount>[];
   var _cost = 0.0;
   var _price = 0.0;
@@ -273,7 +272,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     });
   }
 
-  void _onEditProduct(EditingOrderProduct oldValue, OrderProduct newValue) {
+  void _onEditProduct(EditingOrderProductDto oldValue, OrderProduct newValue) {
     bloc.getEditingOrderProduct(newValue).onRightThen((editingOrderProduct) {
       final index = _products.indexOf(oldValue);
       setState(() {
@@ -285,7 +284,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     });
   }
 
-  void _onDeleteProduct(EditingOrderProduct product) {
+  void _onDeleteProduct(EditingOrderProductDto product) {
     setState(() {
       _products.remove(product);
       _cost -= product.cost;
