@@ -7,10 +7,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'database_migrator.dart';
 import '../../core/core.dart';
 
-const kInitialDatabaseVersion = 1;
-const kClientModuleDatabaseVersion = 2;
 typedef TransactionCallback<T> = FutureOr<T> Function();
 
 class SQLiteDatabase {
@@ -51,10 +50,7 @@ class SQLiteDatabase {
   }
 
   static Future _onCreate(Database db, int version) async {
-    await _createIngredientTables(db);
-    await _createRecipeTables(db);
-    await _createOrderTables(db);
-    await _createClientTables(db);
+    await DatabaseMigrator().createSchema(db);
   }
 
   static Future<void> _onUpgrade(
@@ -62,106 +58,7 @@ class SQLiteDatabase {
     int oldVersion,
     int newVersion,
   ) async {
-    if (oldVersion < kClientModuleDatabaseVersion &&
-        newVersion >= kClientModuleDatabaseVersion) {
-      await _createClientTables(db);
-    }
-  }
-
-  static Future<void> _createIngredientTables(Database db) async {
-    await db.execute('''
-    CREATE TABLE ingredients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      measurementUnit TEXT NOT NULL,
-      cost REAL NOT NULL
-    )''');
-  }
-
-  static Future<void> _createRecipeTables(Database db) async {
-    await db.execute('''
-    CREATE TABLE recipes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      notes TEXT,
-      quantityProduced REAL NOT NULL,
-      quantitySold REAL,
-      price REAL,
-      canBeSold INTEGER NOT NULL,
-      measurementUnit TEXT NOT NULL
-    )''');
-    await db.execute('''
-    CREATE TABLE recipeIngredients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parentRecipeId INTEGER NOT NULL,
-      recipeIngredientId INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      FOREIGN KEY (parentRecipeId) REFERENCES recipe (id) ON DELETE CASCADE
-    )''');
-  }
-
-  static Future<void> _createOrderTables(Database db) async {
-    await db.execute('''
-    CREATE TABLE orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      clientName TEXT NOT NULL,
-      clientAddress TEXT NOT NULL,
-      orderDate INTEGER NOT NULL,
-      deliveryDate INTEGER NOT NULL,
-      status TEXT NOT NULL
-    )''');
-    await db.execute('''
-    CREATE TABLE orderProducts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      productId INTEGER NOT NULL,
-      quantity REAL NOT NULL,
-      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE,
-      FOREIGN KEY (productId) REFERENCES recipes (id) ON DELETE CASCADE
-    )''');
-    await db.execute('''
-    CREATE TABLE orderDiscounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      reason TEXT NOT NULL,
-      type TEXT NOT NULL,
-      value REAL NOT NULL,
-      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE
-    )''');
-  }
-
-  static Future<void> _createClientTables(Database db) async {
-    await db.execute('''
-      CREATE TABLE clients(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE clientContacts(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        contact TEXT NOT NULL,
-        clientId INTEGER NOT NULL,
-        FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE clientAddresses(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        clientId INTEGER NOT NULL,
-        identifier TEXT NOT NULL,
-        cep INTEGER,
-        street TEXT,
-        number INTEGER,
-        complement TEXT,
-        neighborhood TEXT,
-        city TEXT,
-        state TEXT,
-        FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
-      )
-      ''');
+    await DatabaseMigrator().migrateTo(db, newVersion, from: oldVersion);
   }
 
   Future<T> insideTransaction<T>(TransactionCallback<T> action) async {
