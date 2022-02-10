@@ -5,6 +5,12 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/common/widget/recipe_ingredient_selector_service.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
+import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
+import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_discount_repository.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_product_repository.dart';
@@ -49,6 +55,8 @@ class OrderProductRepositoryMock extends Mock
 class OrderDiscountRepositoryMock extends Mock
     implements OrderDiscountRepository {}
 
+class ClientRepositoryMock extends Mock implements ClientRepository {}
+
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
 class RecipeIngredientSelectorServiceMock extends Mock
@@ -86,6 +94,8 @@ class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
 class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
 
+class FakeClient extends Fake implements Client {}
+
 class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
 class FakeFailure extends Failure {
@@ -104,6 +114,9 @@ class FakeDatabaseException extends DatabaseException with EquatableMixin {
 
   @override
   List<Object?> get props => [message];
+
+  @override
+  Object? get result => null;
 }
 
 const sugarWithId = Ingredient(
@@ -364,6 +377,36 @@ final listingBatmanOrderDto = ListingOrderDto(
   status: OrderStatus.delivered,
   price: 50,
 );
+const batmanClient = Client(
+  id: 1,
+  name: 'Batman',
+  addresses: [
+    Address(
+      identifier: 'Test street, 1',
+      cep: 123,
+      street: 'Test street',
+      number: 1,
+      complement: 'Mansion',
+      neighborhood: 'Neighborhood',
+      city: 'Gotham',
+      state: States.SP,
+    ),
+  ],
+  contacts: [
+    Contact(contact: '(99) 99999-9999'),
+  ],
+);
+const spidermanClient = Client(
+  id: 2,
+  name: 'Spider man',
+  addresses: [],
+  contacts: [],
+);
+
+const listingBatmanDto = ListingClientDto(id: 1, name: 'Batman');
+const listingSpidermanDto = ListingClientDto(id: 2, name: 'Spider man');
+
+const listingClientDtos = [listingBatmanDto, listingSpidermanDto];
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

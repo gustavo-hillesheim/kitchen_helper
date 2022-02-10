@@ -10,30 +10,24 @@ build_app:
 code_coverage:
 	fvm flutter pub run code_coverage \
 	-m 80 -u --ignoreBarrelFiles \
-	-e domain \
 	-e core \
 	-e database \
 	-e main.dart \
-	-e presenter\\\\app_widget.dart \
-	-e presenter\\\\constants.dart \
+	-e presenter \
 	-e app_guard.dart \
 	-e app_module.dart \
-	-i domain\\\\usecases \
-	-i database\\\\sqlite
+	-i usecases
 
 code_coverage_ci:
 	flutter pub run code_coverage \
 	-m 80 -u \
-	-e domain \
 	-e core \
 	-e database \
 	-e main.dart \
-	-e presenter\\\\app_widget.dart \
-	-e presenter\\\\constants.dart \
+	-e presenter \
 	-e app_guard.dart \
 	-e app_module.dart \
-	-i domain\\\\usecases \
-	-i database\\\\sqlite
+	-i usecases
 
 run_tests:
 	fvm flutter test --reporter expanded

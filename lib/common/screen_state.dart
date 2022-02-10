@@ -42,12 +42,18 @@ abstract class AppCubit<T> extends Cubit<ScreenState<T>> {
 
   Future<Either<Failure, T>> runEither(
       Future<Either<Failure, T>> Function() fn) async {
-    emit(LoadingState<T>());
-    final result = await fn();
-    result.fold(
-      (failure) => emit(FailureState<T>(failure)),
-      (value) => emit(SuccessState<T>(value)),
-    );
-    return result;
+    try {
+      emit(LoadingState<T>());
+      final result = await fn();
+      result.fold(
+        (failure) => emit(FailureState<T>(failure)),
+        (value) => emit(SuccessState<T>(value)),
+      );
+      return result;
+    } catch (e) {
+      final failure = UnexpectedFailure(e);
+      emit(FailureState<T>(failure));
+      return Left(failure);
+    }
   }
 }

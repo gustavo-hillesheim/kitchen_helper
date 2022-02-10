@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'database_migrator.dart';
 import '../../core/core.dart';
 
 typedef TransactionCallback<T> = FutureOr<T> Function();
@@ -14,7 +16,7 @@ typedef TransactionCallback<T> = FutureOr<T> Function();
 class SQLiteDatabase {
   static SQLiteDatabase? _instance;
   static const _databaseName = 'KitchenHelper.db';
-  static const _databaseVersion = 1;
+  static const _databaseVersion = kClientModuleDatabaseVersion;
 
   final Database _database;
   DatabaseExecutor _executor;
@@ -39,66 +41,27 @@ class SQLiteDatabase {
     }
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
-    Sqflite.setDebugModeOn(true);
-    return openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    if (kDebugMode) {
+      Sqflite.setDebugModeOn(true);
+    }
+    return openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   static Future _onCreate(Database db, int version) async {
-    await db.execute('''
-    CREATE TABLE ingredients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      measurementUnit TEXT NOT NULL,
-      cost REAL NOT NULL
-    )''');
-    await db.execute('''
-    CREATE TABLE recipes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      notes TEXT,
-      quantityProduced REAL NOT NULL,
-      quantitySold REAL,
-      price REAL,
-      canBeSold INTEGER NOT NULL,
-      measurementUnit TEXT NOT NULL
-    )''');
-    await db.execute('''
-    CREATE TABLE recipeIngredients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parentRecipeId INTEGER NOT NULL,
-      recipeIngredientId INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      FOREIGN KEY (parentRecipeId) REFERENCES recipe (id) ON DELETE CASCADE
-    )''');
-    await db.execute('''
-    CREATE TABLE orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      clientName TEXT NOT NULL,
-      clientAddress TEXT NOT NULL,
-      orderDate INTEGER NOT NULL,
-      deliveryDate INTEGER NOT NULL,
-      status TEXT NOT NULL
-    )''');
-    await db.execute('''
-    CREATE TABLE orderProducts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      productId INTEGER NOT NULL,
-      quantity REAL NOT NULL,
-      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE,
-      FOREIGN KEY (productId) REFERENCES recipes (id) ON DELETE CASCADE
-    )''');
-    await db.execute('''
-    CREATE TABLE orderDiscounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      reason TEXT NOT NULL,
-      type TEXT NOT NULL,
-      value REAL NOT NULL,
-      FOREIGN KEY (orderId) REFERENCES orders (id) ON DELETE CASCADE
-    )''');
+    await DatabaseMigrator().createSchema(db);
+  }
+
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    await DatabaseMigrator().migrateTo(db, newVersion, from: oldVersion);
   }
 
   Future<T> insideTransaction<T>(TransactionCallback<T> action) async {

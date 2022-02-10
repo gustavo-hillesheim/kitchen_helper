@@ -26,7 +26,16 @@ class AppDropdownButtonField<T> extends StatelessWidget {
       value: value,
       onChanged: onChange,
       decoration: InputDecoration(
-        label: Text(name),
+        label: Wrap(
+          alignment: WrapAlignment.start,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: kExtraSmallSpace,
+          spacing: kExtraSmallSpace,
+          children: [
+            Text(name),
+            if (!required) const Text('(Opcional)', textScaleFactor: 0.8)
+          ],
+        ),
         contentPadding: const EdgeInsets.fromLTRB(12, 22, 12, 13),
       ),
       items: values.entries

@@ -9,7 +9,19 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: MenuScreen()));
 
     expect(
-      PageDescriptionTileFinder('Ingredientes', '/ingredients'),
+      PageDescriptionTileFinder('Ingredientes', '/ingredients/'),
+      findsOneWidget,
+    );
+    expect(
+      PageDescriptionTileFinder('Receitas', '/recipes/'),
+      findsOneWidget,
+    );
+    expect(
+      PageDescriptionTileFinder('Pedidos', '/orders/'),
+      findsOneWidget,
+    );
+    expect(
+      PageDescriptionTileFinder('Clientes', '/clients/'),
       findsOneWidget,
     );
   });
