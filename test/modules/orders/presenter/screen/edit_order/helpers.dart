@@ -148,6 +148,7 @@ EditingOrderProduct editingOrderProduct(OrderProduct op) {
 }
 
 final clientNameFinder = AppTextFormFieldFinder(name: 'Cliente');
+final clientContactFinder = AppTextFormFieldFinder(name: 'Contato');
 final clientAddressFinder = AppTextFormFieldFinder(name: 'Endereço');
 final orderDateFinder = AppDateTimeFieldFinder(name: 'Data do pedido');
 final deliveryDateFinder = AppDateTimeFieldFinder(name: 'Data de entrega');
@@ -156,6 +157,7 @@ final statusFinder =
 
 expectGeneralOrderInformationFormState({
   String? clientName,
+  String? clientContact,
   String? clientAddress,
   OrderStatus? status,
   DateTime? orderDate,
@@ -165,6 +167,12 @@ expectGeneralOrderInformationFormState({
   if (clientName != null) {
     expect(
       AppTextFormFieldFinder(name: 'Cliente', value: clientName),
+      findsOneWidget,
+    );
+  }
+  if (clientContact != null) {
+    expect(
+      AppTextFormFieldFinder(name: 'Contato', value: clientContact),
       findsOneWidget,
     );
   }
@@ -194,6 +202,7 @@ expectGeneralOrderInformationFormState({
 Future<void> inputGeneralOrderInfo(
   WidgetTester tester, {
   String? clientName,
+  String? clientContact,
   String? clientAddress,
   OrderStatus? status,
   DateTime? orderDate,
@@ -201,6 +210,9 @@ Future<void> inputGeneralOrderInfo(
 }) async {
   if (clientName != null) {
     await tester.enterText(clientNameFinder, clientName);
+  }
+  if (clientContact != null) {
+    await tester.enterText(clientContactFinder, clientContact);
   }
   if (clientAddress != null) {
     await tester.enterText(clientAddressFinder, clientAddress);

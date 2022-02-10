@@ -6,6 +6,7 @@ import '../../../../domain/domain.dart';
 
 class GeneralOrderInformationForm extends StatelessWidget {
   final TextEditingController clientNameController;
+  final TextEditingController clientContactController;
   final TextEditingController clientAddressController;
   final ValueNotifier<DateTime?> orderDateNotifier;
   final ValueNotifier<DateTime?> deliveryDateNotifier;
@@ -17,6 +18,7 @@ class GeneralOrderInformationForm extends StatelessWidget {
   const GeneralOrderInformationForm({
     Key? key,
     required this.clientNameController,
+    required this.clientContactController,
     required this.clientAddressController,
     required this.orderDateNotifier,
     required this.deliveryDateNotifier,
@@ -37,6 +39,11 @@ class GeneralOrderInformationForm extends StatelessWidget {
             AppTextFormField(
               name: 'Cliente',
               controller: clientNameController,
+            ),
+            kMediumSpacerVertical,
+            AppTextFormField(
+              name: 'Contato',
+              controller: clientContactController,
             ),
             kMediumSpacerVertical,
             AppTextFormField(

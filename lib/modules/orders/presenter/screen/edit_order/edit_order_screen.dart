@@ -36,6 +36,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
   final _clientNameController = TextEditingController();
+  final _clientContactController = TextEditingController();
   final _clientAddressController = TextEditingController();
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
@@ -94,6 +95,17 @@ class _EditOrderScreenState extends State<EditOrderScreen>
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _clientNameController.dispose();
+    _clientContactController.dispose();
+    _clientAddressController.dispose();
+    _orderDateNotifier.dispose();
+    _deliveryDateNotifier.dispose();
+    _statusNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -156,6 +168,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 children: [
                   GeneralOrderInformationForm(
                     clientNameController: _clientNameController,
+                    clientContactController: _clientContactController,
                     clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,

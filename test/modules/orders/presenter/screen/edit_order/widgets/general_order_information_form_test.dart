@@ -9,6 +9,7 @@ import '../helpers.dart';
 
 void main() {
   late TextEditingController clientNameController;
+  late TextEditingController clientContactController;
   late TextEditingController clientAddressController;
   late ValueNotifier<DateTime?> orderDateNotifier;
   late ValueNotifier<DateTime?> deliveryDateNotifier;
@@ -22,6 +23,7 @@ void main() {
     orderDateNotifier = ValueNotifier(null);
     deliveryDateNotifier = ValueNotifier(null);
     clientAddressController = TextEditingController();
+    clientContactController = TextEditingController();
     clientNameController = TextEditingController();
   });
 
@@ -33,6 +35,7 @@ void main() {
           orderDateNotifier: orderDateNotifier,
           deliveryDateNotifier: deliveryDateNotifier,
           clientAddressController: clientAddressController,
+          clientContactController: clientContactController,
           clientNameController: clientNameController,
           price: price,
           cost: cost,
@@ -47,6 +50,7 @@ void main() {
     await pumpWidget(tester);
 
     expect(clientNameFinder, findsOneWidget);
+    expect(clientContactFinder, findsOneWidget);
     expect(clientAddressFinder, findsOneWidget);
     expect(orderDateFinder, findsOneWidget);
     expect(deliveryDateFinder, findsOneWidget);
@@ -55,12 +59,14 @@ void main() {
     await inputGeneralOrderInfo(
       tester,
       clientName: 'Client',
+      clientContact: 'Contact',
       clientAddress: 'Address',
       status: OrderStatus.ordered,
       orderDate: DateTime(2022, 1, 1, 12, 0),
       deliveryDate: DateTime(2022, 2, 1, 15, 30),
     );
     expect(clientNameController.text, 'Client');
+    expect(clientContactController.text, 'Contact');
     expect(clientAddressController.text, 'Address');
     expect(statusNotifier.value, OrderStatus.ordered);
     expect(orderDateNotifier.value, DateTime(2022, 1, 1, 12, 0));
@@ -77,6 +83,7 @@ void main() {
   testWidgets('WHEN has initialValue SHOULD render fields with initialValue',
       (tester) async {
     clientNameController.text = 'Test client';
+    clientContactController.text = 'Contact';
     clientAddressController.text = 'Some address';
     statusNotifier.value = OrderStatus.delivered;
     orderDateNotifier.value = DateTime(2022, 10, 1, 9, 15);
@@ -86,6 +93,7 @@ void main() {
 
     expectGeneralOrderInformationFormState(
       clientName: 'Test client',
+      clientContact: 'Contact',
       clientAddress: 'Some address',
       status: OrderStatus.delivered,
       orderDate: DateTime(2022, 10, 1, 9, 15),
