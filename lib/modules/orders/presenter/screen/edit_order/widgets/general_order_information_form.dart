@@ -36,36 +36,53 @@ class GeneralOrderInformationForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppTextFormField(
-              name: 'Cliente',
-              controller: clientNameController,
-            ),
-            kMediumSpacerVertical,
-            AppTextFormField(
-              name: 'Contato',
-              controller: clientContactController,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppTextFormField(
+                    name: 'Cliente',
+                    controller: clientNameController,
+                  ),
+                ),
+                kMediumSpacerHorizontal,
+                Expanded(
+                  child: AppTextFormField(
+                    name: 'Contato',
+                    controller: clientContactController,
+                  ),
+                ),
+              ],
             ),
             kMediumSpacerVertical,
             AppTextFormField(
               name: 'Endereço',
               controller: clientAddressController,
-              multiline: true,
             ),
             kMediumSpacerVertical,
-            orderDateNotifier.builder(
-              (_, value, onChange) => AppDateTimeField(
-                name: 'Data do pedido',
-                initialValue: value,
-                onChanged: onChange,
-              ),
-            ),
-            kMediumSpacerVertical,
-            deliveryDateNotifier.builder(
-              (_, value, onChange) => AppDateTimeField(
-                name: 'Data de entrega',
-                initialValue: value,
-                onChanged: onChange,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: orderDateNotifier.builder(
+                    (_, value, onChange) => AppDateTimeField(
+                      name: 'Data do pedido',
+                      initialValue: value,
+                      onChanged: onChange,
+                    ),
+                  ),
+                ),
+                kMediumSpacerHorizontal,
+                Expanded(
+                  child: deliveryDateNotifier.builder(
+                    (_, value, onChange) => AppDateTimeField(
+                      name: 'Data de entrega',
+                      initialValue: value,
+                      onChanged: onChange,
+                    ),
+                  ),
+                ),
+              ],
             ),
             kMediumSpacerVertical,
             statusNotifier.builder(
