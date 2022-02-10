@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/extensions.dart';
-import 'package:kitchen_helper/common/common.dart';
-import 'package:kitchen_helper/modules/clients/clients.dart';
-import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/edit_address_form_bloc.dart';
+
+import '../../../../../extensions.dart';
+import '../../../../../common/common.dart';
+import '../../../clients.dart';
+import 'edit_address_form_bloc.dart';
 
 class EditAddressForm extends StatefulWidget {
   final Address? initialValue;

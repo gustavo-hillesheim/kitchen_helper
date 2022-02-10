@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kitchen_helper/common/common.dart';
 
+import '../../../../../common/common.dart';
 import '../../../clients.dart';
 
 class ClientListTile extends StatelessWidget {

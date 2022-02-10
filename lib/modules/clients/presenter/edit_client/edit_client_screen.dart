@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/common/common.dart';
-import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/modules/clients/clients.dart';
-import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/addresses_list.dart';
-import 'package:kitchen_helper/modules/clients/presenter/edit_client/widgets/contacts_list.dart';
+
+import '../../../../common/common.dart';
+import '../../../../core/core.dart';
+import '../../clients.dart';
+import 'widgets/addresses_list.dart';
+import 'widgets/contacts_list.dart';
 
 import 'edit_client_bloc.dart';
 

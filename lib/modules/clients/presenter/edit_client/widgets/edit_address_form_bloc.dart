@@ -1,7 +1,8 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/common/common.dart';
-import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/modules/clients/clients.dart';
+
+import '../../../../../common/common.dart';
+import '../../../../../core/core.dart';
+import '../../../clients.dart';
 
 class EditAddressFormBloc extends AppCubit<AddressData> {
   final GetAddressDataByCepUseCase getAdressDataUseCase;

@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:dio/dio.dart';
+
+import '../../../../core/core.dart';
+import '../model/states.dart';
 
 part 'get_address_data_by_cep_usecase.g.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/modules/clients/presenter/edit_client/edit_client_screen.dart';
 
+import '../edit_client/edit_client_screen.dart';
 import 'widgets/client_list_tile.dart';
 import '../../clients.dart';
 import 'clients_list_bloc.dart';
