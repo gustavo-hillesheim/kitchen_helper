@@ -14,7 +14,7 @@ part 'sqlite_address_repository.g.dart';
 class SQLiteAddressRepository extends SQLiteRepository<AddressEntity> {
   SQLiteAddressRepository(SQLiteDatabase database)
       : super(
-          'clientAddressess',
+          'clientAddresses',
           'id',
           database,
           toMap: (contact) => contact.toJson(),

@@ -23,6 +23,7 @@ class EditClientScreen extends StatefulWidget {
 
 class _EditClientScreenState extends State<EditClientScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   List<Contact> _contacts = [];
   List<Address> _addresses = [];
   late EditClientBloc bloc;
@@ -41,8 +42,16 @@ class _EditClientScreenState extends State<EditClientScreen> {
   }
 
   void _setControllersValues(Client client) {
+    _nameController.text = client.name;
     _contacts = client.contacts;
     _addresses = client.addresses;
+  }
+
+  @override
+  void dispose() {
+    bloc.close();
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -94,7 +103,10 @@ class _EditClientScreenState extends State<EditClientScreen> {
                 children: [
                   Padding(
                     padding: kMediumEdgeInsets,
-                    child: AppTextFormField(name: 'Nome'),
+                    child: AppTextFormField(
+                      name: 'Nome',
+                      controller: _nameController,
+                    ),
                   ),
                   ContactsList(
                     _contacts,
@@ -122,7 +134,23 @@ class _EditClientScreenState extends State<EditClientScreen> {
         ],
       ));
 
-  void _save() {}
+  Future<void> _save() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final client = Client(
+        id: widget.id,
+        name: _nameController.text,
+        addresses: _addresses,
+        contacts: _contacts,
+      );
+      final result = await bloc.save(client);
+      result.fold(
+        (failure) => ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Falha ao salvar: ${failure.message}')),
+        ),
+        (r) => Modular.to.pop(true),
+      );
+    }
+  }
 
   void _onAddContact(Contact contact) {
     setState(() {

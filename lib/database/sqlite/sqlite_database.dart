@@ -51,6 +51,24 @@ class SQLiteDatabase {
   }
 
   static Future _onCreate(Database db, int version) async {
+    await _createIngredientTables(db);
+    await _createRecipeTables(db);
+    await _createOrderTables(db);
+    await _createClientTables(db);
+  }
+
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < kClientModuleDatabaseVersion &&
+        newVersion >= kClientModuleDatabaseVersion) {
+      await _createClientTables(db);
+    }
+  }
+
+  static Future<void> _createIngredientTables(Database db) async {
     await db.execute('''
     CREATE TABLE ingredients (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,6 +77,9 @@ class SQLiteDatabase {
       measurementUnit TEXT NOT NULL,
       cost REAL NOT NULL
     )''');
+  }
+
+  static Future<void> _createRecipeTables(Database db) async {
     await db.execute('''
     CREATE TABLE recipes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +100,9 @@ class SQLiteDatabase {
       quantity REAL NOT NULL,
       FOREIGN KEY (parentRecipeId) REFERENCES recipe (id) ON DELETE CASCADE
     )''');
+  }
+
+  static Future<void> _createOrderTables(Database db) async {
     await db.execute('''
     CREATE TABLE orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,20 +132,14 @@ class SQLiteDatabase {
     )''');
   }
 
-  static Future<void> _onUpgrade(
-    Database db,
-    int oldVersion,
-    int newVersion,
-  ) async {
-    if (oldVersion < kClientModuleDatabaseVersion &&
-        newVersion >= kClientModuleDatabaseVersion) {
-      await db.execute('''
+  static Future<void> _createClientTables(Database db) async {
+    await db.execute('''
       CREATE TABLE clients(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
       )
       ''');
-      await db.execute('''
+    await db.execute('''
       CREATE TABLE clientContacts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         contact TEXT NOT NULL,
@@ -129,21 +147,21 @@ class SQLiteDatabase {
         FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
       )
       ''');
-      await db.execute('''
+    await db.execute('''
       CREATE TABLE clientAddresses(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         clientId INTEGER NOT NULL,
-        cep INTEGER NOT NULL,
-        street TEXT NOT NULL,
-        number INTEGER NOT NULL,
+        identifier TEXT NOT NULL,
+        cep INTEGER,
+        street TEXT,
+        number INTEGER,
         complement TEXT,
-        neighborhood TEXT NOT NULL,
-        city TEXT NOT NULL,
-        state TEXT NOT NULL,
+        neighborhood TEXT,
+        city TEXT,
+        state TEXT,
         FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
       )
       ''');
-    }
   }
 
   Future<T> insideTransaction<T>(TransactionCallback<T> action) async {
