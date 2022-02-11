@@ -6,11 +6,11 @@ import '../../../../../extensions.dart';
 import '../../../../recipes/recipes.dart';
 import '../../../domain/domain.dart';
 
-class EditOrderBloc extends AppCubit<Order> {
-  final SaveOrderUseCase saveOrderUseCase;
+class EditOrderBloc extends AppCubit<void> {
+  final SaveEditingOrderDtoUseCase saveOrderUseCase;
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
-  final GetOrderUseCase getOrderUseCase;
+  final GetEditingOrderDtoUseCase getOrderUseCase;
 
   EditOrderBloc(
     this.saveOrderUseCase,
@@ -19,28 +19,21 @@ class EditOrderBloc extends AppCubit<Order> {
     this.getOrderUseCase,
   ) : super(const EmptyState());
 
-  Future<ScreenState<void>> save(Order order) async {
+  Future<ScreenState<void>> save(EditingOrderDto order) async {
     await runEither(() async {
       return saveOrderUseCase.execute(order);
     });
     return state;
   }
 
-  Future<void> loadOrder(int id) async {
+  Future<Either<Failure, EditingOrderDto>> loadOrder(int id) async {
     emit(const LoadingOrderState());
     final result = await getOrderUseCase.execute(id);
     result.fold(
       (f) => emit(FailureState(f)),
-      (order) {
-        if (order == null) {
-          emit(const FailureState(
-            BusinessFailure('Não foi possível encontrar o pedido'),
-          ));
-        } else {
-          emit(SuccessState(order));
-        }
-      },
+      (_) => emit(const SuccessState(null)),
     );
+    return result;
   }
 
   Future<Either<Failure, List<EditingOrderProductDto>>> getEditingOrderProducts(

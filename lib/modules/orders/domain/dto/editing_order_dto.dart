@@ -13,7 +13,7 @@ class EditingOrderDto extends Equatable {
   final DateTime orderDate;
   final DateTime deliveryDate;
   final OrderStatus status;
-  final List<OrderProduct> products;
+  final List<EditingOrderProductDto> products;
   final List<Discount> discounts;
 
   const EditingOrderDto({

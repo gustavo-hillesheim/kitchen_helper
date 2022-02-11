@@ -56,44 +56,32 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           Modular.get(),
         );
     if (widget.id != null) {
-      bloc.stream
-          .where((state) => state is SuccessState<Order>)
-          .map((state) => (state as SuccessState<Order>).value)
-          .listen((order) {
+      bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
         _fillCostPriceAndProducts(order);
         _discounts.addAll(order.discounts);
+        return const Right(null);
       });
-      bloc.loadOrder(widget.id!);
     }
   }
 
-  void _fillControllers(Order order) {
-    _clientNameController.text = order.clientName;
-    _clientAddressController.text = order.clientAddress;
+  void _fillControllers(EditingOrderDto order) {
+    _clientNameController.text = order.client ?? '';
+    _clientContactController.text = order.contact ?? '';
+    _clientAddressController.text = order.address ?? '';
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
     _statusNotifier.value = order.status;
   }
 
-  void _fillCostPriceAndProducts(Order order) async {
-    final result = await bloc.getEditingOrderProducts(order.products);
-    result.fold(
-      (failure) => debugPrint(
-        'Could not find products: ${failure.message}',
-      ),
-      (products) {
-        if (mounted) {
-          setState(() {
-            for (final product in products) {
-              _cost += product.cost;
-              _price += product.price;
-              _products.add(product);
-            }
-          });
-        }
-      },
-    );
+  void _fillCostPriceAndProducts(EditingOrderDto order) async {
+    setState(() {
+      for (final product in order.products) {
+        _cost += product.cost;
+        _price += product.price;
+        _products.add(product);
+      }
+    });
   }
 
   @override
@@ -120,7 +108,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           return Stack(
             children: [
               if (state is FailureState)
-                _buildFailureState((state as FailureState).failure)
+                _buildFailureState(state.failure)
               else if (state is LoadingOrderState)
                 const Center(child: CircularProgressIndicator())
               else
@@ -204,8 +192,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
 
   void _save() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final order = _createOrder();
-      final state = await bloc.save(order);
+      final state = await bloc.save(_createEditingOrderDto());
       if (state is SuccessState) {
         Modular.to.pop(true);
       } else if (state is FailureState) {
@@ -224,20 +211,19 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     return totalDiscount;
   }
 
-  Order _createOrder() {
-    return Order(
+  EditingOrderDto _createEditingOrderDto() {
+    return EditingOrderDto(
       id: widget.id,
-      clientName: _clientNameController.text,
-      clientAddress: _clientAddressController.text,
+      client: _clientNameController.text,
+      clientId: null,
+      contact: _clientContactController.text,
+      contactId: null,
+      address: _clientAddressController.text,
+      addressId: null,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,
       status: _statusNotifier.value!,
-      products: _products
-          .map((ep) => OrderProduct(
-                id: ep.id,
-                quantity: ep.quantity,
-              ))
-          .toList(),
+      products: _products,
       discounts: _discounts,
     );
   }

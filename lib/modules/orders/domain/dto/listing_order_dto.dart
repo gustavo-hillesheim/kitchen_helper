@@ -35,5 +35,6 @@ class ListingOrderDto extends Equatable implements ListingDto {
         clientAddress,
         deliveryDate,
         price,
+        status,
       ];
 }
