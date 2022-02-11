@@ -357,6 +357,7 @@ final spidermanOrder = Order(
   ],
 );
 final editingSpidermanOrderDto = EditingOrderDto(
+  id: spidermanOrderWithId.id!,
   clientId: spidermanClient.id!,
   client: '',
   addressId: null,

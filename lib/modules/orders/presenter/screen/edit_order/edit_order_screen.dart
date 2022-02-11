@@ -44,6 +44,9 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _discounts = <Discount>[];
   var _cost = 0.0;
   var _price = 0.0;
+  int? _clientId;
+  int? _contactId;
+  int? _addressId;
 
   @override
   void initState() {
@@ -77,6 +80,9 @@ class _EditOrderScreenState extends State<EditOrderScreen>
         _products.add(product);
       }
       _discounts.addAll(order.discounts);
+      _clientId = order.clientId;
+      _contactId = order.contactId;
+      _addressId = order.addressId;
     });
   }
 
@@ -211,11 +217,11 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     return EditingOrderDto(
       id: widget.id,
       client: _clientNameController.text,
-      clientId: null,
+      clientId: _clientId,
       contact: _clientContactController.text,
-      contactId: null,
+      contactId: _contactId,
       address: _clientAddressController.text,
-      addressId: null,
+      addressId: _addressId,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,
       status: _statusNotifier.value!,

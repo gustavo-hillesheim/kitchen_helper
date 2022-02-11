@@ -40,6 +40,7 @@ void main() {
         id: initialValue?.id,
       ),
     ));
+    await tester.pump();
   }
 
   testWidgets('SHOULD render form, lists and save button', (tester) async {
@@ -190,6 +191,7 @@ Future<void> inputOrderInfo(WidgetTester tester, EditingOrderDto order) async {
   await inputGeneralOrderInfo(
     tester,
     clientName: order.client,
+    clientContact: order.contact,
     clientAddress: order.address,
     status: order.status,
     orderDate: order.orderDate,
