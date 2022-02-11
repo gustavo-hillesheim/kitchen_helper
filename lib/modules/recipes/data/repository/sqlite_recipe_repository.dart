@@ -200,4 +200,10 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
     ''', recipesId);
     return result.map((data) => data['id'] as int).toList();
   }
+
+  @override
+  Future<Either<Failure, double>> getCost(int recipeId) {
+    // TODO: implement getCost
+    throw UnimplementedError();
+  }
 }

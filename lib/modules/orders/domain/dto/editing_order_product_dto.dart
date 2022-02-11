@@ -1,9 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../common/common.dart';
 import '../../../recipes/recipes.dart';
 import '../domain.dart';
 
+part 'editing_order_product_dto.g.dart';
+
+@JsonSerializable()
 class EditingOrderProductDto extends Equatable {
   final String name;
   final double quantity;
@@ -20,6 +24,11 @@ class EditingOrderProductDto extends Equatable {
     required this.id,
     required this.price,
   });
+
+  factory EditingOrderProductDto.fromJson(Map<String, dynamic> json) =>
+      _$EditingOrderProductDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EditingOrderProductDtoToJson(this);
 
   factory EditingOrderProductDto.fromModels(
     OrderProduct orderProduct,

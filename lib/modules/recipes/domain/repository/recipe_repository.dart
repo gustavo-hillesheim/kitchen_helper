@@ -15,6 +15,8 @@ abstract class RecipeRepository extends Repository<Recipe, int> {
       {RecipeFilter? filter});
 
   Future<Either<Failure, Set<int>>> getRecipesThatDependOn(int recipeId);
+
+  Future<Either<Failure, double>> getCost(int recipeId);
 }
 
 class RecipeFilter extends Equatable {

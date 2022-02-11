@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart' hide Order;
+import 'package:kitchen_helper/modules/recipes/domain/domain.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/core.dart';
@@ -10,11 +11,16 @@ import 'sqlite_order_product_repository.dart';
 
 class SQLiteOrderRepository extends SQLiteRepository<Order>
     implements OrderRepository {
+  static const couldNotGetOrderProductsMessage =
+      'Não foi possível encontrar os produtos do pedido';
+
+  final RecipeRepository recipeRepository;
   final OrderProductRepository orderProductRepository;
   final OrderDiscountRepository orderDiscountRepository;
 
   SQLiteOrderRepository(
     SQLiteDatabase database,
+    this.recipeRepository,
     this.orderProductRepository,
     this.orderDiscountRepository,
   ) : super(
@@ -172,14 +178,14 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   Future<Either<Failure, Order>> _withProducts(Order order) async {
-    return _getProducts(order).onRightThen(
+    return _getProducts(order.id!).onRightThen(
       (products) => Right(order.copyWith(products: products)),
     );
   }
 
-  Future<Either<Failure, List<OrderProduct>>> _getProducts(Order order) async {
+  Future<Either<Failure, List<OrderProduct>>> _getProducts(int orderId) async {
     return orderProductRepository
-        .findByOrder(order.id!)
+        .findByOrder(orderId)
         .onRightThen((productsEntities) {
       final products = productsEntities
           .map((e) => e.toOrderProduct())
@@ -203,14 +209,14 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   Future<Either<Failure, Order>> _withDiscounts(Order order) async {
-    return _getDiscounts(order).onRightThen(
+    return _getDiscounts(order.id!).onRightThen(
       (discounts) => Right(order.copyWith(discounts: discounts)),
     );
   }
 
-  Future<Either<Failure, List<Discount>>> _getDiscounts(Order order) async {
+  Future<Either<Failure, List<Discount>>> _getDiscounts(int orderId) async {
     return orderDiscountRepository
-        .findByOrder(order.id!)
+        .findByOrder(orderId)
         .onRightThen((discountEntities) {
       final discounts =
           discountEntities.map((e) => e.toDiscount()).toList(growable: false);
@@ -219,8 +225,53 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   @override
-  Future<Either<Failure, EditingOrderDto?>> findEditingDtoById(int id) {
-    // TODO: implement findEditingDtoById
-    throw UnimplementedError();
+  Future<Either<Failure, EditingOrderDto?>> findEditingDtoById(int id) async {
+    try {
+      final exists = await database.exists(tableName, idColumn, id);
+      if (!exists) {
+        return const Right(null);
+      }
+      final orderData = await _getEditingOrderData(id);
+      final discounts = await _getDiscounts(id).throwOnFailure();
+      final editingProducts = await _getEditingProducts(id);
+      orderData['discounts'] = discounts.map((d) => d.toJson()).toList();
+      orderData['products'] = editingProducts;
+      return Right(EditingOrderDto.fromJson(orderData));
+    } on Failure catch (f) {
+      return Left(f);
+    }
+  }
+
+  Future<Map<String, dynamic>> _getEditingOrderData(int id) async {
+    return (await database.rawQuery('''
+SELECT o.id id, o.clientId clientId, c.name client, o.contactId contactId, 
+  cc.contact contact, o.addressId addressId, ca.identifier address, 
+  o.orderDate orderDate, o.deliveryDate deliveryDate, o.status status
+FROM orders o
+LEFT JOIN clients c ON c.id = o.clientId
+LEFT JOIN clientContacts cc ON c.id = cc.clientId && cc.id = o.contactId
+LEFT JOIN clientAddresses ca ON c.id = ca.clientId && ca.id = o.addressId
+WHERE o.id = ?
+''', [id])).first;
+  }
+
+  Future<List<Map<String, dynamic>>> _getEditingProducts(int orderId) async {
+    try {
+      final queryResult = await database.query(
+        table: 'recipes',
+        columns: ['name', 'measurementUnit', 'price', 'id', 'quantity'],
+        where: {'orderId': orderId},
+      );
+      final editingProducts = <Map<String, dynamic>>[];
+      for (final data in queryResult) {
+        final cost =
+            await recipeRepository.getCost(data['id']).throwOnFailure();
+        data['cost'] = cost;
+        editingProducts.add(data);
+      }
+      return editingProducts;
+    } on DatabaseException catch (e) {
+      throw DatabaseFailure(couldNotGetOrderProductsMessage, e);
+    }
   }
 }

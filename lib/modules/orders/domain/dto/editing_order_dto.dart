@@ -1,7 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import '../domain.dart';
 
+part 'editing_order_dto.g.dart';
+
+@JsonSerializable()
 class EditingOrderDto extends Equatable {
   final int? id;
   final int? clientId;
@@ -30,6 +34,11 @@ class EditingOrderDto extends Equatable {
     required this.products,
     required this.discounts,
   });
+
+  factory EditingOrderDto.fromJson(Map<String, dynamic> json) =>
+      _$EditingOrderDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EditingOrderDtoToJson(this);
 
   EditingOrderDto copyWith({
     int? id,

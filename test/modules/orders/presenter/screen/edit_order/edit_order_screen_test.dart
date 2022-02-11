@@ -69,7 +69,8 @@ void main() {
     await tester.ensureVisible(find.byType(PrimaryButton).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDto));
+    verify(() =>
+        bloc.save(editingSpidermanOrderDto.copyWith(address: '', contact: '')));
   });
 
   testWidgets('WHEN bloc.save returns Failure SHOULD show error message',
@@ -87,7 +88,8 @@ void main() {
     await tester.pump();
     expect(find.text('error message'), findsOneWidget);
 
-    verify(() => bloc.save(editingSpidermanOrderDto));
+    verify(() =>
+        bloc.save(editingSpidermanOrderDto.copyWith(address: '', contact: '')));
   });
 
   testWidgets('WHEN deletes product SHOULD remove from product list',
@@ -105,7 +107,8 @@ void main() {
     await delete(tester, find.byType(OrderProductListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(products: [])));
+    verify(() => bloc.save(editingSpidermanOrderDto
+        .copyWith(products: [], address: '', contact: '')));
   });
 
   testWidgets('WHEN edits product SHOULD update product list', (tester) async {
@@ -138,7 +141,7 @@ void main() {
           editingOrderProduct(
             OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
           ),
-        ])));
+        ], address: '', contact: '')));
   });
 
   testWidgets('WHEN deletes discount SHOULD remove from discount list',
@@ -156,7 +159,8 @@ void main() {
     await delete(tester, find.byType(DiscountListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(discounts: [])));
+    verify(() => bloc.save(editingSpidermanOrderDto
+        .copyWith(discounts: [], address: '', contact: '')));
   });
 
   testWidgets('WHEN edits discount SHOULD update discount list',
@@ -183,6 +187,8 @@ void main() {
 
     verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
           discounts: [discount],
+          contact: '',
+          address: '',
         )));
   });
 }

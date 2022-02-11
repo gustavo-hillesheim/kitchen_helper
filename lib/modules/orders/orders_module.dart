@@ -18,7 +18,7 @@ class OrdersModule extends Module {
         Bind<OrderDiscountRepository>(
             (i) => SQLiteOrderDiscountRepository(i())),
         Bind<OrderProductRepository>((i) => SQLiteOrderProductRepository(i())),
-        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i())),
+        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i(), i())),
         Bind((i) => SaveOrderUseCase(i())),
         Bind((i) => GetOrdersUseCase(i())),
         Bind((i) => GetOrderUseCase(i())),
