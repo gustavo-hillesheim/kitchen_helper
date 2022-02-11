@@ -72,6 +72,12 @@ class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
 
 class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
 
+class SaveEditingOrderDtoUseCaseMock extends Mock
+    implements SaveEditingOrderDtoUseCase {}
+
+class GetEditingOrderDtoUseCaseMock extends Mock
+    implements GetEditingOrderDtoUseCase {}
+
 class GetListingOrderProductsUseCaseMock extends Mock
     implements GetListingOrderProductsUseCase {}
 
@@ -86,6 +92,8 @@ class FakeIngredient extends Fake implements Ingredient {}
 class FakeRecipe extends Fake implements Recipe {}
 
 class FakeOrder extends Fake implements Order {}
+
+class FakeEditingOrderDto extends Fake implements EditingOrderDto {}
 
 class FakeOrderProduct extends Fake implements OrderProduct {}
 
@@ -337,12 +345,28 @@ final cakeOrderProduct = OrderProduct(id: cakeRecipe.id!, quantity: 1);
 final iceCreamOrderProduct = OrderProduct(id: iceCreamRecipe.id!, quantity: 2);
 
 final spidermanOrder = Order(
-  clientName: 'Test client',
-  clientAddress: 'New York Street, 123',
+  clientId: spidermanClient.id!,
+  addressId: null,
+  contactId: null,
   orderDate: DateTime(2022, 1, 1, 1, 10),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
   products: [cakeOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
+  ],
+);
+final editingSpidermanOrderDto = EditingOrderDto(
+  clientId: spidermanClient.id!,
+  client: '',
+  addressId: null,
+  address: '',
+  contactId: null,
+  contact: '',
+  orderDate: DateTime(2022, 1, 1, 1, 10),
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  products: [editingOrderProduct(cakeOrderProduct)],
   discounts: const [
     Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
   ],
@@ -359,12 +383,29 @@ final listingSpidermanOrderDto = ListingOrderDto(
 
 final batmanOrder = Order(
   id: 2,
-  clientName: 'Batman',
-  clientAddress: 'Gotham',
+  clientId: batmanClient.id!,
+  addressId: 1,
+  contactId: 1,
   orderDate: DateTime(2022, 1, 3, 1, 15),
   deliveryDate: DateTime(2022, 1, 7, 12),
   status: OrderStatus.delivered,
   products: [cakeOrderProduct, iceCreamOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
+  ],
+);
+final editingBatmanOrderDto = EditingOrderDto(
+  id: 2,
+  clientId: batmanClient.id!,
+  client: '',
+  addressId: 1,
+  address: '',
+  contactId: 1,
+  contact: '',
+  orderDate: DateTime(2022, 1, 3, 1, 15),
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  products: editingOrderProducts([cakeOrderProduct, iceCreamOrderProduct]),
   discounts: const [
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
   ],
@@ -407,6 +448,21 @@ const listingBatmanDto = ListingClientDto(id: 1, name: 'Batman');
 const listingSpidermanDto = ListingClientDto(id: 2, name: 'Spider man');
 
 const listingClientDtos = [listingBatmanDto, listingSpidermanDto];
+
+List<EditingOrderProductDto> editingOrderProducts(List<OrderProduct> ops) {
+  return ops.map(editingOrderProduct).toList();
+}
+
+EditingOrderProductDto editingOrderProduct(OrderProduct op) {
+  return EditingOrderProductDto(
+    name: recipesMap[op.id]!.name,
+    quantity: op.quantity,
+    measurementUnit: recipesMap[op.id]!.measurementUnit,
+    cost: op.id.toDouble(),
+    id: op.id,
+    price: op.id.toDouble(),
+  );
+}
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

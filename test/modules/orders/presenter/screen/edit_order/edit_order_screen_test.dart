@@ -17,12 +17,13 @@ import 'helpers.dart';
 
 void main() {
   late EditOrderBloc bloc;
-  late StreamController<ScreenState<Order>> streamController;
-  ScreenState<Order> state = const EmptyState();
+  late StreamController<ScreenState<void>> streamController;
+  ScreenState<void> state = const EmptyState();
 
   setUp(() {
     registerFallbackValue(FakeOrder());
     registerFallbackValue(FakeOrderProduct());
+    registerFallbackValue(FakeEditingOrderDto());
     mockRecipeIngredientsSelectorService();
     streamController = StreamController.broadcast();
     streamController.stream.listen((newState) => state = newState);
@@ -31,7 +32,8 @@ void main() {
     when(() => bloc.state).thenAnswer((_) => state);
   });
 
-  Future<void> pumpWidget(WidgetTester tester, {Order? initialValue}) async {
+  Future<void> pumpWidget(WidgetTester tester,
+      {EditingOrderDto? initialValue}) async {
     await tester.pumpWidget(MaterialApp(
       home: EditOrderScreen(
         bloc: bloc,
@@ -61,12 +63,12 @@ void main() {
         .thenAnswer((_) async => const SuccessState(null));
 
     await pumpWidget(tester);
-    await inputOrderInfo(tester, spidermanOrder);
+    await inputOrderInfo(tester, editingSpidermanOrderDto);
 
     await tester.ensureVisible(find.byType(PrimaryButton).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(spidermanOrder));
+    verify(() => bloc.save(editingSpidermanOrderDto));
   });
 
   testWidgets('WHEN bloc.save returns Failure SHOULD show error message',
@@ -78,36 +80,34 @@ void main() {
         (_) async => const FailureState((FakeFailure('error message'))));
 
     await pumpWidget(tester);
-    await inputOrderInfo(tester, spidermanOrder);
+    await inputOrderInfo(tester, editingSpidermanOrderDto);
 
     await tester.tap(find.byType(PrimaryButton).first);
     await tester.pump();
     expect(find.text('error message'), findsOneWidget);
 
-    verify(() => bloc.save(spidermanOrder));
+    verify(() => bloc.save(editingSpidermanOrderDto));
   });
 
   testWidgets('WHEN deletes product SHOULD remove from product list',
       (tester) async {
-    when(() => bloc.getEditingOrderProducts(any())).thenAnswer((_) async =>
-        Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
-    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
-        streamController.sink.add(SuccessState(spidermanOrderWithId)));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async {
+      streamController.sink.add(const SuccessState(null));
+      return Right(editingSpidermanOrderDto);
+    });
 
-    await pumpWidget(tester, initialValue: spidermanOrderWithId);
+    await pumpWidget(tester, initialValue: editingSpidermanOrderDto);
 
     await goToProductsTab(tester);
     await delete(tester, find.byType(OrderProductListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(spidermanOrderWithId.copyWith(products: [])));
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(products: [])));
   });
 
   testWidgets('WHEN edits product SHOULD update product list', (tester) async {
-    when(() => bloc.getEditingOrderProducts(any())).thenAnswer((_) async =>
-        Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.getEditingOrderProduct(any()))
         .thenAnswer((invocation) async {
       final op = invocation.positionalArguments[0];
@@ -115,10 +115,12 @@ void main() {
     });
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
-    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
-        streamController.sink.add(SuccessState(spidermanOrderWithId)));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async {
+      streamController.sink.add(const SuccessState(null));
+      return Right(editingSpidermanOrderDto);
+    });
 
-    await pumpWidget(tester, initialValue: spidermanOrderWithId);
+    await pumpWidget(tester, initialValue: editingSpidermanOrderDto);
 
     await goToProductsTab(tester);
     await tester.tap(find.byType(OrderProductListTile).first);
@@ -131,39 +133,41 @@ void main() {
     );
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(spidermanOrderWithId.copyWith(products: [
-          OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(products: [
+          editingOrderProduct(
+            OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
+          ),
         ])));
   });
 
   testWidgets('WHEN deletes discount SHOULD remove from discount list',
       (tester) async {
-    when(() => bloc.getEditingOrderProducts(any())).thenAnswer((_) async =>
-        Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
-    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
-        streamController.sink.add(SuccessState(spidermanOrderWithId)));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async {
+      streamController.sink.add(const SuccessState(null));
+      return Right(editingSpidermanOrderDto);
+    });
 
-    await pumpWidget(tester, initialValue: spidermanOrderWithId);
+    await pumpWidget(tester, initialValue: editingSpidermanOrderDto);
 
     await goToDiscountsTab(tester);
     await delete(tester, find.byType(DiscountListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(spidermanOrderWithId.copyWith(discounts: [])));
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(discounts: [])));
   });
 
   testWidgets('WHEN edits discount SHOULD update discount list',
       (tester) async {
-    when(() => bloc.getEditingOrderProducts(any())).thenAnswer((_) async =>
-        Right(editingOrderProducts(spidermanOrderWithId.products)));
     when(() => bloc.save(any()))
         .thenAnswer((_) async => const SuccessState(null));
-    when(() => bloc.loadOrder(any())).thenAnswer((_) async =>
-        streamController.sink.add(SuccessState(spidermanOrderWithId)));
+    when(() => bloc.loadOrder(any())).thenAnswer((_) async {
+      streamController.sink.add(const SuccessState(null));
+      return Right(editingSpidermanOrderDto);
+    });
 
-    await pumpWidget(tester, initialValue: spidermanOrderWithId);
+    await pumpWidget(tester, initialValue: editingSpidermanOrderDto);
 
     const discount = Discount(
       reason: 'Some reason',
@@ -176,17 +180,17 @@ void main() {
     await inputDiscountInfo(tester, discount);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(spidermanOrderWithId.copyWith(
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
           discounts: [discount],
         )));
   });
 }
 
-Future<void> inputOrderInfo(WidgetTester tester, Order order) async {
+Future<void> inputOrderInfo(WidgetTester tester, EditingOrderDto order) async {
   await inputGeneralOrderInfo(
     tester,
-    clientName: order.clientName,
-    clientAddress: order.clientAddress,
+    clientName: order.client,
+    clientAddress: order.address,
     status: order.status,
     orderDate: order.orderDate,
     deliveryDate: order.deliveryDate,

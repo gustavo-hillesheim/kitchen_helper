@@ -1,4 +1,4 @@
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/orders/domain/domain.dart';
 

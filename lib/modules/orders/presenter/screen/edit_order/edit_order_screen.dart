@@ -50,16 +50,11 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     super.initState();
     bloc = widget.bloc ??
         EditOrderBloc(
-          Modular.get(),
-          Modular.get(),
-          Modular.get(),
-          Modular.get(),
-        );
+            Modular.get(), Modular.get(), Modular.get(), Modular.get());
     if (widget.id != null) {
       bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
-        _fillCostPriceAndProducts(order);
-        _discounts.addAll(order.discounts);
+        _fillVariables(order);
         return const Right(null);
       });
     }
@@ -74,13 +69,14 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     _statusNotifier.value = order.status;
   }
 
-  void _fillCostPriceAndProducts(EditingOrderDto order) async {
+  void _fillVariables(EditingOrderDto order) async {
     setState(() {
       for (final product in order.products) {
         _cost += product.cost;
         _price += product.price;
         _products.add(product);
       }
+      _discounts.addAll(order.discounts);
     });
   }
 

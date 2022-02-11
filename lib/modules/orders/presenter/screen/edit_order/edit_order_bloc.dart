@@ -20,9 +20,8 @@ class EditOrderBloc extends AppCubit<void> {
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(EditingOrderDto order) async {
-    await runEither(() async {
-      return saveOrderUseCase.execute(order);
-    });
+    await runEither(() =>
+        saveOrderUseCase.execute(order).onRightThen((p0) => const Right(null)));
     return state;
   }
 
@@ -34,13 +33,6 @@ class EditOrderBloc extends AppCubit<void> {
       (_) => emit(const SuccessState(null)),
     );
     return result;
-  }
-
-  Future<Either<Failure, List<EditingOrderProductDto>>> getEditingOrderProducts(
-      List<OrderProduct> products) async {
-    final futures = products.map(getEditingOrderProduct);
-    final values = (await Future.wait(futures)).asEitherList();
-    return values;
   }
 
   Future<Either<Failure, EditingOrderProductDto>> getEditingOrderProduct(

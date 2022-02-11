@@ -31,6 +31,36 @@ class EditingOrderDto extends Equatable {
     required this.discounts,
   });
 
+  EditingOrderDto copyWith({
+    int? id,
+    int? clientId,
+    String? client,
+    int? contactId,
+    String? contact,
+    int? addressId,
+    String? address,
+    DateTime? orderDate,
+    DateTime? deliveryDate,
+    OrderStatus? status,
+    List<EditingOrderProductDto>? products,
+    List<Discount>? discounts,
+  }) {
+    return EditingOrderDto(
+      id: id ?? this.id,
+      clientId: clientId ?? this.clientId,
+      client: client ?? this.client,
+      contactId: contactId ?? this.contactId,
+      contact: contact ?? this.contact,
+      address: address ?? this.address,
+      addressId: addressId ?? this.addressId,
+      orderDate: orderDate ?? this.orderDate,
+      deliveryDate: deliveryDate ?? this.deliveryDate,
+      status: status ?? this.status,
+      products: products ?? this.products,
+      discounts: discounts ?? this.discounts,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

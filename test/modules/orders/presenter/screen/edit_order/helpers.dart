@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/models/editing_order_product.dart';
 
 import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
@@ -130,21 +129,6 @@ Future<void> inputOrderProductInfo(
   );
   await tester.tap(find.byType(PrimaryButton).last);
   await tester.pumpAndSettle();
-}
-
-List<EditingOrderProduct> editingOrderProducts(List<OrderProduct> ops) {
-  return ops.map(editingOrderProduct).toList();
-}
-
-EditingOrderProduct editingOrderProduct(OrderProduct op) {
-  return EditingOrderProduct(
-    name: recipesMap[op.id]!.name,
-    quantity: op.quantity,
-    measurementUnit: recipesMap[op.id]!.measurementUnit,
-    cost: op.id.toDouble(),
-    id: op.id,
-    price: op.id.toDouble(),
-  );
 }
 
 final clientNameFinder = AppTextFormFieldFinder(name: 'Cliente');
@@ -276,7 +260,7 @@ Future<void> delete(WidgetTester tester, Finder finder) async {
   await tester.pump();
 }
 
-void expectOrderProductListTile(EditingOrderProduct orderProduct) {
+void expectOrderProductListTile(EditingOrderProductDto orderProduct) {
   expect(find.text(orderProduct.name), findsOneWidget);
   expect(find.text(Formatter.currency(orderProduct.price)), findsOneWidget);
   expect(

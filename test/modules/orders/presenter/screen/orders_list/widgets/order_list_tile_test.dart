@@ -31,7 +31,8 @@ void main() {
   });
 
   testWidgets('SHOULD render order data', (tester) async {
-    when(() => bloc.loadProducts(batmanOrder.id!)).thenAnswer((_) async {
+    when(() => bloc.loadProducts(listingBatmanOrderDto.id))
+        .thenAnswer((_) async {
       setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
       setState(SuccessState(_listingOrderProducts(batmanOrder.products)));
@@ -48,9 +49,10 @@ void main() {
     // Renders price
     await tester.pump();
 
-    expect(find.text(batmanOrder.clientName), findsOneWidget);
-    expect(find.text(batmanOrder.clientAddress), findsOneWidget);
-    expect(find.text(Formatter.completeDate(batmanOrder.deliveryDate)),
+    expect(find.text(listingBatmanOrderDto.clientName), findsOneWidget);
+    expect(find.text(listingBatmanOrderDto.clientAddress), findsOneWidget);
+    expect(
+        find.text(Formatter.completeDate(listingBatmanOrderDto.deliveryDate)),
         findsOneWidget);
     expect(find.text(Formatter.currency(50)), findsOneWidget);
     expect(TagFinder(label: 'Entregue'), findsOneWidget);
