@@ -64,9 +64,9 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   }
 
   void _fillControllers(EditingOrderDto order) {
-    _clientNameController.text = order.client ?? '';
-    _clientContactController.text = order.contact ?? '';
-    _clientAddressController.text = order.address ?? '';
+    _clientNameController.text = order.clientName ?? '';
+    _clientContactController.text = order.clientContact ?? '';
+    _clientAddressController.text = order.clientAddress ?? '';
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
     _statusNotifier.value = order.status;
@@ -216,11 +216,11 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   EditingOrderDto _createEditingOrderDto() {
     return EditingOrderDto(
       id: widget.id,
-      client: _clientNameController.text,
+      clientName: _clientNameController.text,
       clientId: _clientId,
-      contact: _clientContactController.text,
+      clientContact: _clientContactController.text,
       contactId: _contactId,
-      address: _clientAddressController.text,
+      clientAddress: _clientAddressController.text,
       addressId: _addressId,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,

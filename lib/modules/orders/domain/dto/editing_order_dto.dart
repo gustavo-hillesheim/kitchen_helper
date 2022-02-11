@@ -9,11 +9,11 @@ part 'editing_order_dto.g.dart';
 class EditingOrderDto extends Equatable {
   final int? id;
   final int? clientId;
-  final String? client;
+  final String? clientName;
   final int? contactId;
-  final String? contact;
+  final String? clientContact;
   final int? addressId;
-  final String? address;
+  final String? clientAddress;
   final DateTime orderDate;
   final DateTime deliveryDate;
   final OrderStatus status;
@@ -23,10 +23,10 @@ class EditingOrderDto extends Equatable {
   const EditingOrderDto({
     this.id,
     required this.clientId,
-    required this.client,
+    required this.clientName,
     required this.contactId,
-    required this.contact,
-    required this.address,
+    required this.clientContact,
+    required this.clientAddress,
     required this.addressId,
     required this.orderDate,
     required this.deliveryDate,
@@ -57,10 +57,10 @@ class EditingOrderDto extends Equatable {
     return EditingOrderDto(
       id: id ?? this.id,
       clientId: clientId ?? this.clientId,
-      client: client ?? this.client,
+      clientName: client ?? this.clientName,
       contactId: contactId ?? this.contactId,
-      contact: contact ?? this.contact,
-      address: address ?? this.address,
+      clientContact: contact ?? this.clientContact,
+      clientAddress: address ?? this.clientAddress,
       addressId: addressId ?? this.addressId,
       orderDate: orderDate ?? this.orderDate,
       deliveryDate: deliveryDate ?? this.deliveryDate,
@@ -74,11 +74,11 @@ class EditingOrderDto extends Equatable {
   List<Object?> get props => [
         id,
         clientId,
-        client,
+        clientName,
         contactId,
-        contact,
+        clientContact,
         addressId,
-        address,
+        clientAddress,
         orderDate,
         deliveryDate,
         status,

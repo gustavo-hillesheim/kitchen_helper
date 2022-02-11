@@ -458,7 +458,3 @@ class SQLiteAddressRepositoryMock extends Mock
 
 class SQLiteContactRepositoryMock extends Mock
     implements SQLiteContactRepository {}
-
-class FakeAddressEntity extends Fake implements AddressEntity {}
-
-class FakeContactEntity extends Fake implements ContactEntity {}

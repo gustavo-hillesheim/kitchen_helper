@@ -196,9 +196,9 @@ void main() {
 Future<void> inputOrderInfo(WidgetTester tester, EditingOrderDto order) async {
   await inputGeneralOrderInfo(
     tester,
-    clientName: order.client,
-    clientContact: order.contact,
-    clientAddress: order.address,
+    clientName: order.clientName,
+    clientContact: order.clientContact,
+    clientAddress: order.clientAddress,
     status: order.status,
     orderDate: order.orderDate,
     deliveryDate: order.deliveryDate,

@@ -5,12 +5,7 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/common/widget/recipe_ingredient_selector_service.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
-import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
-import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_discount_repository.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_product_repository.dart';
@@ -56,6 +51,10 @@ class OrderDiscountRepositoryMock extends Mock
     implements OrderDiscountRepository {}
 
 class ClientRepositoryMock extends Mock implements ClientRepository {}
+
+class AddressRepositoryMock extends Mock implements AddressRepository {}
+
+class ContactRepositoryMock extends Mock implements ContactRepository {}
 
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
@@ -103,6 +102,10 @@ class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
 
 class FakeClient extends Fake implements Client {}
+
+class FakeAddressEntity extends Fake implements AddressEntity {}
+
+class FakeContactEntity extends Fake implements ContactEntity {}
 
 class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
@@ -359,11 +362,11 @@ final spidermanOrder = Order(
 final editingSpidermanOrderDto = EditingOrderDto(
   id: spidermanOrderWithId.id!,
   clientId: spidermanClient.id!,
-  client: spidermanClient.name,
+  clientName: spidermanClient.name,
   addressId: null,
-  address: null,
+  clientAddress: null,
   contactId: null,
-  contact: null,
+  clientContact: null,
   orderDate: DateTime(2022, 1, 1, 1, 10),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
@@ -398,11 +401,11 @@ final batmanOrder = Order(
 final editingBatmanOrderDto = EditingOrderDto(
   id: 2,
   clientId: batmanClient.id!,
-  client: '',
+  clientName: '',
   addressId: 1,
-  address: '',
+  clientAddress: '',
   contactId: 1,
-  contact: '',
+  clientContact: '',
   orderDate: DateTime(2022, 1, 3, 1, 15),
   deliveryDate: DateTime(2022, 1, 7, 12),
   status: OrderStatus.delivered,

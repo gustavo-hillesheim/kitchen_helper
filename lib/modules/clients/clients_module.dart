@@ -10,9 +10,18 @@ import 'domain/domain.dart';
 class ClientsModule extends Module {
   @override
   List<Bind<Object>> get binds => [
-        Bind<AddressRepository>((i) => SQLiteAddressRepository(i())),
-        Bind<ContactRepository>((i) => SQLiteContactRepository(i())),
-        Bind<ClientRepository>((i) => SQLiteClientRepository(i(), i(), i())),
+        Bind<AddressRepository>(
+          (i) => SQLiteAddressRepository(i()),
+          export: true,
+        ),
+        Bind<ContactRepository>(
+          (i) => SQLiteContactRepository(i()),
+          export: true,
+        ),
+        Bind<ClientRepository>(
+          (i) => SQLiteClientRepository(i(), i(), i()),
+          export: true,
+        ),
         Bind((i) => GetClientsUseCase(i())),
         Bind((i) => GetClientUseCase(i())),
         Bind((i) => SaveClientUseCase(i())),
