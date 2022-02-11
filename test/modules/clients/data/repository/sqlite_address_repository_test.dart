@@ -1,6 +1,6 @@
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

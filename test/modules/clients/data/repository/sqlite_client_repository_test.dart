@@ -1,12 +1,10 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_client_repository.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_contact_repository.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

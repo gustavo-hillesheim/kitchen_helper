@@ -10,7 +10,7 @@ class SaveEditingOrderDtoUseCase extends UseCase<EditingOrderDto, Order> {
   SaveEditingOrderDtoUseCase(this.repository);
 
   @override
-  Future<fp.Either<Failure, Order>> execute(EditingOrderDto dto) {
+  Future<fp.Either<Failure, Order>> execute(EditingOrderDto dto) async {
     final order = _createOrder(dto);
     return repository
         .save(order)
