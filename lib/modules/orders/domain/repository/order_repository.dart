@@ -14,6 +14,8 @@ abstract class OrderRepository implements Repository<Order, int> {
 
   Future<Either<Failure, List<ListingOrderProductDto>>>
       findAllOrderProductsListing(int orderId);
+
+  Future<Either<Failure, EditingOrderDto?>> findEditingDtoById(int id);
 }
 
 class OrdersFilter extends Equatable {

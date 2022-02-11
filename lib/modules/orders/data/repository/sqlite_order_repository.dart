@@ -217,4 +217,10 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       return Right(discounts);
     });
   }
+
+  @override
+  Future<Either<Failure, EditingOrderDto?>> findEditingDtoById(int id) {
+    // TODO: implement findEditingDtoById
+    throw UnimplementedError();
+  }
 }
