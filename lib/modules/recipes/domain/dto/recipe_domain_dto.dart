@@ -21,5 +21,5 @@ class RecipeDomainDto extends Equatable {
       _$RecipeDomainDtoFromJson(json);
 
   @override
-  List<Object?> get props => [id, label];
+  List<Object?> get props => [id, label, measurementUnit];
 }

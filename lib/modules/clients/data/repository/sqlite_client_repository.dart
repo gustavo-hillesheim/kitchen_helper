@@ -154,4 +154,10 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
     }
     return Right(clientId);
   }
+
+  @override
+  Future<Either<Failure, List<ClientDomainDto>>> findAllDomain() {
+    // TODO: implement findAllDomain
+    throw UnimplementedError();
+  }
 }
