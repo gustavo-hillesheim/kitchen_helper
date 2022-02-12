@@ -30,7 +30,7 @@ class OrdersModule extends Module {
         Bind((i) => DeleteOrderUseCase(i())),
         Bind((i) => GetListingOrderProductsUseCase(i())),
         Bind((i) => GetEditingOrderDtoUseCase(i())),
-        Bind((i) => SaveEditingOrderDtoUseCase(i())),
+        Bind((i) => SaveEditingOrderDtoUseCase(i(), i(), i(), i())),
       ];
 
   @override
