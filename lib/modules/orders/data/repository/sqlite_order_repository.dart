@@ -74,7 +74,7 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
     try {
       final where = filter != null ? _filterToWhereMap(filter) : null;
       final result = await database.rawQuery('''
-      SELECT o.id id, o.clientName clientName, o.clientAddress clientAddress,
+      SELECT o.id id, c.name clientName, ca.identifier clientAddress,
         o.deliveryDate deliveryDate, o.status status,
         (r.quantitySold / r.quantityProduced * r.price * op.quantity) basePrice, 
         sum(case when d.type = 'fixed' then d.value else 0 end) fixedDiscount, 
@@ -84,6 +84,8 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       LEFT JOIN orderProducts op ON o.id = op.orderId
       LEFT JOIN recipes r ON r.id = op.productId
       LEFT JOIN orderDiscounts d ON o.id = d.orderId
+      LEFT JOIN clients c ON c.id = o.clientId
+      LEFT JOIN clientAddresses ca ON ca.id = o.addressId AND ca.clientId = c.id
       ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
       GROUP BY o.id
       ORDER BY o.deliveryDate
