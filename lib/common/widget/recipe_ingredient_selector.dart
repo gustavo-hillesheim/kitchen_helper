@@ -1,4 +1,3 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -64,65 +63,25 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownSearch<RecipeIngredientSelectorItem>(
-      selectedItem: initialValue,
-      showSearchBox: true,
-      onFind: (_) => service
+    return SearchTextField<RecipeIngredientSelectorItem>(
+      initialValue: initialValue,
+      onChanged: widget.onChanged,
+      onSearch: (_) => service
           .getItems(
             recipeToIgnore: widget.recipeToIgnore,
             recipeFilter: widget.recipeFilter,
             getOnly: widget.showOnly,
           )
           .throwOnFailure(),
-      validator: Validator.required,
-      autoValidateMode: AutovalidateMode.onUserInteraction,
-      filterFn: _filterFn,
-      itemAsString: (item) => item?.name ?? '',
-      dropdownBuilderSupportsNullItem: false,
-      dropdownBuilder: (_, item) => Text(item?.name ?? ''),
-      loadingBuilder: _loadingBuilder,
-      emptyBuilder: _emptyBuilder,
-      errorBuilder: _errorBuilder,
-      onChanged: widget.onChanged,
-    );
-  }
-
-  bool _filterFn(RecipeIngredientSelectorItem? item, String? search) {
-    if (item == null) {
-      return false;
-    }
-    if (search == null) {
-      return true;
-    }
-    return item.name.toLowerCase().startsWith(search.toLowerCase());
-  }
-
-  Widget _loadingBuilder(_, __) => const Center(
-        child: CircularProgressIndicator(),
-      );
-
-  Widget _emptyBuilder(_, __) => Center(
-        child: Empty(
-          text: RecipeIngredientSelector.emptyText,
-          subtext: _showAll
-              ? RecipeIngredientSelector.emptySubtext
-              : (_showOnlyRecipes
-                  ? RecipeIngredientSelector.emptyRecipesSubtext
-                  : RecipeIngredientSelector.emptyIngredientsSubtext),
-        ),
-      );
-
-  Widget _errorBuilder(_, __, error) {
-    debugPrint('Error on RecipeIngredientSelector: ${error.toString()}');
-    if (error is Error) {
-      debugPrintStack(stackTrace: error.stackTrace);
-    }
-    return const Center(
-      child: Empty(
-        text: RecipeIngredientSelector.errorText,
-        subtext: RecipeIngredientSelector.errorSubtext,
-        icon: Icons.error_outline_outlined,
-      ),
+      getLabelFromValue: (item) => item?.name ?? '',
+      emptyTitle: RecipeIngredientSelector.emptyText,
+      emptySubtext: _showAll
+          ? RecipeIngredientSelector.emptySubtext
+          : (_showOnlyRecipes
+              ? RecipeIngredientSelector.emptyRecipesSubtext
+              : RecipeIngredientSelector.emptyIngredientsSubtext),
+      errorTitle: RecipeIngredientSelector.errorText,
+      errorSubtext: RecipeIngredientSelector.errorSubtext,
     );
   }
 
