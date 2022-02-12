@@ -451,6 +451,52 @@ void main() {
       expect(result.getLeft().toNullable(), failure);
     });
   });
+
+  group('findAllDomain', () {
+    When<Future<List<Map<String, dynamic>>>> whenQueryDomain() {
+      return when(() =>
+          database.query(table: repository.tableName, columns: ['id', 'name']));
+    }
+
+    test('WHEN database has records SHOULD return dtos', () async {
+      whenQueryDomain().thenAnswer((_) async => [
+            {'id': 1, 'label': 'Client one'},
+            {'id': 2, 'label': 'Client two'},
+          ]);
+
+      final result = await repository.findAllDomain();
+
+      expect(result.getRight().toNullable(), const [
+        ClientDomainDto(id: 1, label: 'Client one'),
+        ClientDomainDto(id: 2, label: 'Client two'),
+      ]);
+    });
+
+    test('WHEN database throw DatabaseException SHOULD return Failure',
+        () async {
+      final exception = FakeDatabaseException('error on query');
+      whenQueryDomain().thenThrow(exception);
+
+      final result = await repository.findAllDomain();
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD throw Exception',
+        () async {
+      final exception = Exception('some error');
+      whenQueryDomain().thenThrow(exception);
+      try {
+        await repository.findAllDomain();
+        fail('Should have thrown');
+      } catch (e) {
+        expect(e, exception);
+      }
+    });
+  });
 }
 
 class SQLiteAddressRepositoryMock extends Mock

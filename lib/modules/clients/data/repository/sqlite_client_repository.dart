@@ -156,8 +156,15 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
   }
 
   @override
-  Future<Either<Failure, List<ClientDomainDto>>> findAllDomain() {
-    // TODO: implement findAllDomain
-    throw UnimplementedError();
+  Future<Either<Failure, List<ClientDomainDto>>> findAllDomain() async {
+    try {
+      final result = await database.query(
+        table: tableName,
+        columns: ['id', 'name'],
+      );
+      return Right(result.map(ClientDomainDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
+    }
   }
 }
