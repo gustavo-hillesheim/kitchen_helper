@@ -160,7 +160,7 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
     try {
       final result = await database.query(
         table: tableName,
-        columns: ['id', 'name'],
+        columns: ['id', 'name label'],
       );
       return Right(result.map(ClientDomainDto.fromJson).toList());
     } on DatabaseException catch (e) {

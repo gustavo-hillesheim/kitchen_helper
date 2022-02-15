@@ -34,7 +34,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   late final EditOrderBloc bloc;
   late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
-  final _clientNameController = TextEditingController();
   final _clientContactController = TextEditingController();
   final _clientAddressController = TextEditingController();
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
@@ -44,6 +43,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _discounts = <Discount>[];
   var _cost = 0.0;
   var _price = 0.0;
+  String? _clientName;
   int? _clientId;
   int? _contactId;
   int? _addressId;
@@ -53,7 +53,12 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     super.initState();
     bloc = widget.bloc ??
         EditOrderBloc(
-            Modular.get(), Modular.get(), Modular.get(), Modular.get());
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
+        );
     if (widget.id != null) {
       bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
@@ -64,7 +69,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   }
 
   void _fillControllers(EditingOrderDto order) {
-    _clientNameController.text = order.clientName ?? '';
     _clientContactController.text = order.clientContact ?? '';
     _clientAddressController.text = order.clientAddress ?? '';
     _orderDateNotifier.value = order.orderDate;
@@ -88,7 +92,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
 
   @override
   void dispose() {
-    _clientNameController.dispose();
     _clientContactController.dispose();
     _clientAddressController.dispose();
     _orderDateNotifier.dispose();
@@ -156,12 +159,16 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 controller: _tabController,
                 children: [
                   GeneralOrderInformationForm(
-                    clientNameController: _clientNameController,
                     clientContactController: _clientContactController,
                     clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,
                     statusNotifier: _statusNotifier,
+                    searchClientDomainFn: bloc.findClientDomain,
+                    onSelectClient: (client) => setState(() {
+                      _clientId = client?.id;
+                      _clientName = client?.name;
+                    }),
                     cost: _cost,
                     price: _price,
                     discount: _calculateDiscount(),
@@ -216,7 +223,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   EditingOrderDto _createEditingOrderDto() {
     return EditingOrderDto(
       id: widget.id,
-      clientName: _clientNameController.text,
+      clientName: _clientName,
       clientId: _clientId,
       clientContact: _clientContactController.text,
       contactId: _contactId,

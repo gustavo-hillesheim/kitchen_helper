@@ -13,6 +13,7 @@ class SearchTextField<T> extends StatelessWidget {
   static const defaultErrorSubtext = 'Não foi possível listar os registros';
   static String defaultGetLabel(item) => item?.toString() ?? '';
 
+  final String name;
   final ValueChanged<T?> onChanged;
   final T? initialValue;
   final SearchFn<T> onSearch;
@@ -25,6 +26,7 @@ class SearchTextField<T> extends StatelessWidget {
 
   const SearchTextField({
     Key? key,
+    required this.name,
     required this.onChanged,
     required this.onSearch,
     this.required = true,
@@ -43,6 +45,9 @@ class SearchTextField<T> extends StatelessWidget {
       selectedItem: initialValue,
       showSearchBox: true,
       onFind: onSearch,
+      dropdownSearchDecoration: InputDecoration(
+          labelText: name,
+          contentPadding: const EdgeInsets.fromLTRB(11, 11, 0, 0)),
       validator: required ? Validator.required : null,
       autoValidateMode: AutovalidateMode.onUserInteraction,
       filterFn: _filterFn,

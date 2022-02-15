@@ -64,6 +64,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   @override
   Widget build(BuildContext context) {
     return SearchTextField<RecipeIngredientSelectorItem>(
+      name: 'Ingrediente',
       initialValue: initialValue,
       onChanged: widget.onChanged,
       onSearch: (_) => service

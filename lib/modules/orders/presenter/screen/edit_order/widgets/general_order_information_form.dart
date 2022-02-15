@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/core/core.dart';
 
+import '../../../../../clients/clients.dart';
 import '../../../../../../common/common.dart';
 import '../../../../../../extensions.dart';
 import '../../../../domain/domain.dart';
 
+typedef SearchClientDomainFn = Future<Either<Failure, List<ClientDomainDto>>>
+    Function();
+
 class GeneralOrderInformationForm extends StatelessWidget {
-  final TextEditingController clientNameController;
   final TextEditingController clientContactController;
   final TextEditingController clientAddressController;
   final ValueNotifier<DateTime?> orderDateNotifier;
   final ValueNotifier<DateTime?> deliveryDateNotifier;
   final ValueNotifier<OrderStatus?> statusNotifier;
+  final ValueChanged<SelectedClient?> onSelectClient;
+  final SearchClientDomainFn searchClientDomainFn;
   final double cost;
   final double price;
   final double discount;
 
   const GeneralOrderInformationForm({
     Key? key,
-    required this.clientNameController,
     required this.clientContactController,
     required this.clientAddressController,
     required this.orderDateNotifier,
@@ -26,6 +32,8 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.cost,
     required this.price,
     required this.discount,
+    required this.searchClientDomainFn,
+    required this.onSelectClient,
   }) : super(key: key);
 
   @override
@@ -40,9 +48,11 @@ class GeneralOrderInformationForm extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: AppTextFormField(
+                  child: SearchTextField<SelectedClient>(
                     name: 'Cliente',
-                    controller: clientNameController,
+                    onChanged: onSelectClient,
+                    onSearch: _getClients,
+                    getLabelFromValue: (client) => client?.name ?? '',
                   ),
                 ),
                 kMediumSpacerHorizontal,
@@ -127,4 +137,17 @@ class GeneralOrderInformationForm extends StatelessWidget {
       ),
     );
   }
+
+  Future<List<SelectedClient>> _getClients(String? search) async {
+    print(search);
+    final clients = await searchClientDomainFn().throwOnFailure();
+    return clients.map((c) => SelectedClient(id: c.id, name: c.label)).toList();
+  }
+}
+
+class SelectedClient {
+  final int? id;
+  final String name;
+
+  const SelectedClient({required this.id, required this.name});
 }

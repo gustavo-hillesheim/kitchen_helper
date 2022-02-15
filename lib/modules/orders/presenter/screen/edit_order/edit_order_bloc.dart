@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart' hide Order;
 
+import '../../../../clients/clients.dart';
 import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
@@ -11,17 +12,19 @@ class EditOrderBloc extends AppCubit<void> {
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
   final GetEditingOrderDtoUseCase getOrderUseCase;
+  final GetClientsDomainUseCase getClientsDomainUseCase;
 
   EditOrderBloc(
     this.saveOrderUseCase,
     this.getRecipeUseCase,
     this.getRecipeCostUseCase,
     this.getOrderUseCase,
+    this.getClientsDomainUseCase,
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(EditingOrderDto order) async {
     await runEither(() =>
-        saveOrderUseCase.execute(order).onRightThen((p0) => const Right(null)));
+        saveOrderUseCase.execute(order).onRightThen((_) => const Right(null)));
     return state;
   }
 
@@ -53,6 +56,10 @@ class EditOrderBloc extends AppCubit<void> {
                 ),
               ),
         );
+  }
+
+  Future<Either<Failure, List<ClientDomainDto>>> findClientDomain() {
+    return getClientsDomainUseCase.execute(const NoParams());
   }
 }
 
