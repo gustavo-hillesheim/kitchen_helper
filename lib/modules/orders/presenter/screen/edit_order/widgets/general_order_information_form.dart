@@ -16,7 +16,7 @@ class GeneralOrderInformationForm extends StatelessWidget {
   final ValueNotifier<DateTime?> orderDateNotifier;
   final ValueNotifier<DateTime?> deliveryDateNotifier;
   final ValueNotifier<OrderStatus?> statusNotifier;
-  final ValueChanged<SelectedClient?> onSelectClient;
+  final ValueNotifier<SelectedClient?> clientNotifier;
   final SearchClientDomainFn searchClientDomainFn;
   final double cost;
   final double price;
@@ -33,7 +33,7 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.price,
     required this.discount,
     required this.searchClientDomainFn,
-    required this.onSelectClient,
+    required this.clientNotifier,
   }) : super(key: key);
 
   @override
@@ -48,12 +48,16 @@ class GeneralOrderInformationForm extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: SearchTextField<SelectedClient>(
-                    name: 'Cliente',
-                    onChanged: onSelectClient,
-                    onSearch: _getClients,
-                    getLabelFromValue: (client) => client?.name ?? '',
-                  ),
+                  child: clientNotifier.builder(
+                      (_, client, onChange) => SearchTextField<SelectedClient>(
+                            name: 'Cliente',
+                            value: client,
+                            onChanged: onChange,
+                            onSearch: _getClients,
+                            onFilter: _filterClients,
+                            getContentLabel: _getClientContentLabel,
+                            getListItemLabel: _getClientListItemLabel,
+                          )),
                 ),
                 kMediumSpacerHorizontal,
                 Expanded(
@@ -138,10 +142,39 @@ class GeneralOrderInformationForm extends StatelessWidget {
     );
   }
 
+  String _getClientContentLabel(SelectedClient? client) {
+    return client?.name ?? '';
+  }
+
+  String _getClientListItemLabel(SelectedClient? client) {
+    if (client == null) {
+      return '';
+    }
+    if (client.id == null) {
+      return 'Novo cliente "${client.name}"';
+    }
+    return client.name;
+  }
+
   Future<List<SelectedClient>> _getClients(String? search) async {
-    print(search);
     final clients = await searchClientDomainFn().throwOnFailure();
     return clients.map((c) => SelectedClient(id: c.id, name: c.label)).toList();
+  }
+
+  List<SelectedClient> _filterClients(
+      List<SelectedClient> clients, String? search) {
+    if (search == null || search.isEmpty) {
+      return clients;
+    }
+    final result = <SelectedClient>[];
+    final lowerCaseSearch = search.toLowerCase();
+    for (final client in clients) {
+      if (client.name.toLowerCase().startsWith(lowerCaseSearch)) {
+        result.add(client);
+      }
+    }
+    result.add(SelectedClient(name: search));
+    return result;
   }
 }
 
@@ -149,5 +182,5 @@ class SelectedClient {
   final int? id;
   final String name;
 
-  const SelectedClient({required this.id, required this.name});
+  const SelectedClient({this.id, required this.name});
 }

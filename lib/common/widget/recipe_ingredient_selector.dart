@@ -44,7 +44,7 @@ class RecipeIngredientSelector extends StatefulWidget {
 
 class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   late final RecipeIngredientSelectorService service;
-  RecipeIngredientSelectorItem? initialValue;
+  RecipeIngredientSelectorItem? value;
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
     service = widget.service ??
         RecipeIngredientSelectorService(Modular.get(), Modular.get());
     if (widget.initialValue != null) {
-      initialValue = RecipeIngredientSelectorItem(
+      value = RecipeIngredientSelectorItem(
         id: widget.initialValue!.id,
         type: widget.initialValue!.type,
         name: widget.initialValue!.name,
@@ -65,8 +65,11 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
   Widget build(BuildContext context) {
     return SearchTextField<RecipeIngredientSelectorItem>(
       name: 'Ingrediente',
-      initialValue: initialValue,
-      onChanged: widget.onChanged,
+      value: value,
+      onChanged: (newValue) => setState(() {
+        value = newValue;
+        widget.onChanged(newValue);
+      }),
       onSearch: (_) => service
           .getItems(
             recipeToIgnore: widget.recipeToIgnore,
@@ -74,7 +77,7 @@ class _RecipeIngredientSelectorState extends State<RecipeIngredientSelector> {
             getOnly: widget.showOnly,
           )
           .throwOnFailure(),
-      getLabelFromValue: (item) => item?.name ?? '',
+      getContentLabel: (item) => item?.name ?? '',
       emptyTitle: RecipeIngredientSelector.emptyText,
       emptySubtext: _showAll
           ? RecipeIngredientSelector.emptySubtext

@@ -39,12 +39,11 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
+  final _clientNotifier = ValueNotifier<SelectedClient?>(null);
   final _products = <EditingOrderProductDto>[];
   final _discounts = <Discount>[];
   var _cost = 0.0;
   var _price = 0.0;
-  String? _clientName;
-  int? _clientId;
   int? _contactId;
   int? _addressId;
 
@@ -74,6 +73,10 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
     _statusNotifier.value = order.status;
+    if (order.clientName != null) {
+      _clientNotifier.value =
+          SelectedClient(id: order.clientId, name: order.clientName!);
+    }
   }
 
   void _fillVariables(EditingOrderDto order) async {
@@ -84,7 +87,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
         _products.add(product);
       }
       _discounts.addAll(order.discounts);
-      _clientId = order.clientId;
       _contactId = order.contactId;
       _addressId = order.addressId;
     });
@@ -164,11 +166,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,
                     statusNotifier: _statusNotifier,
+                    clientNotifier: _clientNotifier,
                     searchClientDomainFn: bloc.findClientDomain,
-                    onSelectClient: (client) => setState(() {
-                      _clientId = client?.id;
-                      _clientName = client?.name;
-                    }),
                     cost: _cost,
                     price: _price,
                     discount: _calculateDiscount(),
@@ -223,8 +222,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   EditingOrderDto _createEditingOrderDto() {
     return EditingOrderDto(
       id: widget.id,
-      clientName: _clientName,
-      clientId: _clientId,
+      clientName: _clientNotifier.value?.name,
+      clientId: _clientNotifier.value?.id,
       clientContact: _clientContactController.text,
       contactId: _contactId,
       clientAddress: _clientAddressController.text,
