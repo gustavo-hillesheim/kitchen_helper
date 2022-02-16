@@ -40,10 +40,14 @@ class SQLiteContactRepository extends SQLiteRepository<ContactEntity>
   }
 
   @override
-  Future<Either<Failure, List<ContactDomainDto>>> findAllDomain() async {
+  Future<Either<Failure, List<ContactDomainDto>>> findAllDomain(
+      int clientId) async {
     try {
-      final result = await database
-          .query(table: tableName, columns: ['id', 'contact label']);
+      final result = await database.query(
+        table: tableName,
+        columns: ['id', 'contact label'],
+        where: {'clientId': clientId},
+      );
       return Right(result.map(ContactDomainDto.fromJson).toList());
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));

@@ -9,7 +9,7 @@ import '../../clients.dart';
 part 'contact_repository.g.dart';
 
 abstract class ContactRepository extends Repository<ContactEntity, int> {
-  Future<Either<Failure, List<ContactDomainDto>>> findAllDomain();
+  Future<Either<Failure, List<ContactDomainDto>>> findAllDomain(int clientId);
 }
 
 @JsonSerializable()

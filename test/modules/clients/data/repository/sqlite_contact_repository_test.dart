@@ -111,18 +111,21 @@ void main() {
   });
 
   group('findAllDomain', () {
-    When<Future<List<Map<String, dynamic>>>> mockDomainQuery() {
+    When<Future<List<Map<String, dynamic>>>> mockDomainQuery(int clientId) {
       return when(() => database.query(
-          table: repository.tableName, columns: ['id', 'contact label']));
+            table: repository.tableName,
+            columns: ['id', 'contact label'],
+            where: {'clientId': clientId},
+          ));
     }
 
     test('WHEN database has records SHOULD return dtos', () async {
-      mockDomainQuery().thenAnswer((_) async => [
+      mockDomainQuery(1).thenAnswer((_) async => [
             {'id': 1, 'label': 'contact@gmail.com'},
             {'id': 2, 'label': '1234-5678'}
           ]);
 
-      final result = await repository.findAllDomain();
+      final result = await repository.findAllDomain(1);
 
       expect(result.getRight().toNullable(), const [
         ContactDomainDto(id: 1, label: 'contact@gmail.com'),
@@ -133,9 +136,9 @@ void main() {
     test('WHEN database throws DatabaseException SHOULD return Failure',
         () async {
       final exception = FakeDatabaseException('query error');
-      mockDomainQuery().thenThrow(exception);
+      mockDomainQuery(1).thenThrow(exception);
 
-      final result = await repository.findAllDomain();
+      final result = await repository.findAllDomain(1);
 
       expect(
         result.getLeft().toNullable()?.message,
@@ -146,10 +149,10 @@ void main() {
     test('WHEN database throws unknown Exception SHOULD throw Exception',
         () async {
       final exception = Exception('query error');
-      mockDomainQuery().thenThrow(exception);
+      mockDomainQuery(1).thenThrow(exception);
 
       try {
-        await repository.findAllDomain();
+        await repository.findAllDomain(1);
         fail('Should have thrown exception');
       } catch (e) {
         expect(e, exception);
