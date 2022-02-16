@@ -201,13 +201,13 @@ Future<void> inputGeneralOrderInfo(
   if (clientContact != null) {
     await tester.tap(clientContactFinder);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(clientContact));
+    await tester.tap(find.text(clientContact).last);
     await tester.pumpAndSettle();
   }
   if (clientAddress != null) {
     await tester.tap(clientAddressFinder);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(clientAddress));
+    await tester.tap(find.text(clientAddress).last);
     await tester.pumpAndSettle();
   }
   if (status != null) {

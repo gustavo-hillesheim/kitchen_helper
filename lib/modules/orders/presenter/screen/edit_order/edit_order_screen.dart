@@ -304,11 +304,17 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   EditingOrderDto _createEditingOrderDto() {
     return EditingOrderDto(
       id: widget.id,
-      clientName: _clientNotifier.value?.name,
+      clientName: _clientNotifier.value?.id == null
+          ? _clientNotifier.value?.name
+          : null,
       clientId: _clientNotifier.value?.id,
-      clientContact: _contactNotifier.value?.contact,
+      clientContact: _contactNotifier.value?.id == null
+          ? _contactNotifier.value?.contact
+          : null,
       contactId: _contactNotifier.value?.id,
-      clientAddress: _addressNotifier.value?.identifier,
+      clientAddress: _addressNotifier.value?.id == null
+          ? _addressNotifier.value?.identifier
+          : null,
       addressId: _addressNotifier.value?.id,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,

@@ -233,7 +233,8 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       if (!exists) {
         return const Right(null);
       }
-      final orderData = await _getEditingOrderData(id);
+      final orderData =
+          Map<String, dynamic>.from(await _getEditingOrderData(id));
       final discounts = await _getDiscounts(id).throwOnFailure();
       final editingProducts = await _getEditingProducts(id);
       orderData['discounts'] = discounts.map((d) => d.toJson()).toList();
@@ -246,24 +247,26 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
 
   Future<Map<String, dynamic>> _getEditingOrderData(int id) async {
     return (await database.rawQuery('''
-SELECT o.id id, o.clientId clientId, c.name client, o.contactId contactId, 
-  cc.contact contact, o.addressId addressId, ca.identifier address, 
+SELECT o.id id, o.clientId clientId, c.name clientName, o.contactId contactId, 
+  cc.contact clientContact, o.addressId addressId, ca.identifier clientAddress, 
   o.orderDate orderDate, o.deliveryDate deliveryDate, o.status status
 FROM orders o
 LEFT JOIN clients c ON c.id = o.clientId
-LEFT JOIN clientContacts cc ON c.id = cc.clientId && cc.id = o.contactId
-LEFT JOIN clientAddresses ca ON c.id = ca.clientId && ca.id = o.addressId
+LEFT JOIN clientContacts cc ON c.id = cc.clientId AND cc.id = o.contactId
+LEFT JOIN clientAddresses ca ON c.id = ca.clientId AND ca.id = o.addressId
 WHERE o.id = ?
 ''', [id])).first;
   }
 
   Future<List<Map<String, dynamic>>> _getEditingProducts(int orderId) async {
     try {
-      final queryResult = await database.query(
-        table: 'recipes',
-        columns: ['name', 'measurementUnit', 'price', 'id', 'quantity'],
-        where: {'orderId': orderId},
-      );
+      final queryResult = await database.rawQuery('''
+SELECT op.id id, r.name name, r.measurementUnit measurementUnit, 
+  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price
+FROM orderProducts op
+INNER JOIN recipes r ON op.productId = r.id
+WHERE op.orderId = ?
+''', [orderId]);
       final editingProducts = <Map<String, dynamic>>[];
       for (final data in queryResult) {
         final cost =

@@ -17,8 +17,10 @@ import '../../../../../mocks.dart';
 import 'helpers.dart';
 
 void main() {
-  const contact = ContactDomainDto(id: 1, label: 'spiderman@contact.com');
-  const address = AddressDomainDto(id: 1, label: 'Address');
+  final contact =
+      ContactDomainDto(id: 1, label: editingSpidermanOrderDto.clientContact!);
+  final address =
+      AddressDomainDto(id: 1, label: editingSpidermanOrderDto.clientAddress!);
   late EditOrderBloc bloc;
   late StreamController<ScreenState<void>> streamController;
   ScreenState<void> state = const EmptyState();
@@ -37,9 +39,9 @@ void main() {
           ClientDomainDto(id: spidermanClient.id!, label: spidermanClient.name),
         ]));
     when(() => bloc.findContactsDomain(spidermanClient.id!))
-        .thenAnswer((_) async => const Right([contact]));
+        .thenAnswer((_) async => Right([contact]));
     when(() => bloc.findAddressDomain(spidermanClient.id!))
-        .thenAnswer((_) async => const Right([address]));
+        .thenAnswer((_) async => Right([address]));
   });
 
   Future<void> pumpWidget(WidgetTester tester,
@@ -79,12 +81,7 @@ void main() {
     await tester.ensureVisible(find.byType(PrimaryButton).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
-          addressId: address.id,
-          address: address.label,
-          contactId: contact.id,
-          contact: contact.label,
-        )));
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientDataWithoutId));
   });
 
   testWidgets('WHEN bloc.save returns Failure SHOULD show error message',
@@ -102,12 +99,7 @@ void main() {
     await tester.pump();
     expect(find.text('error message'), findsOneWidget);
 
-    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
-          addressId: address.id,
-          address: address.label,
-          contactId: contact.id,
-          contact: contact.label,
-        )));
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientDataWithoutId));
   });
 
   testWidgets('WHEN deletes product SHOULD remove from product list',
@@ -125,12 +117,8 @@ void main() {
     await delete(tester, find.byType(OrderProductListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientData.copyWith(
           products: [],
-          addressId: address.id,
-          address: address.label,
-          contactId: contact.id,
-          contact: contact.label,
         )));
   });
 
@@ -160,16 +148,12 @@ void main() {
     );
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientData.copyWith(
           products: [
             editingOrderProduct(
               OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
             ),
           ],
-          addressId: address.id,
-          address: address.label,
-          contactId: contact.id,
-          contact: contact.label,
         )));
   });
 
@@ -188,12 +172,8 @@ void main() {
     await delete(tester, find.byType(DiscountListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientData.copyWith(
           discounts: [],
-          addressId: address.id,
-          address: address.label,
-          contactId: contact.id,
-          contact: contact.label,
         )));
   });
 
@@ -219,12 +199,8 @@ void main() {
     await inputDiscountInfo(tester, discount);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+    verify(() => bloc.save(editingSpidermanOrderDtoWithoutClientData.copyWith(
           discounts: [discount],
-          contactId: contact.id,
-          contact: contact.label,
-          addressId: address.id,
-          address: address.label,
         )));
   });
 }
@@ -269,5 +245,24 @@ Future<void> goToDiscountsTab(WidgetTester tester) async {
       (widget) => widget is Tab && widget.text == 'Descontos'));
   await tester.pumpAndSettle();
 }
+
+final editingSpidermanOrderDtoWithoutClientData =
+    editingSpidermanOrderDtoWithoutClientDataWithoutId.copyWith(
+        id: editingSpidermanOrderDtoWithId.id!);
+final editingSpidermanOrderDtoWithoutClientDataWithoutId = EditingOrderDto(
+  clientId: spidermanClient.id!,
+  clientName: null,
+  addressId: 1,
+  clientAddress: null,
+  contactId: 1,
+  clientContact: null,
+  orderDate: DateTime(2022, 1, 1, 1, 10),
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  products: [editingOrderProduct(cakeOrderProduct)],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
+  ],
+);
 
 class EditOrderBlocMock extends Mock implements EditOrderBloc {}

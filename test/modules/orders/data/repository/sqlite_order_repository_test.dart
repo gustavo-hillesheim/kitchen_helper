@@ -792,19 +792,15 @@ void main() {
 
     void mockFindEditingProducts(
         int orderId, List<Map<String, dynamic>> result) {
-      when(() => database.query(
-            table: 'recipes',
-            columns: ['name', 'measurementUnit', 'price', 'id', 'quantity'],
-            where: {'orderId': orderId},
-          )).thenAnswer((_) async => result);
+      when(() => database.rawQuery(
+              any(that: contains('FROM orderProducts op')), [orderId]))
+          .thenAnswer((_) async => result);
     }
 
     void mockFindEditingProductsThrow(int orderId, error) {
-      when(() => database.query(
-            table: 'recipes',
-            columns: ['name', 'measurementUnit', 'price', 'id', 'quantity'],
-            where: {'orderId': orderId},
-          )).thenThrow(error);
+      when(() => database.rawQuery(
+              any(that: contains('FROM orderProducts op')), [orderId]))
+          .thenThrow(error);
     }
 
     void mockQueriesOfFindEditing(int orderId, EditingOrderDto? dto) {
@@ -839,7 +835,7 @@ void main() {
       }
     }
 
-    test('WHEN database return data SHOULD return EditingOrderDto', () async {
+    test('WHEN database returns data SHOULD return EditingOrderDto', () async {
       mockQueriesOfFindEditing(1, editingSpidermanOrderDtoWithId);
 
       final result = await repository.findEditingDtoById(1);

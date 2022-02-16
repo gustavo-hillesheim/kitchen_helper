@@ -71,7 +71,7 @@ class SearchTextFieldFinder<T> extends MatchFinder {
   bool matches(Element candidate) {
     if (candidate.widget is SearchTextField) {
       final widget = candidate.widget as SearchTextField;
-      return widget.name == name && widget.value == value;
+      return widget.name == name && (value == null || widget.value == value);
     }
     return false;
   }
