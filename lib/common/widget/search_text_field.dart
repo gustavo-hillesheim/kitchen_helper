@@ -41,7 +41,8 @@ class SearchTextField<T> extends StatelessWidget {
     GetLabelFn<T>? getContentLabel,
     GetLabelFn<T>? getListItemLabel,
   })  : getContentLabel = getContentLabel ?? defaultGetLabel,
-        getListItemLabel = getListItemLabel ?? defaultGetLabel,
+        getListItemLabel =
+            getListItemLabel ?? getContentLabel ?? defaultGetLabel,
         super(key: key);
 
   @override
@@ -53,18 +54,27 @@ class SearchTextField<T> extends StatelessWidget {
     ).applyDefaults(themeData.inputDecorationTheme);
     final contentTextStyle = themeData.textTheme.subtitle1!;
 
-    return GestureDetector(
-      onTap: () => _showSearchDialog(context),
-      child: InputDecorator(
-        decoration: effectiveDecoration,
-        isEmpty: getContentLabel(value).isEmpty,
-        child: Text(getContentLabel(value), style: contentTextStyle),
+    return FormField<T>(
+      validator: required ? Validator.required : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      initialValue: value,
+      builder: (state) => GestureDetector(
+        onTap: () => _showSearchDialog(context, onChanged: (i) {
+          state.didChange(i);
+          onChanged(i);
+        }),
+        child: InputDecorator(
+          decoration: effectiveDecoration,
+          isEmpty: getContentLabel(value).isEmpty,
+          child: Text(getContentLabel(value), style: contentTextStyle),
+        ),
       ),
     );
   }
 
-  void _showSearchDialog(BuildContext context) {
-    showDialog(
+  void _showSearchDialog(BuildContext context,
+      {required ValueChanged<T> onChanged}) {
+    showDialog<T>(
       context: context,
       builder: (_) => _SearchDialog<T>(
         name: name,
@@ -72,7 +82,9 @@ class SearchTextField<T> extends StatelessWidget {
         filterFn: onFilter ?? defaultFilter,
         getLabelFromValue: getListItemLabel,
         onChanged: (i) {
-          onChanged(i);
+          if (i != value) {
+            onChanged(i);
+          }
           Navigator.of(context).pop();
         },
         emptyTitle: emptyTitle,

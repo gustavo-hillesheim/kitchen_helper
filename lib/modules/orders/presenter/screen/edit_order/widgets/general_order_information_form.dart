@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
@@ -178,9 +179,12 @@ class GeneralOrderInformationForm extends StatelessWidget {
   }
 }
 
-class SelectedClient {
+class SelectedClient extends Equatable {
   final int? id;
   final String name;
 
   const SelectedClient({this.id, required this.name});
+
+  @override
+  List<Object?> get props => [id, name];
 }

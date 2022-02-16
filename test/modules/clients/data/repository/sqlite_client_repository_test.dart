@@ -454,8 +454,8 @@ void main() {
 
   group('findAllDomain', () {
     When<Future<List<Map<String, dynamic>>>> whenQueryDomain() {
-      return when(() =>
-          database.query(table: repository.tableName, columns: ['id', 'name']));
+      return when(() => database
+          .query(table: repository.tableName, columns: ['id', 'name label']));
     }
 
     test('WHEN database has records SHOULD return dtos', () async {

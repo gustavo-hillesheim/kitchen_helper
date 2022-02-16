@@ -57,10 +57,10 @@ class EditingOrderDto extends Equatable {
     return EditingOrderDto(
       id: id ?? this.id,
       clientId: clientId ?? this.clientId,
-      clientName: client ?? this.clientName,
+      clientName: client ?? clientName,
       contactId: contactId ?? this.contactId,
-      clientContact: contact ?? this.clientContact,
-      clientAddress: address ?? this.clientAddress,
+      clientContact: contact ?? clientContact,
+      clientAddress: address ?? clientAddress,
       addressId: addressId ?? this.addressId,
       orderDate: orderDate ?? this.orderDate,
       deliveryDate: deliveryDate ?? this.deliveryDate,

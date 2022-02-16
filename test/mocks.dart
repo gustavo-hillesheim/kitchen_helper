@@ -71,6 +71,9 @@ class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
 
 class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
 
+class GetClientsDomainUseCaseMock extends Mock
+    implements GetClientsDomainUseCase {}
+
 class SaveEditingOrderDtoUseCaseMock extends Mock
     implements SaveEditingOrderDtoUseCase {}
 
@@ -360,7 +363,6 @@ final spidermanOrder = Order(
   ],
 );
 final editingSpidermanOrderDto = EditingOrderDto(
-  id: spidermanOrderWithId.id!,
   clientId: spidermanClient.id!,
   clientName: spidermanClient.name,
   addressId: null,
@@ -375,6 +377,8 @@ final editingSpidermanOrderDto = EditingOrderDto(
     Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
   ],
 );
+final editingSpidermanOrderDtoWithId =
+    editingSpidermanOrderDto.copyWith(id: spidermanOrderWithId.id!);
 final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
 final listingSpidermanOrderDto = ListingOrderDto(
   id: 1,

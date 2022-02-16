@@ -1,4 +1,3 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -14,7 +13,7 @@ void main() {
   late RecipeIngredientSelectorService service;
   late OnChangedMock onChanged;
   final dropdownFinder = find.byWidgetPredicate(
-    (widget) => widget is DropdownSearch<RecipeIngredientSelectorItem>,
+    (widget) => widget is SearchTextField<RecipeIngredientSelectorItem>,
   );
 
   setUp(() {

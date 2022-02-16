@@ -840,11 +840,11 @@ void main() {
     }
 
     test('WHEN database return data SHOULD return EditingOrderDto', () async {
-      mockQueriesOfFindEditing(1, editingSpidermanOrderDto);
+      mockQueriesOfFindEditing(1, editingSpidermanOrderDtoWithId);
 
       final result = await repository.findEditingDtoById(1);
 
-      expect(result.getRight().toNullable(), editingSpidermanOrderDto);
+      expect(result.getRight().toNullable(), editingSpidermanOrderDtoWithId);
     });
 
     test('WHEN record doesn\'t exist SHOULD return null', () async {
@@ -859,7 +859,7 @@ void main() {
         () async {
       const failure = FakeFailure('error on discounts');
       mockExists(1, true);
-      mockGetEditingOrderData(1, editingSpidermanOrderDto);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
       mockFindDiscounts(1, const Left(failure));
 
       final result = await repository.findEditingDtoById(1);
@@ -870,7 +870,7 @@ void main() {
     test('WHEN has error on getting products SHOULD return Failure', () async {
       final error = FakeDatabaseException('error on products');
       mockExists(1, true);
-      mockGetEditingOrderData(1, editingSpidermanOrderDto);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
       mockFindDiscounts(1, const Right([]));
       mockFindEditingProductsThrow(1, error);
 
@@ -887,7 +887,7 @@ void main() {
         () async {
       const failure = FakeFailure('failure on cost');
       mockExists(1, true);
-      mockGetEditingOrderData(1, editingSpidermanOrderDto);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
       mockFindDiscounts(1, const Right([]));
       mockFindEditingProducts(
           1, [editingOrderProduct(cakeOrderProduct).toJson()]);

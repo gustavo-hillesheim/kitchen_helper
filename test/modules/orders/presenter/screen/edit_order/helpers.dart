@@ -1,12 +1,12 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 
 import '../../../../../finders.dart';
-import '../../../../../mocks.dart';
+import '../../../../../utils.dart';
 
 const discountOne =
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10);
@@ -100,8 +100,8 @@ void expectOrderProductFormState({
   if (name != null) {
     expect(
       find.byWidgetPredicate((widget) =>
-          widget is DropdownSearch<RecipeIngredientSelectorItem> &&
-          widget.selectedItem?.name == name),
+          widget is SearchTextField<RecipeIngredientSelectorItem> &&
+          widget.value?.name == name),
       findsOneWidget,
     );
   }
@@ -131,7 +131,7 @@ Future<void> inputOrderProductInfo(
   await tester.pumpAndSettle();
 }
 
-final clientNameFinder = AppTextFormFieldFinder(name: 'Cliente');
+final clientNameFinder = SearchTextFieldFinder(name: 'Cliente');
 final clientContactFinder = AppTextFormFieldFinder(name: 'Contato');
 final clientAddressFinder = AppTextFormFieldFinder(name: 'Endereço');
 final orderDateFinder = AppDateTimeFieldFinder(name: 'Data do pedido');
@@ -140,7 +140,7 @@ final statusFinder =
     find.byWidgetPredicate((widget) => widget is DropdownButton<OrderStatus>);
 
 expectGeneralOrderInformationFormState({
-  String? clientName,
+  SelectedClient? client,
   String? clientContact,
   String? clientAddress,
   OrderStatus? status,
@@ -148,9 +148,9 @@ expectGeneralOrderInformationFormState({
   DateTime? deliveryDate,
 }) {
   final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
-  if (clientName != null) {
+  if (client != null) {
     expect(
-      AppTextFormFieldFinder(name: 'Cliente', value: clientName),
+      SearchTextFieldFinder(name: 'Cliente', value: client),
       findsOneWidget,
     );
   }
@@ -193,7 +193,10 @@ Future<void> inputGeneralOrderInfo(
   DateTime? deliveryDate,
 }) async {
   if (clientName != null) {
-    await tester.enterText(clientNameFinder, clientName);
+    await tester.tap(clientNameFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(clientName));
+    await tester.pumpAndSettle();
   }
   if (clientContact != null) {
     await tester.enterText(clientContactFinder, clientContact);

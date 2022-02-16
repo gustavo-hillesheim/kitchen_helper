@@ -104,6 +104,7 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
         measurementUnit: widget.initialValue!.measurementUnit,
       );
     }
+    return null;
   }
 
   void _save() {

@@ -2,7 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/common/common.dart';
-import 'package:kitchen_helper/modules/orders/orders.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/edit_order_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,6 +15,7 @@ void main() {
   late GetEditingOrderDtoUseCaseMock getOrderUseCase;
   late GetRecipeUseCase getRecipeUseCase;
   late GetRecipeCostUseCase getRecipeCostUseCase;
+  late GetClientsDomainUseCase getClientsDomainUseCase;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
@@ -23,11 +24,13 @@ void main() {
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipeCostUseCase = GetRecipeCostUseCaseMock();
     getOrderUseCase = GetEditingOrderDtoUseCaseMock();
+    getClientsDomainUseCase = GetClientsDomainUseCaseMock();
     bloc = EditOrderBloc(
       saveOrderUseCase,
       getRecipeUseCase,
       getRecipeCostUseCase,
       getOrderUseCase,
+      getClientsDomainUseCase,
     );
   });
 
@@ -42,7 +45,7 @@ void main() {
           .thenAnswer((_) async => Right(spidermanOrderWithId));
     },
     build: () => bloc,
-    act: (bloc) => bloc.save(editingSpidermanOrderDto),
+    act: (bloc) => bloc.save(editingSpidermanOrderDtoWithId),
     expect: () => <ScreenState<void>>[
       const LoadingState(),
       const SuccessState(null),
@@ -56,7 +59,7 @@ void main() {
           .thenAnswer((_) async => const Left(FakeFailure('failure')));
     },
     build: () => bloc,
-    act: (bloc) => bloc.save(editingSpidermanOrderDto),
+    act: (bloc) => bloc.save(editingSpidermanOrderDtoWithId),
     expect: () => <ScreenState<void>>[
       const LoadingState(),
       const FailureState(FakeFailure('failure')),

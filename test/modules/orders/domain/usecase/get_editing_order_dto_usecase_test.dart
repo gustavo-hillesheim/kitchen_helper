@@ -16,11 +16,11 @@ void main() {
 
   test('WHNE repository returns entity SHOULD return entity', () async {
     when(() => repository.findEditingDtoById(1))
-        .thenAnswer((_) async => Right(editingSpidermanOrderDto));
+        .thenAnswer((_) async => Right(editingSpidermanOrderDtoWithId));
 
     final result = await usecase.execute(1);
 
-    expect(result.getRight().toNullable(), editingSpidermanOrderDto);
+    expect(result.getRight().toNullable(), editingSpidermanOrderDtoWithId);
   });
 
   test('WHNE repository returns Failure SHOULD return Failure', () async {
