@@ -132,7 +132,7 @@ Future<void> inputOrderProductInfo(
 }
 
 final clientNameFinder = SearchTextFieldFinder(name: 'Cliente');
-final clientContactFinder = AppTextFormFieldFinder(name: 'Contato');
+final clientContactFinder = SearchTextFieldFinder(name: 'Contato');
 final clientAddressFinder = AppTextFormFieldFinder(name: 'Endereço');
 final orderDateFinder = AppDateTimeFieldFinder(name: 'Data do pedido');
 final deliveryDateFinder = AppDateTimeFieldFinder(name: 'Data de entrega');
@@ -141,7 +141,7 @@ final statusFinder =
 
 expectGeneralOrderInformationFormState({
   SelectedClient? client,
-  String? clientContact,
+  SelectedContact? contact,
   String? clientAddress,
   OrderStatus? status,
   DateTime? orderDate,
@@ -154,9 +154,9 @@ expectGeneralOrderInformationFormState({
       findsOneWidget,
     );
   }
-  if (clientContact != null) {
+  if (contact != null) {
     expect(
-      AppTextFormFieldFinder(name: 'Contato', value: clientContact),
+      SearchTextFieldFinder(name: 'Contato', value: contact),
       findsOneWidget,
     );
   }
@@ -199,7 +199,10 @@ Future<void> inputGeneralOrderInfo(
     await tester.pumpAndSettle();
   }
   if (clientContact != null) {
-    await tester.enterText(clientContactFinder, clientContact);
+    await tester.tap(clientContactFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(clientContact));
+    await tester.pumpAndSettle();
   }
   if (clientAddress != null) {
     await tester.enterText(clientAddressFinder, clientAddress);

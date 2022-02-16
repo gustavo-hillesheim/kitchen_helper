@@ -11,7 +11,7 @@ import '../helpers.dart';
 
 void main() {
   late ValueNotifier<SelectedClient?> clientNotifier;
-  late TextEditingController clientContactController;
+  late ValueNotifier<SelectedContact?> contactNotifier;
   late TextEditingController clientAddressController;
   late ValueNotifier<DateTime?> orderDateNotifier;
   late ValueNotifier<DateTime?> deliveryDateNotifier;
@@ -25,8 +25,8 @@ void main() {
     orderDateNotifier = ValueNotifier(null);
     deliveryDateNotifier = ValueNotifier(null);
     clientNotifier = ValueNotifier(null);
+    contactNotifier = ValueNotifier(null);
     clientAddressController = TextEditingController();
-    clientContactController = TextEditingController();
   });
 
   Future<void> pumpWidget(WidgetTester tester) async {
@@ -37,11 +37,13 @@ void main() {
           orderDateNotifier: orderDateNotifier,
           deliveryDateNotifier: deliveryDateNotifier,
           clientAddressController: clientAddressController,
-          clientContactController: clientContactController,
+          contactNotifier: contactNotifier,
           clientNotifier: clientNotifier,
           searchClientDomainFn: () async => const Right([
             ClientDomainDto(id: 1, label: 'Test Client'),
           ]),
+          searchContactDomainFn: () async =>
+              const Right([ContactDomainDto(id: 1, label: 'Contact')]),
           price: price,
           cost: cost,
           discount: discount,
@@ -72,8 +74,9 @@ void main() {
     );
 
     const expectedClient = SelectedClient(id: 1, name: 'Test Client');
+    const expectedContact = SelectedContact(id: 1, contact: 'Contact');
     expect(clientNotifier.value, expectedClient);
-    expect(clientContactController.text, 'Contact');
+    expect(contactNotifier.value, expectedContact);
     expect(clientAddressController.text, 'Address');
     expect(statusNotifier.value, OrderStatus.ordered);
     expect(orderDateNotifier.value, DateTime(2022, 1, 1, 12, 0));
@@ -90,8 +93,9 @@ void main() {
   testWidgets('WHEN has initialValue SHOULD render fields with initialValue',
       (tester) async {
     const client = SelectedClient(name: 'Test client');
+    const contact = SelectedContact(contact: 'test@contact.com');
     clientNotifier.value = client;
-    clientContactController.text = 'Contact';
+    contactNotifier.value = contact;
     clientAddressController.text = 'Some address';
     statusNotifier.value = OrderStatus.delivered;
     orderDateNotifier.value = DateTime(2022, 10, 1, 9, 15);
@@ -101,7 +105,7 @@ void main() {
 
     expectGeneralOrderInformationFormState(
       client: client,
-      clientContact: 'Contact',
+      contact: contact,
       clientAddress: 'Some address',
       status: OrderStatus.delivered,
       orderDate: DateTime(2022, 10, 1, 9, 15),

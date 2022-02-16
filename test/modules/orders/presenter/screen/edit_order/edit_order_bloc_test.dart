@@ -16,6 +16,7 @@ void main() {
   late GetRecipeUseCase getRecipeUseCase;
   late GetRecipeCostUseCase getRecipeCostUseCase;
   late GetClientsDomainUseCase getClientsDomainUseCase;
+  late GetContactsDomainUseCase getContactsDomainUseCase;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
@@ -25,12 +26,14 @@ void main() {
     getRecipeCostUseCase = GetRecipeCostUseCaseMock();
     getOrderUseCase = GetEditingOrderDtoUseCaseMock();
     getClientsDomainUseCase = GetClientsDomainUseCaseMock();
+    getContactsDomainUseCase = GetContactsDomainUseCaseMock();
     bloc = EditOrderBloc(
       saveOrderUseCase,
       getRecipeUseCase,
       getRecipeCostUseCase,
       getOrderUseCase,
       getClientsDomainUseCase,
+      getContactsDomainUseCase,
     );
   });
 

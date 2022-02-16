@@ -17,6 +17,7 @@ import '../../../../../mocks.dart';
 import 'helpers.dart';
 
 void main() {
+  const contact = ContactDomainDto(id: 1, label: 'spiderman@contact.com');
   late EditOrderBloc bloc;
   late StreamController<ScreenState<void>> streamController;
   ScreenState<void> state = const EmptyState();
@@ -34,6 +35,8 @@ void main() {
     when(() => bloc.findClientDomain()).thenAnswer((_) async => Right([
           ClientDomainDto(id: spidermanClient.id!, label: spidermanClient.name),
         ]));
+    when(() => bloc.findContactsDomain(spidermanClient.id!))
+        .thenAnswer((_) async => const Right([contact]));
   });
 
   Future<void> pumpWidget(WidgetTester tester,
@@ -73,8 +76,11 @@ void main() {
     await tester.ensureVisible(find.byType(PrimaryButton).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() =>
-        bloc.save(editingSpidermanOrderDto.copyWith(address: '', contact: '')));
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
+          address: '',
+          contactId: contact.id,
+          contact: contact.label,
+        )));
   });
 
   testWidgets('WHEN bloc.save returns Failure SHOULD show error message',
@@ -92,8 +98,11 @@ void main() {
     await tester.pump();
     expect(find.text('error message'), findsOneWidget);
 
-    verify(() =>
-        bloc.save(editingSpidermanOrderDto.copyWith(address: '', contact: '')));
+    verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
+          address: '',
+          contactId: contact.id,
+          contact: contact.label,
+        )));
   });
 
   testWidgets('WHEN deletes product SHOULD remove from product list',
@@ -111,8 +120,12 @@ void main() {
     await delete(tester, find.byType(OrderProductListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId
-        .copyWith(products: [], address: '', contact: '')));
+    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+          products: [],
+          address: '',
+          contactId: contact.id,
+          contact: contact.label,
+        )));
   });
 
   testWidgets('WHEN edits product SHOULD update product list', (tester) async {
@@ -141,11 +154,16 @@ void main() {
     );
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(products: [
-          editingOrderProduct(
-            OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
-          ),
-        ], address: '', contact: '')));
+    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+          products: [
+            editingOrderProduct(
+              OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
+            ),
+          ],
+          address: '',
+          contactId: contact.id,
+          contact: contact.label,
+        )));
   });
 
   testWidgets('WHEN deletes discount SHOULD remove from discount list',
@@ -163,8 +181,12 @@ void main() {
     await delete(tester, find.byType(DiscountListTile).first);
     await tester.tap(find.byType(PrimaryButton).first);
 
-    verify(() => bloc.save(editingSpidermanOrderDtoWithId
-        .copyWith(discounts: [], address: '', contact: '')));
+    verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
+          discounts: [],
+          address: '',
+          contactId: contact.id,
+          contact: contact.label,
+        )));
   });
 
   testWidgets('WHEN edits discount SHOULD update discount list',
@@ -191,7 +213,8 @@ void main() {
 
     verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
           discounts: [discount],
-          contact: '',
+          contactId: contact.id,
+          contact: contact.label,
           address: '',
         )));
   });
