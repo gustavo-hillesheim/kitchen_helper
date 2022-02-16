@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/modules/clients/domain/dto/address_domain_dto.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../domain/repository/address_repository.dart';
@@ -48,5 +49,11 @@ class SQLiteAddressRepository extends SQLiteRepository<AddressEntity>
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, e));
     }
+  }
+
+  @override
+  Future<Either<Failure, List<AddressDomainDto>>> findAllDomain(int clientId) {
+    // TODO: implement findAllDomain
+    throw UnimplementedError();
   }
 }

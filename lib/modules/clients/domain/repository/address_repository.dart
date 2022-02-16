@@ -1,12 +1,16 @@
 import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../../core/core.dart';
 import '../../clients.dart';
 import '../../../../database/database.dart';
 
 part 'address_repository.g.dart';
 
-abstract class AddressRepository extends Repository<AddressEntity, int> {}
+abstract class AddressRepository extends Repository<AddressEntity, int> {
+  Future<Either<Failure, List<AddressDomainDto>>> findAllDomain(int clientId);
+}
 
 @JsonSerializable()
 class AddressEntity extends Equatable implements Entity<int> {
