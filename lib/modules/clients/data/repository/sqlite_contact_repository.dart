@@ -38,4 +38,15 @@ class SQLiteContactRepository extends SQLiteRepository<ContactEntity>
       return Left(DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, e));
     }
   }
+
+  @override
+  Future<Either<Failure, List<ContactDomainDto>>> findAllDomain() async {
+    try {
+      final result = await database
+          .query(table: tableName, columns: ['id', 'contact label']);
+      return Right(result.map(ContactDomainDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+    }
+  }
 }

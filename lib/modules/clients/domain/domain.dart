@@ -8,3 +8,4 @@ export 'repository/contact_repository.dart';
 export 'usecase/usecase.dart';
 export 'dto/listing_client_dto.dart';
 export 'dto/client_domain_dto.dart';
+export 'dto/contact_domain_dto.dart';
