@@ -52,8 +52,17 @@ class SQLiteAddressRepository extends SQLiteRepository<AddressEntity>
   }
 
   @override
-  Future<Either<Failure, List<AddressDomainDto>>> findAllDomain(int clientId) {
-    // TODO: implement findAllDomain
-    throw UnimplementedError();
+  Future<Either<Failure, List<AddressDomainDto>>> findAllDomain(
+      int clientId) async {
+    try {
+      final result = await database.query(
+        table: tableName,
+        columns: ['id', 'identifier label'],
+        where: {'clientId': clientId},
+      );
+      return Right(result.map(AddressDomainDto.fromJson).toList());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+    }
   }
 }
