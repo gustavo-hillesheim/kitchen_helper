@@ -77,6 +77,9 @@ class GetClientsDomainUseCaseMock extends Mock
 class GetContactsDomainUseCaseMock extends Mock
     implements GetContactsDomainUseCase {}
 
+class GetAddressDomainUseCaseMock extends Mock
+    implements GetAddressDomainUseCase {}
+
 class SaveEditingOrderDtoUseCaseMock extends Mock
     implements SaveEditingOrderDtoUseCase {}
 

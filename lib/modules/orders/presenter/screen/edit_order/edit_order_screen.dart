@@ -35,7 +35,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   late final EditOrderBloc bloc;
   late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
-  final _clientAddressController = TextEditingController();
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
@@ -140,7 +139,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   }
 
   void _fillControllers(EditingOrderDto order) {
-    _clientAddressController.text = order.clientAddress ?? '';
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
     _statusNotifier.value = order.status;
@@ -171,12 +169,12 @@ class _EditOrderScreenState extends State<EditOrderScreen>
 
   @override
   void dispose() {
-    _clientAddressController.dispose();
     _orderDateNotifier.dispose();
     _deliveryDateNotifier.dispose();
     _statusNotifier.dispose();
     _clientNotifier.dispose();
     _contactNotifier.dispose();
+    _addressNotifier.dispose();
     super.dispose();
   }
 
@@ -239,7 +237,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 controller: _tabController,
                 children: [
                   GeneralOrderInformationForm(
-                    clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,
                     statusNotifier: _statusNotifier,

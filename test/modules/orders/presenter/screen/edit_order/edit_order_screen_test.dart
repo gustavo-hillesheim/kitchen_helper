@@ -18,6 +18,7 @@ import 'helpers.dart';
 
 void main() {
   const contact = ContactDomainDto(id: 1, label: 'spiderman@contact.com');
+  const address = AddressDomainDto(id: 1, label: 'Address');
   late EditOrderBloc bloc;
   late StreamController<ScreenState<void>> streamController;
   ScreenState<void> state = const EmptyState();
@@ -37,6 +38,8 @@ void main() {
         ]));
     when(() => bloc.findContactsDomain(spidermanClient.id!))
         .thenAnswer((_) async => const Right([contact]));
+    when(() => bloc.findAddressDomain(spidermanClient.id!))
+        .thenAnswer((_) async => const Right([address]));
   });
 
   Future<void> pumpWidget(WidgetTester tester,
@@ -77,7 +80,8 @@ void main() {
     await tester.tap(find.byType(PrimaryButton).first);
 
     verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
-          address: '',
+          addressId: address.id,
+          address: address.label,
           contactId: contact.id,
           contact: contact.label,
         )));
@@ -99,7 +103,8 @@ void main() {
     expect(find.text('error message'), findsOneWidget);
 
     verify(() => bloc.save(editingSpidermanOrderDto.copyWith(
-          address: '',
+          addressId: address.id,
+          address: address.label,
           contactId: contact.id,
           contact: contact.label,
         )));
@@ -122,7 +127,8 @@ void main() {
 
     verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
           products: [],
-          address: '',
+          addressId: address.id,
+          address: address.label,
           contactId: contact.id,
           contact: contact.label,
         )));
@@ -160,7 +166,8 @@ void main() {
               OrderProduct(id: iceCreamRecipe.id!, quantity: 20),
             ),
           ],
-          address: '',
+          addressId: address.id,
+          address: address.label,
           contactId: contact.id,
           contact: contact.label,
         )));
@@ -183,7 +190,8 @@ void main() {
 
     verify(() => bloc.save(editingSpidermanOrderDtoWithId.copyWith(
           discounts: [],
-          address: '',
+          addressId: address.id,
+          address: address.label,
           contactId: contact.id,
           contact: contact.label,
         )));
@@ -215,7 +223,8 @@ void main() {
           discounts: [discount],
           contactId: contact.id,
           contact: contact.label,
-          address: '',
+          addressId: address.id,
+          address: address.label,
         )));
   });
 }

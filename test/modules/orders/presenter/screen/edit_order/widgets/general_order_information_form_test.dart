@@ -12,7 +12,7 @@ import '../helpers.dart';
 void main() {
   late ValueNotifier<SelectedClient?> clientNotifier;
   late ValueNotifier<SelectedContact?> contactNotifier;
-  late TextEditingController clientAddressController;
+  late ValueNotifier<SelectedAddress?> addressNotifier;
   late ValueNotifier<DateTime?> orderDateNotifier;
   late ValueNotifier<DateTime?> deliveryDateNotifier;
   late ValueNotifier<OrderStatus?> statusNotifier;
@@ -26,7 +26,7 @@ void main() {
     deliveryDateNotifier = ValueNotifier(null);
     clientNotifier = ValueNotifier(null);
     contactNotifier = ValueNotifier(null);
-    clientAddressController = TextEditingController();
+    addressNotifier = ValueNotifier(null);
   });
 
   Future<void> pumpWidget(WidgetTester tester) async {
@@ -36,14 +36,16 @@ void main() {
           statusNotifier: statusNotifier,
           orderDateNotifier: orderDateNotifier,
           deliveryDateNotifier: deliveryDateNotifier,
-          clientAddressController: clientAddressController,
           contactNotifier: contactNotifier,
           clientNotifier: clientNotifier,
+          addressNotifier: addressNotifier,
           searchClientDomainFn: () async => const Right([
             ClientDomainDto(id: 1, label: 'Test Client'),
           ]),
           searchContactDomainFn: () async =>
               const Right([ContactDomainDto(id: 1, label: 'Contact')]),
+          searchAddressDomainFn: () async =>
+              const Right([AddressDomainDto(id: 1, label: 'Address')]),
           price: price,
           cost: cost,
           discount: discount,
@@ -75,15 +77,17 @@ void main() {
 
     const expectedClient = SelectedClient(id: 1, name: 'Test Client');
     const expectedContact = SelectedContact(id: 1, contact: 'Contact');
+    const expectedAddress = SelectedAddress(id: 1, identifier: 'Address');
     expect(clientNotifier.value, expectedClient);
     expect(contactNotifier.value, expectedContact);
-    expect(clientAddressController.text, 'Address');
+    expect(addressNotifier.value, expectedAddress);
     expect(statusNotifier.value, OrderStatus.ordered);
     expect(orderDateNotifier.value, DateTime(2022, 1, 1, 12, 0));
     expect(deliveryDateNotifier.value, DateTime(2022, 2, 1, 15, 30));
     expectGeneralOrderInformationFormState(
       client: expectedClient,
-      clientAddress: 'Address',
+      contact: expectedContact,
+      address: expectedAddress,
       status: OrderStatus.ordered,
       orderDate: DateTime(2022, 1, 1, 12, 0),
       deliveryDate: DateTime(2022, 2, 1, 15, 30),
@@ -94,9 +98,10 @@ void main() {
       (tester) async {
     const client = SelectedClient(name: 'Test client');
     const contact = SelectedContact(contact: 'test@contact.com');
+    const address = SelectedAddress(identifier: 'Test address');
     clientNotifier.value = client;
     contactNotifier.value = contact;
-    clientAddressController.text = 'Some address';
+    addressNotifier.value = address;
     statusNotifier.value = OrderStatus.delivered;
     orderDateNotifier.value = DateTime(2022, 10, 1, 9, 15);
     deliveryDateNotifier.value = DateTime(2022, 11, 15, 19, 30);
@@ -106,7 +111,7 @@ void main() {
     expectGeneralOrderInformationFormState(
       client: client,
       contact: contact,
-      clientAddress: 'Some address',
+      address: address,
       status: OrderStatus.delivered,
       orderDate: DateTime(2022, 10, 1, 9, 15),
       deliveryDate: DateTime(2022, 11, 15, 19, 30),

@@ -16,7 +16,6 @@ typedef SearchAddressDomainFn = Future<Either<Failure, List<AddressDomainDto>>>
     Function();
 
 class GeneralOrderInformationForm extends StatelessWidget {
-  final TextEditingController clientAddressController;
   final ValueNotifier<DateTime?> orderDateNotifier;
   final ValueNotifier<DateTime?> deliveryDateNotifier;
   final ValueNotifier<OrderStatus?> statusNotifier;
@@ -32,7 +31,6 @@ class GeneralOrderInformationForm extends StatelessWidget {
 
   const GeneralOrderInformationForm({
     Key? key,
-    required this.clientAddressController,
     required this.orderDateNotifier,
     required this.deliveryDateNotifier,
     required this.statusNotifier,
