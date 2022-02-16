@@ -71,7 +71,11 @@ class SearchTextField<T> extends StatelessWidget {
         child: InputDecorator(
           decoration: effectiveDecoration,
           isEmpty: getContentLabel(value).isEmpty,
-          child: Text(getContentLabel(value), style: contentTextStyle),
+          child: Text(
+            getContentLabel(value),
+            style: contentTextStyle,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ),
     );

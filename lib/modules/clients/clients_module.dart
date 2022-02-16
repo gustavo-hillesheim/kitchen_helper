@@ -29,6 +29,7 @@ class ClientsModule extends Module {
         Bind((i) => GetAddressDataByCepUseCase(i())),
         Bind((i) => GetClientsDomainUseCase(i()), export: true),
         Bind((i) => GetContactsDomainUseCase(i()), export: true),
+        Bind((i) => GetAddressDomainUseCase(i()), export: true),
       ];
 
   @override

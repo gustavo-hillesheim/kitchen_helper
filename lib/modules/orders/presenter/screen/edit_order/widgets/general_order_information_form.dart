@@ -12,6 +12,8 @@ typedef SearchClientDomainFn = Future<Either<Failure, List<ClientDomainDto>>>
     Function();
 typedef SearchContactDomainFn = Future<Either<Failure, List<ContactDomainDto>>>
     Function();
+typedef SearchAddressDomainFn = Future<Either<Failure, List<AddressDomainDto>>>
+    Function();
 
 class GeneralOrderInformationForm extends StatelessWidget {
   final TextEditingController clientAddressController;
@@ -20,8 +22,10 @@ class GeneralOrderInformationForm extends StatelessWidget {
   final ValueNotifier<OrderStatus?> statusNotifier;
   final ValueNotifier<SelectedClient?> clientNotifier;
   final ValueNotifier<SelectedContact?> contactNotifier;
+  final ValueNotifier<SelectedAddress?> addressNotifier;
   final SearchClientDomainFn searchClientDomainFn;
   final SearchContactDomainFn? searchContactDomainFn;
+  final SearchAddressDomainFn? searchAddressDomainFn;
   final double cost;
   final double price;
   final double discount;
@@ -39,6 +43,8 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.clientNotifier,
     required this.searchContactDomainFn,
     required this.contactNotifier,
+    required this.searchAddressDomainFn,
+    required this.addressNotifier,
   }) : super(key: key);
 
   @override
@@ -81,10 +87,17 @@ class GeneralOrderInformationForm extends StatelessWidget {
               ],
             ),
             kMediumSpacerVertical,
-            AppTextFormField(
-              name: 'Endereço',
-              controller: clientAddressController,
-            ),
+            addressNotifier.builder(
+                (_, address, onChange) => SearchTextField<SelectedAddress>(
+                      name: 'Endereço',
+                      value: address,
+                      onChanged: onChange,
+                      enabled: searchContactDomainFn != null,
+                      onSearch: _getAddresses,
+                      onFilter: _filterAddresses,
+                      getContentLabel: _getAddressContentLabel,
+                      getListItemLabel: _getAddressListItemLabel,
+                    )),
             kMediumSpacerVertical,
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,6 +241,46 @@ class GeneralOrderInformationForm extends StatelessWidget {
     result.add(SelectedContact(contact: search));
     return result;
   }
+
+  String _getAddressContentLabel(SelectedAddress? address) {
+    return address?.identifier ?? '';
+  }
+
+  String _getAddressListItemLabel(SelectedAddress? address) {
+    if (address == null) {
+      return '';
+    }
+    if (address.id == null) {
+      return 'Novo endereço "${address.identifier}"';
+    }
+    return address.identifier;
+  }
+
+  Future<List<SelectedAddress>> _getAddresses(String? search) async {
+    if (searchContactDomainFn == null) {
+      return const [];
+    }
+    final addresses = await searchAddressDomainFn!().throwOnFailure();
+    return addresses
+        .map((c) => SelectedAddress(id: c.id, identifier: c.label))
+        .toList();
+  }
+
+  List<SelectedAddress> _filterAddresses(
+      List<SelectedAddress> addresses, String? search) {
+    if (search == null || search.isEmpty) {
+      return addresses;
+    }
+    final result = <SelectedAddress>[];
+    final lowerCaseSearch = search.toLowerCase();
+    for (final address in addresses) {
+      if (address.identifier.toLowerCase().startsWith(lowerCaseSearch)) {
+        result.add(address);
+      }
+    }
+    result.add(SelectedAddress(identifier: search));
+    return result;
+  }
 }
 
 class SelectedClient extends Equatable {
@@ -248,4 +301,14 @@ class SelectedContact extends Equatable {
 
   @override
   List<Object?> get props => [id, contact];
+}
+
+class SelectedAddress extends Equatable {
+  final int? id;
+  final String identifier;
+
+  const SelectedAddress({this.id, required this.identifier});
+
+  @override
+  List<Object?> get props => [id, identifier];
 }

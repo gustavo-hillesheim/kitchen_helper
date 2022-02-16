@@ -41,12 +41,13 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
   final _clientNotifier = ValueNotifier<SelectedClient?>(null);
   final _contactNotifier = ValueNotifier<SelectedContact?>(null);
+  final _addressNotifier = ValueNotifier<SelectedAddress?>(null);
   final _products = <EditingOrderProductDto>[];
   final _discounts = <Discount>[];
   List<ContactDomainDto>? _clientContacts;
+  List<AddressDomainDto>? _clientAddresses;
   var _cost = 0.0;
   var _price = 0.0;
-  int? _addressId;
 
   @override
   void initState() {
@@ -59,8 +60,12 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           Modular.get(),
           Modular.get(),
           Modular.get(),
+          Modular.get(),
         );
-    _clientNotifier.addListener(_updateClientContacts);
+    _clientNotifier.addListener(() {
+      _updateClientContacts();
+      _updateClientAddresses();
+    });
     if (widget.id != null) {
       bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
@@ -102,6 +107,38 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     }
   }
 
+  Future<void> _updateClientAddresses() async {
+    final client = _clientNotifier.value;
+    if (client == null) {
+      setState(() {
+        _clientAddresses = null;
+      });
+    } else if (client.id == null) {
+      setState(() {
+        _clientAddresses = [];
+      });
+    } else {
+      final addressesResult = await bloc.findAddressDomain(client.id!);
+      if (mounted) {
+        setState(() {
+          addressesResult.fold(
+            (l) => _clientAddresses = [],
+            (addresses) {
+              if (addresses.isNotEmpty) {
+                final lastAddress = addresses.last;
+                _addressNotifier.value = SelectedAddress(
+                  id: lastAddress.id,
+                  identifier: lastAddress.label,
+                );
+              }
+              _clientAddresses = addresses;
+            },
+          );
+        });
+      }
+    }
+  }
+
   void _fillControllers(EditingOrderDto order) {
     _clientAddressController.text = order.clientAddress ?? '';
     _orderDateNotifier.value = order.orderDate;
@@ -115,6 +152,10 @@ class _EditOrderScreenState extends State<EditOrderScreen>
       _contactNotifier.value =
           SelectedContact(id: order.contactId, contact: order.clientContact!);
     }
+    if (order.clientAddress != null) {
+      _addressNotifier.value = SelectedAddress(
+          id: order.addressId, identifier: order.clientAddress!);
+    }
   }
 
   void _fillVariables(EditingOrderDto order) async {
@@ -125,7 +166,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
         _products.add(product);
       }
       _discounts.addAll(order.discounts);
-      _addressId = order.addressId;
     });
   }
 
@@ -205,10 +245,14 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                     statusNotifier: _statusNotifier,
                     clientNotifier: _clientNotifier,
                     contactNotifier: _contactNotifier,
+                    addressNotifier: _addressNotifier,
                     searchClientDomainFn: bloc.findClientDomain,
                     searchContactDomainFn: _clientContacts == null
                         ? null
                         : () async => Right(_clientContacts!),
+                    searchAddressDomainFn: _clientAddresses == null
+                        ? null
+                        : () async => Right(_clientAddresses!),
                     cost: _cost,
                     price: _price,
                     discount: _calculateDiscount(),
@@ -267,8 +311,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
       clientId: _clientNotifier.value?.id,
       clientContact: _contactNotifier.value?.contact,
       contactId: _contactNotifier.value?.id,
-      clientAddress: _clientAddressController.text,
-      addressId: _addressId,
+      clientAddress: _addressNotifier.value?.identifier,
+      addressId: _addressNotifier.value?.id,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,
       status: _statusNotifier.value!,
