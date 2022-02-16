@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
 
+import '../../../../clients/clients.dart';
 import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
@@ -34,17 +35,17 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   late final EditOrderBloc bloc;
   late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
-  final _clientContactController = TextEditingController();
   final _clientAddressController = TextEditingController();
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
   final _clientNotifier = ValueNotifier<SelectedClient?>(null);
+  final _contactNotifier = ValueNotifier<SelectedContact?>(null);
   final _products = <EditingOrderProductDto>[];
   final _discounts = <Discount>[];
+  List<ContactDomainDto>? _clientContacts;
   var _cost = 0.0;
   var _price = 0.0;
-  int? _contactId;
   int? _addressId;
 
   @override
@@ -57,7 +58,9 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           Modular.get(),
           Modular.get(),
           Modular.get(),
+          Modular.get(),
         );
+    _clientNotifier.addListener(_updateClientContacts);
     if (widget.id != null) {
       bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
@@ -67,8 +70,39 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     }
   }
 
+  Future<void> _updateClientContacts() async {
+    final client = _clientNotifier.value;
+    if (client == null) {
+      setState(() {
+        _clientContacts = null;
+      });
+    } else if (client.id == null) {
+      setState(() {
+        _clientContacts = [];
+      });
+    } else {
+      final contactsResult = await bloc.findContactsDomain(client.id!);
+      if (mounted) {
+        setState(() {
+          contactsResult.fold(
+            (l) => _clientContacts = [],
+            (contacts) {
+              if (contacts.isNotEmpty) {
+                final lastContact = contacts.last;
+                _contactNotifier.value = SelectedContact(
+                  id: lastContact.id,
+                  contact: lastContact.label,
+                );
+              }
+              _clientContacts = contacts;
+            },
+          );
+        });
+      }
+    }
+  }
+
   void _fillControllers(EditingOrderDto order) {
-    _clientContactController.text = order.clientContact ?? '';
     _clientAddressController.text = order.clientAddress ?? '';
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
@@ -76,6 +110,10 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     if (order.clientName != null) {
       _clientNotifier.value =
           SelectedClient(id: order.clientId, name: order.clientName!);
+    }
+    if (order.clientContact != null) {
+      _contactNotifier.value =
+          SelectedContact(id: order.contactId, contact: order.clientContact!);
     }
   }
 
@@ -87,18 +125,18 @@ class _EditOrderScreenState extends State<EditOrderScreen>
         _products.add(product);
       }
       _discounts.addAll(order.discounts);
-      _contactId = order.contactId;
       _addressId = order.addressId;
     });
   }
 
   @override
   void dispose() {
-    _clientContactController.dispose();
     _clientAddressController.dispose();
     _orderDateNotifier.dispose();
     _deliveryDateNotifier.dispose();
     _statusNotifier.dispose();
+    _clientNotifier.dispose();
+    _contactNotifier.dispose();
     super.dispose();
   }
 
@@ -161,13 +199,16 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 controller: _tabController,
                 children: [
                   GeneralOrderInformationForm(
-                    clientContactController: _clientContactController,
                     clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,
                     statusNotifier: _statusNotifier,
                     clientNotifier: _clientNotifier,
+                    contactNotifier: _contactNotifier,
                     searchClientDomainFn: bloc.findClientDomain,
+                    searchContactDomainFn: _clientContacts == null
+                        ? null
+                        : () async => Right(_clientContacts!),
                     cost: _cost,
                     price: _price,
                     discount: _calculateDiscount(),
@@ -224,8 +265,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
       id: widget.id,
       clientName: _clientNotifier.value?.name,
       clientId: _clientNotifier.value?.id,
-      clientContact: _clientContactController.text,
-      contactId: _contactId,
+      clientContact: _contactNotifier.value?.contact,
+      contactId: _contactNotifier.value?.id,
       clientAddress: _clientAddressController.text,
       addressId: _addressId,
       deliveryDate: _deliveryDateNotifier.value!,

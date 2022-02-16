@@ -13,6 +13,7 @@ class EditOrderBloc extends AppCubit<void> {
   final GetRecipeCostUseCase getRecipeCostUseCase;
   final GetEditingOrderDtoUseCase getOrderUseCase;
   final GetClientsDomainUseCase getClientsDomainUseCase;
+  final GetContactsDomainUseCase getContactsDomainUseCase;
 
   EditOrderBloc(
     this.saveOrderUseCase,
@@ -20,6 +21,7 @@ class EditOrderBloc extends AppCubit<void> {
     this.getRecipeCostUseCase,
     this.getOrderUseCase,
     this.getClientsDomainUseCase,
+    this.getContactsDomainUseCase,
   ) : super(const EmptyState());
 
   Future<ScreenState<void>> save(EditingOrderDto order) async {
@@ -60,6 +62,11 @@ class EditOrderBloc extends AppCubit<void> {
 
   Future<Either<Failure, List<ClientDomainDto>>> findClientDomain() {
     return getClientsDomainUseCase.execute(const NoParams());
+  }
+
+  Future<Either<Failure, List<ContactDomainDto>>> findContactsDomain(
+      int clientId) {
+    return getContactsDomainUseCase.execute(clientId);
   }
 }
 

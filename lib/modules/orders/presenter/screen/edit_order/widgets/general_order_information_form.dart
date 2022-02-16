@@ -10,22 +10,24 @@ import '../../../../domain/domain.dart';
 
 typedef SearchClientDomainFn = Future<Either<Failure, List<ClientDomainDto>>>
     Function();
+typedef SearchContactDomainFn = Future<Either<Failure, List<ContactDomainDto>>>
+    Function();
 
 class GeneralOrderInformationForm extends StatelessWidget {
-  final TextEditingController clientContactController;
   final TextEditingController clientAddressController;
   final ValueNotifier<DateTime?> orderDateNotifier;
   final ValueNotifier<DateTime?> deliveryDateNotifier;
   final ValueNotifier<OrderStatus?> statusNotifier;
   final ValueNotifier<SelectedClient?> clientNotifier;
+  final ValueNotifier<SelectedContact?> contactNotifier;
   final SearchClientDomainFn searchClientDomainFn;
+  final SearchContactDomainFn? searchContactDomainFn;
   final double cost;
   final double price;
   final double discount;
 
   const GeneralOrderInformationForm({
     Key? key,
-    required this.clientContactController,
     required this.clientAddressController,
     required this.orderDateNotifier,
     required this.deliveryDateNotifier,
@@ -35,6 +37,8 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.discount,
     required this.searchClientDomainFn,
     required this.clientNotifier,
+    required this.searchContactDomainFn,
+    required this.contactNotifier,
   }) : super(key: key);
 
   @override
@@ -62,10 +66,17 @@ class GeneralOrderInformationForm extends StatelessWidget {
                 ),
                 kMediumSpacerHorizontal,
                 Expanded(
-                  child: AppTextFormField(
-                    name: 'Contato',
-                    controller: clientContactController,
-                  ),
+                  child: contactNotifier.builder((_, contact, onChange) =>
+                      SearchTextField<SelectedContact>(
+                        name: 'Contato',
+                        value: contact,
+                        onChanged: onChange,
+                        enabled: searchContactDomainFn != null,
+                        onSearch: _getContacts,
+                        onFilter: _filterContacts,
+                        getContentLabel: _getContactContentLabel,
+                        getListItemLabel: _getContactListItemLabel,
+                      )),
                 ),
               ],
             ),
@@ -177,6 +188,46 @@ class GeneralOrderInformationForm extends StatelessWidget {
     result.add(SelectedClient(name: search));
     return result;
   }
+
+  String _getContactContentLabel(SelectedContact? contact) {
+    return contact?.contact ?? '';
+  }
+
+  String _getContactListItemLabel(SelectedContact? contact) {
+    if (contact == null) {
+      return '';
+    }
+    if (contact.id == null) {
+      return 'Novo contato "${contact.contact}"';
+    }
+    return contact.contact;
+  }
+
+  Future<List<SelectedContact>> _getContacts(String? search) async {
+    if (searchContactDomainFn == null) {
+      return const [];
+    }
+    final contacts = await searchContactDomainFn!().throwOnFailure();
+    return contacts
+        .map((c) => SelectedContact(id: c.id, contact: c.label))
+        .toList();
+  }
+
+  List<SelectedContact> _filterContacts(
+      List<SelectedContact> contacts, String? search) {
+    if (search == null || search.isEmpty) {
+      return contacts;
+    }
+    final result = <SelectedContact>[];
+    final lowerCaseSearch = search.toLowerCase();
+    for (final contact in contacts) {
+      if (contact.contact.toLowerCase().startsWith(lowerCaseSearch)) {
+        result.add(contact);
+      }
+    }
+    result.add(SelectedContact(contact: search));
+    return result;
+  }
 }
 
 class SelectedClient extends Equatable {
@@ -187,4 +238,14 @@ class SelectedClient extends Equatable {
 
   @override
   List<Object?> get props => [id, name];
+}
+
+class SelectedContact extends Equatable {
+  final int? id;
+  final String contact;
+
+  const SelectedContact({this.id, required this.contact});
+
+  @override
+  List<Object?> get props => [id, contact];
 }

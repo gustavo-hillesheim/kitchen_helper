@@ -21,6 +21,7 @@ class SearchTextField<T> extends StatelessWidget {
   final GetLabelFn<T> getContentLabel;
   final GetLabelFn<T> getListItemLabel;
   final bool required;
+  final bool enabled;
   final String emptyTitle;
   final String emptySubtext;
   final String errorTitle;
@@ -32,6 +33,7 @@ class SearchTextField<T> extends StatelessWidget {
     required this.onChanged,
     required this.onSearch,
     this.required = true,
+    this.enabled = true,
     this.value,
     this.onFilter,
     this.emptyTitle = defaultEmptyTitle,
@@ -51,18 +53,21 @@ class SearchTextField<T> extends StatelessWidget {
     final effectiveDecoration = InputDecoration(
       labelText: name,
       prefixIcon: const Icon(Icons.search_outlined),
-    ).applyDefaults(themeData.inputDecorationTheme);
+    ).applyDefaults(themeData.inputDecorationTheme).copyWith(enabled: enabled);
     final contentTextStyle = themeData.textTheme.subtitle1!;
 
     return FormField<T>(
       validator: required ? Validator.required : null,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       initialValue: value,
+      enabled: enabled,
       builder: (state) => GestureDetector(
-        onTap: () => _showSearchDialog(context, onChanged: (i) {
-          state.didChange(i);
-          onChanged(i);
-        }),
+        onTap: enabled
+            ? () => _showSearchDialog(context, onChanged: (i) {
+                  onChanged(i);
+                  state.didChange(i);
+                })
+            : null,
         child: InputDecorator(
           decoration: effectiveDecoration,
           isEmpty: getContentLabel(value).isEmpty,
