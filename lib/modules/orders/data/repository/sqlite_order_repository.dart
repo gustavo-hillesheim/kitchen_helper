@@ -268,9 +268,11 @@ INNER JOIN recipes r ON op.productId = r.id
 WHERE op.orderId = ?
 ''', [orderId]);
       final editingProducts = <Map<String, dynamic>>[];
-      for (final data in queryResult) {
-        final cost =
-            await recipeRepository.getCost(data['id']).throwOnFailure();
+      for (final row in queryResult) {
+        final data = Map<String, dynamic>.from(row);
+        final cost = await recipeRepository
+            .getCost(data['id'], quantity: data['quantity'])
+            .throwOnFailure();
         data['cost'] = cost;
         editingProducts.add(data);
       }
