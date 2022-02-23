@@ -76,14 +76,10 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       final result = await database.rawQuery('''
       SELECT o.id id, c.name clientName, ca.identifier clientAddress,
         o.deliveryDate deliveryDate, o.status status,
-        SUM(op.quantity / r.quantitySold * r.price) basePrice, 
-        sum(case when d.type = 'fixed' then d.value else 0 end) fixedDiscount, 
-        sum(case when d.type = 'percentage' then d.value else 0 end) 
-        percentageDiscount
+        (SELECT SUM(op.quantity / r.quantitySold * r.price) FROM orderProducts op INNER JOIN recipes r ON r.id = op.productId WHERE op.orderId = o.id) basePrice, 
+        (SELECT SUM(d.value) FROM orderDiscounts d WHERE o.id = d.orderId AND d.type = 'fixed') fixedDiscount, 
+        (SELECT SUM(d.value) FROM orderDiscounts d WHERE o.id = d.orderId AND d.type = 'percentage') percentageDiscount
       FROM orders o
-      LEFT JOIN orderProducts op ON o.id = op.orderId
-      LEFT JOIN recipes r ON r.id = op.productId
-      LEFT JOIN orderDiscounts d ON o.id = d.orderId
       LEFT JOIN clients c ON c.id = o.clientId
       LEFT JOIN clientAddresses ca ON ca.id = o.addressId AND ca.clientId = c.id
       ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
