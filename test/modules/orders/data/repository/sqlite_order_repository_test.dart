@@ -826,10 +826,12 @@ void main() {
                       'price': product.price,
                       'id': product.id,
                       'quantity': product.quantity,
+                      'productId': product.id,
                     })
                 .toList());
         for (final product in dto.products) {
-          when(() => recipeRepository.getCost(product.id))
+          when(() => recipeRepository.getCost(product.id,
+                  quantity: product.quantity))
               .thenAnswer((_) async => Right(product.cost));
         }
       }
@@ -885,9 +887,14 @@ void main() {
       mockExists(1, true);
       mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
       mockFindDiscounts(1, const Right([]));
-      mockFindEditingProducts(
-          1, [editingOrderProduct(cakeOrderProduct).toJson()]);
-      when(() => recipeRepository.getCost(any()))
+      mockFindEditingProducts(1, [
+        {
+          ...editingOrderProduct(cakeOrderProduct).toJson(),
+          'productId': cakeOrderProduct.id,
+        }
+      ]);
+      when(() =>
+              recipeRepository.getCost(any(), quantity: any(named: 'quantity')))
           .thenAnswer((_) async => const Left(failure));
 
       final result = await repository.findEditingDtoById(1);

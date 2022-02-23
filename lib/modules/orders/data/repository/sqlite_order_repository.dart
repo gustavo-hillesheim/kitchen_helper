@@ -76,7 +76,7 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       final result = await database.rawQuery('''
       SELECT o.id id, c.name clientName, ca.identifier clientAddress,
         o.deliveryDate deliveryDate, o.status status,
-        (r.quantitySold / r.quantityProduced * r.price * op.quantity) basePrice, 
+        SUM(op.quantity / r.quantitySold * r.price) basePrice, 
         sum(case when d.type = 'fixed' then d.value else 0 end) fixedDiscount, 
         sum(case when d.type = 'percentage' then d.value else 0 end) 
         percentageDiscount
@@ -262,7 +262,7 @@ WHERE o.id = ?
     try {
       final queryResult = await database.rawQuery('''
 SELECT op.id id, r.name name, r.measurementUnit measurementUnit, 
-  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price
+  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price, op.productId productId
 FROM orderProducts op
 INNER JOIN recipes r ON op.productId = r.id
 WHERE op.orderId = ?
@@ -271,7 +271,7 @@ WHERE op.orderId = ?
       for (final row in queryResult) {
         final data = Map<String, dynamic>.from(row);
         final cost = await recipeRepository
-            .getCost(data['id'], quantity: data['quantity'])
+            .getCost(data['productId'], quantity: data['quantity'])
             .throwOnFailure();
         data['cost'] = cost;
         editingProducts.add(data);
