@@ -1,22 +1,30 @@
 import 'package:sqflite/sqflite.dart';
 
-const kInitialDatabaseVersion = 1;
-const kClientModuleDatabaseVersion = 2;
+const kInitialDbVersion = 1;
+const kClientModuleDbVersion = 2;
+const kClientAndOrderIntegrationDbVersion = 3;
+const kLatestDbVersion = kClientAndOrderIntegrationDbVersion;
 
 class DatabaseMigrator {
   Future<void> createSchema(Database db) async {
     await _createIngredientTables(db);
     await _createRecipeTables(db);
-    await _createOrderTables(db);
     await _createClientTables(db);
+    await _createOrderTables(db);
   }
 
   Future<void> migrateTo(Database db, int newVersion,
       {required int from}) async {
     final oldVersion = from;
-    if (oldVersion < kClientModuleDatabaseVersion &&
-        newVersion >= kClientModuleDatabaseVersion) {
+    if (oldVersion < kClientModuleDbVersion &&
+        newVersion >= kClientModuleDbVersion) {
       await _createClientTables(db);
+    }
+    if (oldVersion < kClientAndOrderIntegrationDbVersion &&
+        newVersion >= kClientAndOrderIntegrationDbVersion) {
+      await _createNewOrderTableWithClientIdColumns(db);
+      await _migrateClientDataFromOrderTableToClientTables(db);
+      await _dropOldOrderTable(db);
     }
   }
 
@@ -58,11 +66,15 @@ class DatabaseMigrator {
     await db.execute('''
     CREATE TABLE orders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      clientName TEXT NOT NULL,
-      clientAddress TEXT NOT NULL,
+      clientId INTEGER NOT NULL,
+      contactId INTEGER,
+      addressId INTEGER,
       orderDate INTEGER NOT NULL,
       deliveryDate INTEGER NOT NULL,
-      status TEXT NOT NULL
+      status TEXT NOT NULL,
+      FOREIGN KEY (clientId) REFERENCES clients (id),
+      FOREIGN KEY (contactId) REFERENCES clientContacts (id),
+      FOREIGN KEY (addressId) REFERENCES clientAddresses (id)
     )''');
     await db.execute('''
     CREATE TABLE orderProducts (
@@ -114,5 +126,93 @@ class DatabaseMigrator {
         FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE CASCADE
       )
       ''');
+  }
+
+  Future<void> _createNewOrderTableWithClientIdColumns(Database db) async {
+    await db.execute('PRAGMA foreign_keys=off');
+    await db.execute('ALTER TABLE orders RENAME TO _old_orders');
+    await db.execute('''
+    CREATE TABLE orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      clientId INTEGER NOT NULL,
+      contactId INTEGER,
+      addressId INTEGER,
+      orderDate INTEGER NOT NULL,
+      deliveryDate INTEGER NOT NULL,
+      status TEXT NOT NULL,
+      FOREIGN KEY (clientId) REFERENCES clients (id),
+      FOREIGN KEY (contactId) REFERENCES clientContacts (id),
+      FOREIGN KEY (addressId) REFERENCES clientAddresses (id)
+    )''');
+    await db.execute('PRAGMA foreign_keys=on');
+  }
+
+  Future<void> _dropOldOrderTable(Database db) async {
+    await db.execute('DROP TABLE _old_orders');
+  }
+
+  Future<void> _migrateClientDataFromOrderTableToClientTables(
+      Database db) async {
+    final orders = await db.query(
+      '_old_orders',
+      columns: [
+        'id',
+        'clientName',
+        'clientAddress',
+        'orderDate',
+        'deliveryDate',
+        'status'
+      ],
+    );
+    await db.transaction((txn) async {
+      for (final order in orders) {
+        final clientId = await _getClientIdOrInsert(txn, order);
+        final addressId = await _getAddressIdOrInsert(txn, order, clientId);
+        await txn.insert(
+          'orders',
+          {
+            'id': order['id'],
+            'clientId': clientId,
+            'addressId': addressId,
+            'orderDate': order['orderDate'],
+            'deliveryDate': order['deliveryDate'],
+            'status': order['status'],
+          },
+        );
+      }
+    });
+  }
+
+  Future<int> _getClientIdOrInsert(
+      DatabaseExecutor db, Map<String, dynamic> client) async {
+    final clientData = await db.query(
+      'clients',
+      columns: ['id'],
+      where: 'name = ?',
+      whereArgs: [client['name']],
+    );
+    if (clientData.isNotEmpty) {
+      return clientData.first['id'] as int;
+    } else {
+      return await db.insert('clients', {'name': client['name']});
+    }
+  }
+
+  Future<int> _getAddressIdOrInsert(
+      DatabaseExecutor db, Map<String, dynamic> client, int clientId) async {
+    final addresses = await db.query(
+      'clientAddresses',
+      columns: ['id'],
+      where: 'identifier = ? AND clientId = ?',
+      whereArgs: [client['clientAddress'], clientId],
+    );
+    if (addresses.isNotEmpty) {
+      return addresses.first['id'] as int;
+    } else {
+      return await db.insert(
+        'clientAddresses',
+        {'identifier': client['clientAddress']},
+      );
+    }
   }
 }

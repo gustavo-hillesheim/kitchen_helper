@@ -16,7 +16,7 @@ typedef TransactionCallback<T> = FutureOr<T> Function();
 class SQLiteDatabase {
   static SQLiteDatabase? _instance;
   static const _databaseName = 'KitchenHelper.db';
-  static const _databaseVersion = kClientModuleDatabaseVersion;
+  static const _databaseVersion = kLatestDbVersion;
 
   final Database _database;
   DatabaseExecutor _executor;
@@ -36,6 +36,7 @@ class SQLiteDatabase {
         options: OpenDatabaseOptions(
           version: _databaseVersion,
           onCreate: _onCreate,
+          onUpgrade: _onUpgrade,
         ),
       );
     }

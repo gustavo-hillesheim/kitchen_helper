@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart' hide Order;
+import 'package:kitchen_helper/modules/recipes/domain/domain.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/core.dart';
@@ -10,11 +11,16 @@ import 'sqlite_order_product_repository.dart';
 
 class SQLiteOrderRepository extends SQLiteRepository<Order>
     implements OrderRepository {
+  static const couldNotGetOrderProductsMessage =
+      'Não foi possível encontrar os produtos do pedido';
+
+  final RecipeRepository recipeRepository;
   final OrderProductRepository orderProductRepository;
   final OrderDiscountRepository orderDiscountRepository;
 
   SQLiteOrderRepository(
     SQLiteDatabase database,
+    this.recipeRepository,
     this.orderProductRepository,
     this.orderDiscountRepository,
   ) : super(
@@ -68,16 +74,14 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
     try {
       final where = filter != null ? _filterToWhereMap(filter) : null;
       final result = await database.rawQuery('''
-      SELECT o.id id, o.clientName clientName, o.clientAddress clientAddress,
+      SELECT o.id id, c.name clientName, ca.identifier clientAddress,
         o.deliveryDate deliveryDate, o.status status,
-        (r.quantitySold / r.quantityProduced * r.price * op.quantity) basePrice, 
-        sum(case when d.type = 'fixed' then d.value else 0 end) fixedDiscount, 
-        sum(case when d.type = 'percentage' then d.value else 0 end) 
-        percentageDiscount
+        (SELECT SUM(op.quantity / r.quantitySold * r.price) FROM orderProducts op INNER JOIN recipes r ON r.id = op.productId WHERE op.orderId = o.id) basePrice, 
+        (SELECT SUM(d.value) FROM orderDiscounts d WHERE o.id = d.orderId AND d.type = 'fixed') fixedDiscount, 
+        (SELECT SUM(d.value) FROM orderDiscounts d WHERE o.id = d.orderId AND d.type = 'percentage') percentageDiscount
       FROM orders o
-      LEFT JOIN orderProducts op ON o.id = op.orderId
-      LEFT JOIN recipes r ON r.id = op.productId
-      LEFT JOIN orderDiscounts d ON o.id = d.orderId
+      LEFT JOIN clients c ON c.id = o.clientId
+      LEFT JOIN clientAddresses ca ON ca.id = o.addressId AND ca.clientId = c.id
       ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
       GROUP BY o.id
       ORDER BY o.deliveryDate
@@ -172,14 +176,14 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   Future<Either<Failure, Order>> _withProducts(Order order) async {
-    return _getProducts(order).onRightThen(
+    return _getProducts(order.id!).onRightThen(
       (products) => Right(order.copyWith(products: products)),
     );
   }
 
-  Future<Either<Failure, List<OrderProduct>>> _getProducts(Order order) async {
+  Future<Either<Failure, List<OrderProduct>>> _getProducts(int orderId) async {
     return orderProductRepository
-        .findByOrder(order.id!)
+        .findByOrder(orderId)
         .onRightThen((productsEntities) {
       final products = productsEntities
           .map((e) => e.toOrderProduct())
@@ -203,18 +207,74 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   }
 
   Future<Either<Failure, Order>> _withDiscounts(Order order) async {
-    return _getDiscounts(order).onRightThen(
+    return _getDiscounts(order.id!).onRightThen(
       (discounts) => Right(order.copyWith(discounts: discounts)),
     );
   }
 
-  Future<Either<Failure, List<Discount>>> _getDiscounts(Order order) async {
+  Future<Either<Failure, List<Discount>>> _getDiscounts(int orderId) async {
     return orderDiscountRepository
-        .findByOrder(order.id!)
+        .findByOrder(orderId)
         .onRightThen((discountEntities) {
       final discounts =
           discountEntities.map((e) => e.toDiscount()).toList(growable: false);
       return Right(discounts);
     });
+  }
+
+  @override
+  Future<Either<Failure, EditingOrderDto?>> findEditingDtoById(int id) async {
+    try {
+      final exists = await database.exists(tableName, idColumn, id);
+      if (!exists) {
+        return const Right(null);
+      }
+      final orderData =
+          Map<String, dynamic>.from(await _getEditingOrderData(id));
+      final discounts = await _getDiscounts(id).throwOnFailure();
+      final editingProducts = await _getEditingProducts(id);
+      orderData['discounts'] = discounts.map((d) => d.toJson()).toList();
+      orderData['products'] = editingProducts;
+      return Right(EditingOrderDto.fromJson(orderData));
+    } on Failure catch (f) {
+      return Left(f);
+    }
+  }
+
+  Future<Map<String, dynamic>> _getEditingOrderData(int id) async {
+    return (await database.rawQuery('''
+SELECT o.id id, o.clientId clientId, c.name clientName, o.contactId contactId, 
+  cc.contact clientContact, o.addressId addressId, ca.identifier clientAddress, 
+  o.orderDate orderDate, o.deliveryDate deliveryDate, o.status status
+FROM orders o
+LEFT JOIN clients c ON c.id = o.clientId
+LEFT JOIN clientContacts cc ON c.id = cc.clientId AND cc.id = o.contactId
+LEFT JOIN clientAddresses ca ON c.id = ca.clientId AND ca.id = o.addressId
+WHERE o.id = ?
+''', [id])).first;
+  }
+
+  Future<List<Map<String, dynamic>>> _getEditingProducts(int orderId) async {
+    try {
+      final queryResult = await database.rawQuery('''
+SELECT op.productId id, r.name name, r.measurementUnit measurementUnit, 
+  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price
+FROM orderProducts op
+INNER JOIN recipes r ON op.productId = r.id
+WHERE op.orderId = ?
+''', [orderId]);
+      final editingProducts = <Map<String, dynamic>>[];
+      for (final row in queryResult) {
+        final data = Map<String, dynamic>.from(row);
+        final cost = await recipeRepository
+            .getCost(data['id'], quantity: data['quantity'])
+            .throwOnFailure();
+        data['cost'] = cost;
+        editingProducts.add(data);
+      }
+      return editingProducts;
+    } on DatabaseException catch (e) {
+      throw DatabaseFailure(couldNotGetOrderProductsMessage, e);
+    }
   }
 }

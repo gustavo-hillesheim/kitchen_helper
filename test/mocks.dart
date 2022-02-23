@@ -5,12 +5,7 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/common/widget/recipe_ingredient_selector_service.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
-import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
-import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_discount_repository.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_product_repository.dart';
@@ -57,6 +52,10 @@ class OrderDiscountRepositoryMock extends Mock
 
 class ClientRepositoryMock extends Mock implements ClientRepository {}
 
+class AddressRepositoryMock extends Mock implements AddressRepository {}
+
+class ContactRepositoryMock extends Mock implements ContactRepository {}
+
 class SQLiteDatabaseMock extends Mock implements SQLiteDatabase {}
 
 class RecipeIngredientSelectorServiceMock extends Mock
@@ -71,6 +70,21 @@ class GetOrdersUseCaseMock extends Mock implements GetOrdersUseCase {}
 class DeleteOrderUseCaseMock extends Mock implements DeleteOrderUseCase {}
 
 class SaveOrderUseCaseMock extends Mock implements SaveOrderUseCase {}
+
+class GetClientsDomainUseCaseMock extends Mock
+    implements GetClientsDomainUseCase {}
+
+class GetContactsDomainUseCaseMock extends Mock
+    implements GetContactsDomainUseCase {}
+
+class GetAddressDomainUseCaseMock extends Mock
+    implements GetAddressDomainUseCase {}
+
+class SaveEditingOrderDtoUseCaseMock extends Mock
+    implements SaveEditingOrderDtoUseCase {}
+
+class GetEditingOrderDtoUseCaseMock extends Mock
+    implements GetEditingOrderDtoUseCase {}
 
 class GetListingOrderProductsUseCaseMock extends Mock
     implements GetListingOrderProductsUseCase {}
@@ -87,6 +101,8 @@ class FakeRecipe extends Fake implements Recipe {}
 
 class FakeOrder extends Fake implements Order {}
 
+class FakeEditingOrderDto extends Fake implements EditingOrderDto {}
+
 class FakeOrderProduct extends Fake implements OrderProduct {}
 
 class FakeRecipeIngredient extends Fake implements RecipeIngredient {}
@@ -95,6 +111,10 @@ class FakeRecipeIngredientEntity extends Fake
     implements RecipeIngredientEntity {}
 
 class FakeClient extends Fake implements Client {}
+
+class FakeAddressEntity extends Fake implements AddressEntity {}
+
+class FakeContactEntity extends Fake implements ContactEntity {}
 
 class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
@@ -337,8 +357,9 @@ final cakeOrderProduct = OrderProduct(id: cakeRecipe.id!, quantity: 1);
 final iceCreamOrderProduct = OrderProduct(id: iceCreamRecipe.id!, quantity: 2);
 
 final spidermanOrder = Order(
-  clientName: 'Test client',
-  clientAddress: 'New York Street, 123',
+  clientId: spidermanClient.id!,
+  addressId: null,
+  contactId: null,
   orderDate: DateTime(2022, 1, 1, 1, 10),
   deliveryDate: DateTime(2022, 1, 2, 15, 30),
   status: OrderStatus.ordered,
@@ -347,6 +368,23 @@ final spidermanOrder = Order(
     Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
   ],
 );
+final editingSpidermanOrderDto = EditingOrderDto(
+  clientId: spidermanClient.id!,
+  clientName: spidermanClient.name,
+  addressId: 1,
+  clientAddress: 'Contact',
+  contactId: 1,
+  clientContact: 'Address',
+  orderDate: DateTime(2022, 1, 1, 1, 10),
+  deliveryDate: DateTime(2022, 1, 2, 15, 30),
+  status: OrderStatus.ordered,
+  products: [editingOrderProduct(cakeOrderProduct)],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.percentage, value: 50),
+  ],
+);
+final editingSpidermanOrderDtoWithId =
+    editingSpidermanOrderDto.copyWith(id: spidermanOrderWithId.id!);
 final spidermanOrderWithId = spidermanOrder.copyWith(id: 1);
 final listingSpidermanOrderDto = ListingOrderDto(
   id: 1,
@@ -359,12 +397,29 @@ final listingSpidermanOrderDto = ListingOrderDto(
 
 final batmanOrder = Order(
   id: 2,
-  clientName: 'Batman',
-  clientAddress: 'Gotham',
+  clientId: batmanClient.id!,
+  addressId: 1,
+  contactId: 1,
   orderDate: DateTime(2022, 1, 3, 1, 15),
   deliveryDate: DateTime(2022, 1, 7, 12),
   status: OrderStatus.delivered,
   products: [cakeOrderProduct, iceCreamOrderProduct],
+  discounts: const [
+    Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
+  ],
+);
+final editingBatmanOrderDto = EditingOrderDto(
+  id: 2,
+  clientId: batmanClient.id!,
+  clientName: '',
+  addressId: 1,
+  clientAddress: '',
+  contactId: 1,
+  clientContact: '',
+  orderDate: DateTime(2022, 1, 3, 1, 15),
+  deliveryDate: DateTime(2022, 1, 7, 12),
+  status: OrderStatus.delivered,
+  products: editingOrderProducts([cakeOrderProduct, iceCreamOrderProduct]),
   discounts: const [
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10),
   ],
@@ -407,6 +462,21 @@ const listingBatmanDto = ListingClientDto(id: 1, name: 'Batman');
 const listingSpidermanDto = ListingClientDto(id: 2, name: 'Spider man');
 
 const listingClientDtos = [listingBatmanDto, listingSpidermanDto];
+
+List<EditingOrderProductDto> editingOrderProducts(List<OrderProduct> ops) {
+  return ops.map(editingOrderProduct).toList();
+}
+
+EditingOrderProductDto editingOrderProduct(OrderProduct op) {
+  return EditingOrderProductDto(
+    name: recipesMap[op.id]!.name,
+    quantity: op.quantity,
+    measurementUnit: recipesMap[op.id]!.measurementUnit,
+    cost: op.id.toDouble(),
+    id: op.id,
+    price: op.id.toDouble(),
+  );
+}
 
 IModularNavigator mockNavigator() {
   final navigator = ModularNavigateMock();

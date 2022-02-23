@@ -3,18 +3,17 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../common/common.dart';
 import '../../../../domain/domain.dart';
-import '../models/editing_order_product.dart';
 import 'edit_order_product_form.dart';
 
-typedef OnEditProduct = void Function(EditingOrderProduct, OrderProduct);
+typedef OnEditProduct = void Function(EditingOrderProductDto, OrderProduct);
 typedef OnAddProduct = ValueChanged<OrderProduct>;
-typedef OnDeletProduct = ValueChanged<EditingOrderProduct>;
+typedef OnDeletProduct = ValueChanged<EditingOrderProductDto>;
 
 class OrderProductsList extends StatelessWidget {
   final OnAddProduct onAdd;
   final OnEditProduct onEdit;
   final OnDeletProduct onDelete;
-  final List<EditingOrderProduct> products;
+  final List<EditingOrderProductDto> products;
 
   const OrderProductsList({
     Key? key,
@@ -58,7 +57,7 @@ class OrderProductsList extends StatelessWidget {
 
   void showOrderProductForm(
     BuildContext context, [
-    EditingOrderProduct? initialValue,
+    EditingOrderProductDto? initialValue,
   ]) {
     showDialog(
       context: context,
@@ -80,7 +79,7 @@ class OrderProductsList extends StatelessWidget {
 }
 
 class OrderProductListTile extends StatelessWidget {
-  final EditingOrderProduct product;
+  final EditingOrderProductDto product;
   final VoidCallback onTap;
 
   const OrderProductListTile(

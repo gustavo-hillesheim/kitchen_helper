@@ -17,3 +17,4 @@ export 'screen_state_builder.dart';
 export 'secondary_button.dart';
 export 'tag.dart';
 export 'toggleable_tag.dart';
+export 'search_text_field.dart';

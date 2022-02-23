@@ -200,4 +200,40 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
     ''', recipesId);
     return result.map((data) => data['id'] as int).toList();
   }
+
+  @override
+  Future<Either<Failure, double>> getCost(int recipeId,
+      {double? quantity}) async {
+    try {
+      final queryResult = await database.rawQuery('''
+    SELECT SUM((i.cost / i.quantity) * ri.quantity) ingredientsCost,
+    GROUP_CONCAT(r.id, ',') recipesUsed, recipe.quantityProduced quantityProduced
+    FROM recipes recipe
+    INNER JOIN recipeIngredients ri
+    LEFT JOIN ingredients i ON i.id = ri.recipeIngredientId AND ri.type = 'ingredient'
+    LEFT JOIN recipes r ON r.id = ri.recipeIngredientId AND ri.type = 'recipe'
+    WHERE ri.parentRecipeId = ?
+''', [recipeId]);
+      final firstResult = queryResult.first;
+      var cost = firstResult['ingredientsCost'] as double;
+      final quantityProduced = firstResult['quantityProduced'] as double;
+      final recipesUsed = firstResult['recipesUsed'] as String?;
+      if (recipesUsed != null && recipesUsed.isNotEmpty) {
+        for (final recipe in recipesUsed.split(',')) {
+          final recipeCostResult = await getCost(int.parse(recipe));
+          if (recipeCostResult.isLeft()) {
+            return recipeCostResult.asLeftOf();
+          }
+          final recipeCost = recipeCostResult.getRight().toNullable()!;
+          cost += recipeCost;
+        }
+      }
+      if (quantity != null) {
+        cost = (cost / quantityProduced) * quantity;
+      }
+      return Right(cost);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(SQLiteRepository.couldNotQueryMessage, e));
+    }
+  }
 }

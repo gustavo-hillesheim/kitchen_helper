@@ -7,6 +7,7 @@ import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_disco
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_product_repository.dart';
 import 'package:kitchen_helper/modules/orders/data/repository/sqlite_order_repository.dart';
 import 'package:kitchen_helper/modules/orders/domain/domain.dart';
+import 'package:kitchen_helper/modules/recipes/domain/domain.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../mocks.dart';
@@ -16,6 +17,7 @@ void main() {
   late SQLiteOrderRepository repository;
   late OrderProductRepository orderProductRepository;
   late OrderDiscountRepository orderDiscountRepository;
+  late RecipeRepository recipeRepository;
   late SQLiteDatabase database;
   const tableName = 'orders';
   const idColumn = 'id';
@@ -26,8 +28,9 @@ void main() {
     database = SQLiteDatabaseMock();
     orderProductRepository = OrderProductRepositoryMock();
     orderDiscountRepository = OrderDiscountRepositoryMock();
-    repository = SQLiteOrderRepository(
-        database, orderProductRepository, orderDiscountRepository);
+    recipeRepository = RecipeRepositoryMock();
+    repository = SQLiteOrderRepository(database, recipeRepository,
+        orderProductRepository, orderDiscountRepository);
   });
 
   test('toMap SHOULD remove products field', () {
@@ -762,6 +765,141 @@ void main() {
       } on Exception catch (e) {
         expect(e, isA<Exception>());
       }
+    });
+  });
+
+  group('findEditingDtoById', () {
+    void mockExists(int orderId, bool result) {
+      when(() => database.exists(
+              repository.tableName, repository.idColumn, orderId))
+          .thenAnswer((_) async => result);
+    }
+
+    void mockGetEditingOrderData(int orderId, EditingOrderDto? dto) {
+      when(() => database.rawQuery(any(), [orderId])).thenAnswer((_) async => [
+            if (dto != null)
+              dto.toJson()
+                ..remove('products')
+                ..remove('discounts')
+          ]);
+    }
+
+    void mockFindDiscounts(
+        int orderId, Either<Failure, List<OrderDiscountEntity>> result) {
+      when(() => orderDiscountRepository.findByOrder(orderId))
+          .thenAnswer((_) async => result);
+    }
+
+    void mockFindEditingProducts(
+        int orderId, List<Map<String, dynamic>> result) {
+      when(() => database.rawQuery(
+              any(that: contains('FROM orderProducts op')), [orderId]))
+          .thenAnswer((_) async => result);
+    }
+
+    void mockFindEditingProductsThrow(int orderId, error) {
+      when(() => database.rawQuery(
+              any(that: contains('FROM orderProducts op')), [orderId]))
+          .thenThrow(error);
+    }
+
+    void mockQueriesOfFindEditing(int orderId, EditingOrderDto? dto) {
+      mockExists(orderId, dto != null);
+      if (dto != null) {
+        mockGetEditingOrderData(orderId, dto);
+        mockFindDiscounts(
+            orderId,
+            Right(dto.discounts
+                .map((d) => OrderDiscountEntity(
+                      orderId: orderId,
+                      reason: d.reason,
+                      type: d.type,
+                      value: d.value,
+                    ))
+                .toList()));
+        mockFindEditingProducts(
+            orderId,
+            dto.products
+                .map((product) => {
+                      'name': product.name,
+                      'measurementUnit': product.measurementUnit.name,
+                      'price': product.price,
+                      'id': product.id,
+                      'quantity': product.quantity,
+                      'productId': product.id,
+                    })
+                .toList());
+        for (final product in dto.products) {
+          when(() => recipeRepository.getCost(product.id,
+                  quantity: product.quantity))
+              .thenAnswer((_) async => Right(product.cost));
+        }
+      }
+    }
+
+    test('WHEN database returns data SHOULD return EditingOrderDto', () async {
+      mockQueriesOfFindEditing(1, editingSpidermanOrderDtoWithId);
+
+      final result = await repository.findEditingDtoById(1);
+
+      expect(result.getRight().toNullable(), editingSpidermanOrderDtoWithId);
+    });
+
+    test('WHEN record doesn\'t exist SHOULD return null', () async {
+      mockQueriesOfFindEditing(1, null);
+
+      final result = await repository.findEditingDtoById(1);
+
+      expect(result.getRight().toNullable(), null);
+    });
+
+    test('WHEN has failure on getting discounts SHOULD return Failure',
+        () async {
+      const failure = FakeFailure('error on discounts');
+      mockExists(1, true);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
+      mockFindDiscounts(1, const Left(failure));
+
+      final result = await repository.findEditingDtoById(1);
+
+      expect(result.getLeft().toNullable(), failure);
+    });
+
+    test('WHEN has error on getting products SHOULD return Failure', () async {
+      final error = FakeDatabaseException('error on products');
+      mockExists(1, true);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
+      mockFindDiscounts(1, const Right([]));
+      mockFindEditingProductsThrow(1, error);
+
+      final result = await repository.findEditingDtoById(1);
+
+      expect(
+        result.getLeft().toNullable(),
+        DatabaseFailure(
+            SQLiteOrderRepository.couldNotGetOrderProductsMessage, error),
+      );
+    });
+
+    test('WHEN has failure on getting product cost SHOULD return Failure',
+        () async {
+      const failure = FakeFailure('failure on cost');
+      mockExists(1, true);
+      mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
+      mockFindDiscounts(1, const Right([]));
+      mockFindEditingProducts(1, [
+        {
+          ...editingOrderProduct(cakeOrderProduct).toJson(),
+          'productId': cakeOrderProduct.id,
+        }
+      ]);
+      when(() =>
+              recipeRepository.getCost(any(), quantity: any(named: 'quantity')))
+          .thenAnswer((_) async => const Left(failure));
+
+      final result = await repository.findEditingDtoById(1);
+
+      expect(result.getLeft().toNullable(), failure);
     });
   });
 }

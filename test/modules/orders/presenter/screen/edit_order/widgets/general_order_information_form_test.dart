@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/common/common.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 
@@ -8,8 +10,9 @@ import '../../../../../../finders.dart';
 import '../helpers.dart';
 
 void main() {
-  late TextEditingController clientNameController;
-  late TextEditingController clientAddressController;
+  late ValueNotifier<SelectedClient?> clientNotifier;
+  late ValueNotifier<SelectedContact?> contactNotifier;
+  late ValueNotifier<SelectedAddress?> addressNotifier;
   late ValueNotifier<DateTime?> orderDateNotifier;
   late ValueNotifier<DateTime?> deliveryDateNotifier;
   late ValueNotifier<OrderStatus?> statusNotifier;
@@ -21,8 +24,9 @@ void main() {
     statusNotifier = ValueNotifier(null);
     orderDateNotifier = ValueNotifier(null);
     deliveryDateNotifier = ValueNotifier(null);
-    clientAddressController = TextEditingController();
-    clientNameController = TextEditingController();
+    clientNotifier = ValueNotifier(null);
+    contactNotifier = ValueNotifier(null);
+    addressNotifier = ValueNotifier(null);
   });
 
   Future<void> pumpWidget(WidgetTester tester) async {
@@ -32,8 +36,16 @@ void main() {
           statusNotifier: statusNotifier,
           orderDateNotifier: orderDateNotifier,
           deliveryDateNotifier: deliveryDateNotifier,
-          clientAddressController: clientAddressController,
-          clientNameController: clientNameController,
+          contactNotifier: contactNotifier,
+          clientNotifier: clientNotifier,
+          addressNotifier: addressNotifier,
+          searchClientDomainFn: () async => const Right([
+            ClientDomainDto(id: 1, label: 'Test Client'),
+          ]),
+          searchContactDomainFn: () async =>
+              const Right([ContactDomainDto(id: 1, label: 'Contact')]),
+          searchAddressDomainFn: () async =>
+              const Right([AddressDomainDto(id: 1, label: 'Address')]),
           price: price,
           cost: cost,
           discount: discount,
@@ -47,6 +59,7 @@ void main() {
     await pumpWidget(tester);
 
     expect(clientNameFinder, findsOneWidget);
+    expect(clientContactFinder, findsOneWidget);
     expect(clientAddressFinder, findsOneWidget);
     expect(orderDateFinder, findsOneWidget);
     expect(deliveryDateFinder, findsOneWidget);
@@ -54,20 +67,27 @@ void main() {
 
     await inputGeneralOrderInfo(
       tester,
-      clientName: 'Client',
+      clientName: 'Test Client',
+      clientContact: 'Contact',
       clientAddress: 'Address',
       status: OrderStatus.ordered,
       orderDate: DateTime(2022, 1, 1, 12, 0),
       deliveryDate: DateTime(2022, 2, 1, 15, 30),
     );
-    expect(clientNameController.text, 'Client');
-    expect(clientAddressController.text, 'Address');
+
+    const expectedClient = SelectedClient(id: 1, name: 'Test Client');
+    const expectedContact = SelectedContact(id: 1, contact: 'Contact');
+    const expectedAddress = SelectedAddress(id: 1, identifier: 'Address');
+    expect(clientNotifier.value, expectedClient);
+    expect(contactNotifier.value, expectedContact);
+    expect(addressNotifier.value, expectedAddress);
     expect(statusNotifier.value, OrderStatus.ordered);
     expect(orderDateNotifier.value, DateTime(2022, 1, 1, 12, 0));
     expect(deliveryDateNotifier.value, DateTime(2022, 2, 1, 15, 30));
     expectGeneralOrderInformationFormState(
-      clientName: 'Client',
-      clientAddress: 'Address',
+      client: expectedClient,
+      contact: expectedContact,
+      address: expectedAddress,
       status: OrderStatus.ordered,
       orderDate: DateTime(2022, 1, 1, 12, 0),
       deliveryDate: DateTime(2022, 2, 1, 15, 30),
@@ -76,8 +96,12 @@ void main() {
 
   testWidgets('WHEN has initialValue SHOULD render fields with initialValue',
       (tester) async {
-    clientNameController.text = 'Test client';
-    clientAddressController.text = 'Some address';
+    const client = SelectedClient(name: 'Test client');
+    const contact = SelectedContact(contact: 'test@contact.com');
+    const address = SelectedAddress(identifier: 'Test address');
+    clientNotifier.value = client;
+    contactNotifier.value = contact;
+    addressNotifier.value = address;
     statusNotifier.value = OrderStatus.delivered;
     orderDateNotifier.value = DateTime(2022, 10, 1, 9, 15);
     deliveryDateNotifier.value = DateTime(2022, 11, 15, 19, 30);
@@ -85,8 +109,9 @@ void main() {
     await pumpWidget(tester);
 
     expectGeneralOrderInformationFormState(
-      clientName: 'Test client',
-      clientAddress: 'Some address',
+      client: client,
+      contact: contact,
+      address: address,
       status: OrderStatus.delivered,
       orderDate: DateTime(2022, 10, 1, 9, 15),
       deliveryDate: DateTime(2022, 11, 15, 19, 30),

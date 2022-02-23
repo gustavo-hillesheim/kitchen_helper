@@ -1,10 +1,14 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../../../common/common.dart';
-import '../../../../../recipes/recipes.dart';
-import '../../../../domain/domain.dart';
+import '../../../../common/common.dart';
+import '../../../recipes/recipes.dart';
+import '../domain.dart';
 
-class EditingOrderProduct extends Equatable {
+part 'editing_order_product_dto.g.dart';
+
+@JsonSerializable()
+class EditingOrderProductDto extends Equatable {
   final String name;
   final double quantity;
   final MeasurementUnit measurementUnit;
@@ -12,7 +16,7 @@ class EditingOrderProduct extends Equatable {
   final double price;
   final int id;
 
-  const EditingOrderProduct({
+  const EditingOrderProductDto({
     required this.name,
     required this.quantity,
     required this.measurementUnit,
@@ -21,12 +25,17 @@ class EditingOrderProduct extends Equatable {
     required this.price,
   });
 
-  factory EditingOrderProduct.fromModels(
+  factory EditingOrderProductDto.fromJson(Map<String, dynamic> json) =>
+      _$EditingOrderProductDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EditingOrderProductDtoToJson(this);
+
+  factory EditingOrderProductDto.fromModels(
     OrderProduct orderProduct,
     Recipe recipe,
     double recipeCost,
   ) {
-    return EditingOrderProduct(
+    return EditingOrderProductDto(
       name: recipe.name,
       quantity: orderProduct.quantity,
       measurementUnit: recipe.measurementUnit,
@@ -36,7 +45,7 @@ class EditingOrderProduct extends Equatable {
     );
   }
 
-  EditingOrderProduct copyWith({
+  EditingOrderProductDto copyWith({
     String? name,
     double? quantity,
     MeasurementUnit? measurementUnit,
@@ -45,7 +54,7 @@ class EditingOrderProduct extends Equatable {
     double? price,
     int? id,
   }) {
-    return EditingOrderProduct(
+    return EditingOrderProductDto(
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       measurementUnit: measurementUnit ?? this.measurementUnit,
@@ -56,5 +65,5 @@ class EditingOrderProduct extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, quantity, measurementUnit, cost];
+  List<Object?> get props => [id, name, quantity, measurementUnit, cost, price];
 }

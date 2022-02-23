@@ -105,6 +105,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
         measurementUnit: widget.initialValue!.measurementUnit,
       );
     }
+    return null;
   }
 
   void _save() {

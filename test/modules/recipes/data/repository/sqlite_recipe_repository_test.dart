@@ -502,6 +502,153 @@ void main() {
       }
     });
   });
+  group('getCost', () {
+    When<Future<List<Map<String, dynamic>>>> mockCostQuery(int recipeId) {
+      return when(() => database.rawQuery(any(), [recipeId]));
+    }
+
+    test('WHEN recipe only have ingredients SHOULD only execute one query',
+        () async {
+      const recipeId = 1;
+      mockCostQuery(recipeId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 50.0,
+              'recipesUsed': null,
+              'quantityProduced': 1.0
+            }
+          ]);
+
+      final result = await repository.getCost(recipeId);
+
+      expect(result.getRight().toNullable(), 50);
+    });
+
+    test(
+        'WHEN recipe have ingredients and recipes SHOULD query for each child recipe',
+        () async {
+      const recipeId = 1;
+      const childRecipeOneId = 2;
+      const childRecipeTwoId = 3;
+      mockCostQuery(recipeId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 50.0,
+              'recipesUsed': '$childRecipeOneId,$childRecipeTwoId',
+              'quantityProduced': 1.0
+            }
+          ]);
+      mockCostQuery(childRecipeOneId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 10.0,
+              'recipesUsed': null,
+              'quantityProduced': 1.0
+            }
+          ]);
+      mockCostQuery(childRecipeTwoId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 15.0,
+              'recipesUsed': '$childRecipeOneId',
+              'quantityProduced': 1.0
+            }
+          ]);
+
+      final result = await repository.getCost(recipeId);
+
+      expect(result.getRight().toNullable(), 85);
+    });
+
+    test(
+        'WHEN quantity is provided SHOULD calculate cost to produce that quantity',
+        () async {
+      const recipeId = 1;
+      const quantity = 10.0;
+      mockCostQuery(recipeId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 50.0,
+              'recipesUsed': null,
+              'quantityProduced': 100.0
+            }
+          ]);
+
+      final result = await repository.getCost(recipeId, quantity: quantity);
+
+      expect(result.getRight().toNullable(), 5);
+    });
+
+    test(
+        'WHEN database throws DatabaseException on first query SHOULD return Failure',
+        () async {
+      final exception = FakeDatabaseException('query error');
+      const recipeId = 1;
+      mockCostQuery(recipeId).thenThrow(exception);
+
+      final result = await repository.getCost(recipeId);
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotQueryMessage,
+      );
+    });
+
+    test('WHEN database throws exception on first query SHOULD throw exception',
+        () async {
+      final exception = Exception('unknown error');
+      const recipeId = 1;
+      mockCostQuery(recipeId).thenThrow(exception);
+
+      try {
+        await repository.getCost(recipeId);
+        fail('Should have thrown exception');
+      } catch (e) {
+        expect(e, exception);
+      }
+    });
+
+    test(
+        'WHEN database throws DatabaseException on nested queries SHOULD return Failure',
+        () async {
+      final exception = FakeDatabaseException('query error');
+      const recipeId = 1;
+      const childRecipeId = 2;
+      mockCostQuery(recipeId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 50.0,
+              'recipesUsed': '$childRecipeId',
+              'quantityProduced': 1.0
+            }
+          ]);
+      mockCostQuery(childRecipeId).thenThrow(exception);
+
+      final result = await repository.getCost(recipeId);
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotQueryMessage,
+      );
+    });
+
+    test(
+        'WHEN database throws exception on nested query SHOULD throw exception',
+        () async {
+      final exception = Exception('unknown error');
+      const recipeId = 1;
+      const childRecipeId = 2;
+      mockCostQuery(recipeId).thenAnswer((_) async => [
+            {
+              'ingredientsCost': 50.0,
+              'recipesUsed': '$childRecipeId',
+              'quantityProduced': 1.0
+            }
+          ]);
+      mockCostQuery(childRecipeId).thenThrow(exception);
+
+      try {
+        await repository.getCost(recipeId);
+        fail('Should have thrown exception');
+      } catch (e) {
+        expect(e, exception);
+      }
+    });
+  });
 }
 
 class FakeRecipeIngredientEntity extends Fake

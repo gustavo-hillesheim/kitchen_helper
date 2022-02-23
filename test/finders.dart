@@ -58,6 +58,25 @@ class AppTextFormFieldFinder extends MatchFinder {
   }
 }
 
+class SearchTextFieldFinder<T> extends MatchFinder {
+  final String name;
+  final T? value;
+
+  SearchTextFieldFinder({required this.name, this.value});
+
+  @override
+  String get description => 'SearchTextField<$T>(name: "$name", value: $value)';
+
+  @override
+  bool matches(Element candidate) {
+    if (candidate.widget is SearchTextField) {
+      final widget = candidate.widget as SearchTextField;
+      return widget.name == name && (value == null || widget.value == value);
+    }
+    return false;
+  }
+}
+
 class AppDateTimeFieldFinder extends MatchFinder {
   final String name;
 

@@ -1,67 +1,58 @@
 import 'package:fpdart/fpdart.dart' hide Order;
 
+import '../../../../clients/clients.dart';
 import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
 import '../../../../recipes/recipes.dart';
 import '../../../domain/domain.dart';
-import 'models/editing_order_product.dart';
 
-class EditOrderBloc extends AppCubit<Order> {
-  final SaveOrderUseCase saveOrderUseCase;
+class EditOrderBloc extends AppCubit<void> {
+  final SaveEditingOrderDtoUseCase saveOrderUseCase;
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
-  final GetOrderUseCase getOrderUseCase;
+  final GetEditingOrderDtoUseCase getOrderUseCase;
+  final GetClientsDomainUseCase getClientsDomainUseCase;
+  final GetContactsDomainUseCase getContactsDomainUseCase;
+  final GetAddressDomainUseCase getAddressDomainUseCase;
 
   EditOrderBloc(
     this.saveOrderUseCase,
     this.getRecipeUseCase,
     this.getRecipeCostUseCase,
     this.getOrderUseCase,
+    this.getClientsDomainUseCase,
+    this.getContactsDomainUseCase,
+    this.getAddressDomainUseCase,
   ) : super(const EmptyState());
 
-  Future<ScreenState<void>> save(Order order) async {
-    await runEither(() async {
-      return saveOrderUseCase.execute(order);
-    });
+  Future<ScreenState<void>> save(EditingOrderDto order) async {
+    await runEither(() =>
+        saveOrderUseCase.execute(order).onRightThen((_) => const Right(null)));
     return state;
   }
 
-  Future<void> loadOrder(int id) async {
+  Future<Either<Failure, EditingOrderDto>> loadOrder(int id) async {
     emit(const LoadingOrderState());
     final result = await getOrderUseCase.execute(id);
     result.fold(
       (f) => emit(FailureState(f)),
-      (order) {
-        if (order == null) {
-          emit(const FailureState(
-            BusinessFailure('Não foi possível encontrar o pedido'),
-          ));
-        } else {
-          emit(SuccessState(order));
-        }
-      },
+      (_) => emit(const SuccessState(null)),
     );
+    return result;
   }
 
-  Future<Either<Failure, List<EditingOrderProduct>>> getEditingOrderProducts(
-      List<OrderProduct> products) async {
-    final futures = products.map(getEditingOrderProduct);
-    final values = (await Future.wait(futures)).asEitherList();
-    return values;
-  }
-
-  Future<Either<Failure, EditingOrderProduct>> getEditingOrderProduct(
+  Future<Either<Failure, EditingOrderProductDto>> getEditingOrderProduct(
       OrderProduct orderProduct) async {
     return _getEditingOrderProductFromRecipe(orderProduct);
   }
 
-  Future<Either<Failure, EditingOrderProduct>>
+  Future<Either<Failure, EditingOrderProductDto>>
       _getEditingOrderProductFromRecipe(OrderProduct orderProduct) {
     return getRecipeUseCase.execute(orderProduct.id).onRightThen(
           (recipe) => getRecipeCostUseCase.execute(recipe!).onRightThen(
                 (recipeCost) => Right(
-                  EditingOrderProduct.fromModels(
+                  EditingOrderProductDto.fromModels(
                     orderProduct,
                     recipe,
                     recipeCost,
@@ -69,6 +60,20 @@ class EditOrderBloc extends AppCubit<Order> {
                 ),
               ),
         );
+  }
+
+  Future<Either<Failure, List<ClientDomainDto>>> findClientDomain() {
+    return getClientsDomainUseCase.execute(const NoParams());
+  }
+
+  Future<Either<Failure, List<ContactDomainDto>>> findContactsDomain(
+      int clientId) {
+    return getContactsDomainUseCase.execute(clientId);
+  }
+
+  Future<Either<Failure, List<AddressDomainDto>>> findAddressDomain(
+      int clientId) {
+    return getAddressDomainUseCase.execute(clientId);
   }
 }
 

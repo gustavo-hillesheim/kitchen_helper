@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:fpdart/fpdart.dart' hide Order, State;
 
+import '../../../../clients/clients.dart';
 import '../../../../../common/common.dart';
 import '../../../../../core/core.dart';
 import '../../../../../extensions.dart';
 import '../../../domain/domain.dart';
 import 'edit_order_bloc.dart';
-import 'models/editing_order_product.dart';
 import 'widgets/discount_list.dart';
 import 'widgets/general_order_information_form.dart';
 import 'widgets/order_products_list.dart';
@@ -35,13 +35,16 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   late final EditOrderBloc bloc;
   late final _tabController = TabController(length: 3, vsync: this);
   final _formKey = GlobalKey<FormState>();
-  final _clientNameController = TextEditingController();
-  final _clientAddressController = TextEditingController();
   final _orderDateNotifier = ValueNotifier<DateTime?>(DateTime.now());
   final _deliveryDateNotifier = ValueNotifier<DateTime?>(null);
   final _statusNotifier = ValueNotifier<OrderStatus?>(OrderStatus.ordered);
-  final _products = <EditingOrderProduct>[];
+  final _clientNotifier = ValueNotifier<SelectedClient?>(null);
+  final _contactNotifier = ValueNotifier<SelectedContact?>(null);
+  final _addressNotifier = ValueNotifier<SelectedAddress?>(null);
+  final _products = <EditingOrderProductDto>[];
   final _discounts = <Discount>[];
+  List<ContactDomainDto>? _clientContacts;
+  List<AddressDomainDto>? _clientAddresses;
   var _cost = 0.0;
   var _price = 0.0;
 
@@ -54,46 +57,125 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           Modular.get(),
           Modular.get(),
           Modular.get(),
+          Modular.get(),
+          Modular.get(),
+          Modular.get(),
         );
+    _clientNotifier.addListener(() {
+      _updateClientContacts();
+      _updateClientAddresses();
+    });
     if (widget.id != null) {
-      bloc.stream
-          .where((state) => state is SuccessState<Order>)
-          .map((state) => (state as SuccessState<Order>).value)
-          .listen((order) {
+      bloc.loadOrder(widget.id!).onRightThen((order) {
         _fillControllers(order);
-        _fillCostPriceAndProducts(order);
-        _discounts.addAll(order.discounts);
+        _fillVariables(order);
+        return const Right(null);
       });
-      bloc.loadOrder(widget.id!);
     }
   }
 
-  void _fillControllers(Order order) {
-    _clientNameController.text = order.clientName;
-    _clientAddressController.text = order.clientAddress;
+  Future<void> _updateClientContacts() async {
+    final client = _clientNotifier.value;
+    if (client == null) {
+      setState(() {
+        _clientContacts = null;
+      });
+    } else if (client.id == null) {
+      setState(() {
+        _clientContacts = [];
+      });
+    } else {
+      final contactsResult = await bloc.findContactsDomain(client.id!);
+      if (mounted) {
+        setState(() {
+          contactsResult.fold(
+            (l) => _clientContacts = [],
+            (contacts) {
+              if (contacts.isNotEmpty) {
+                final lastContact = contacts.last;
+                _contactNotifier.value = SelectedContact(
+                  id: lastContact.id,
+                  contact: lastContact.label,
+                );
+              }
+              _clientContacts = contacts;
+            },
+          );
+        });
+      }
+    }
+  }
+
+  Future<void> _updateClientAddresses() async {
+    final client = _clientNotifier.value;
+    if (client == null) {
+      setState(() {
+        _clientAddresses = null;
+      });
+    } else if (client.id == null) {
+      setState(() {
+        _clientAddresses = [];
+      });
+    } else {
+      final addressesResult = await bloc.findAddressDomain(client.id!);
+      if (mounted) {
+        setState(() {
+          addressesResult.fold(
+            (l) => _clientAddresses = [],
+            (addresses) {
+              if (addresses.isNotEmpty) {
+                final lastAddress = addresses.last;
+                _addressNotifier.value = SelectedAddress(
+                  id: lastAddress.id,
+                  identifier: lastAddress.label,
+                );
+              }
+              _clientAddresses = addresses;
+            },
+          );
+        });
+      }
+    }
+  }
+
+  void _fillControllers(EditingOrderDto order) {
     _orderDateNotifier.value = order.orderDate;
     _deliveryDateNotifier.value = order.deliveryDate;
     _statusNotifier.value = order.status;
+    if (order.clientName != null) {
+      _clientNotifier.value =
+          SelectedClient(id: order.clientId, name: order.clientName!);
+    }
+    if (order.clientContact != null) {
+      _contactNotifier.value =
+          SelectedContact(id: order.contactId, contact: order.clientContact!);
+    }
+    if (order.clientAddress != null) {
+      _addressNotifier.value = SelectedAddress(
+          id: order.addressId, identifier: order.clientAddress!);
+    }
   }
 
-  void _fillCostPriceAndProducts(Order order) async {
-    final result = await bloc.getEditingOrderProducts(order.products);
-    result.fold(
-      (failure) => debugPrint(
-        'Could not find products: ${failure.message}',
-      ),
-      (products) {
-        if (mounted) {
-          setState(() {
-            for (final product in products) {
-              _cost += product.cost;
-              _price += product.price;
-              _products.add(product);
-            }
-          });
-        }
-      },
-    );
+  void _fillVariables(EditingOrderDto order) async {
+    setState(() {
+      for (final product in order.products) {
+        _cost += product.cost;
+        _price += product.price;
+        _products.add(product);
+      }
+      _discounts.addAll(order.discounts);
+    });
+  }
+
+  @override
+  void dispose() {
+    _orderDateNotifier.dispose();
+    _deliveryDateNotifier.dispose();
+    _statusNotifier.dispose();
+    _clientNotifier.dispose();
+    _contactNotifier.dispose();
+    _addressNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,7 +191,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           return Stack(
             children: [
               if (state is FailureState)
-                _buildFailureState((state as FailureState).failure)
+                _buildFailureState(state.failure)
               else if (state is LoadingOrderState)
                 const Center(child: CircularProgressIndicator())
               else
@@ -155,11 +237,19 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                 controller: _tabController,
                 children: [
                   GeneralOrderInformationForm(
-                    clientNameController: _clientNameController,
-                    clientAddressController: _clientAddressController,
                     deliveryDateNotifier: _deliveryDateNotifier,
                     orderDateNotifier: _orderDateNotifier,
                     statusNotifier: _statusNotifier,
+                    clientNotifier: _clientNotifier,
+                    contactNotifier: _contactNotifier,
+                    addressNotifier: _addressNotifier,
+                    searchClientDomainFn: bloc.findClientDomain,
+                    searchContactDomainFn: _clientContacts == null
+                        ? null
+                        : () async => Right(_clientContacts!),
+                    searchAddressDomainFn: _clientAddresses == null
+                        ? null
+                        : () async => Right(_clientAddresses!),
                     cost: _cost,
                     price: _price,
                     discount: _calculateDiscount(),
@@ -192,8 +282,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
 
   void _save() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final order = _createOrder();
-      final state = await bloc.save(order);
+      final state = await bloc.save(_createEditingOrderDto());
       if (state is SuccessState) {
         Modular.to.pop(true);
       } else if (state is FailureState) {
@@ -212,20 +301,25 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     return totalDiscount;
   }
 
-  Order _createOrder() {
-    return Order(
+  EditingOrderDto _createEditingOrderDto() {
+    return EditingOrderDto(
       id: widget.id,
-      clientName: _clientNameController.text,
-      clientAddress: _clientAddressController.text,
+      clientName: _clientNotifier.value?.id == null
+          ? _clientNotifier.value?.name
+          : null,
+      clientId: _clientNotifier.value?.id,
+      clientContact: _contactNotifier.value?.id == null
+          ? _contactNotifier.value?.contact
+          : null,
+      contactId: _contactNotifier.value?.id,
+      clientAddress: _addressNotifier.value?.id == null
+          ? _addressNotifier.value?.identifier
+          : null,
+      addressId: _addressNotifier.value?.id,
       deliveryDate: _deliveryDateNotifier.value!,
       orderDate: _orderDateNotifier.value!,
       status: _statusNotifier.value!,
-      products: _products
-          .map((ep) => OrderProduct(
-                id: ep.id,
-                quantity: ep.quantity,
-              ))
-          .toList(),
+      products: _products,
       discounts: _discounts,
     );
   }
@@ -260,7 +354,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     });
   }
 
-  void _onEditProduct(EditingOrderProduct oldValue, OrderProduct newValue) {
+  void _onEditProduct(EditingOrderProductDto oldValue, OrderProduct newValue) {
     bloc.getEditingOrderProduct(newValue).onRightThen((editingOrderProduct) {
       final index = _products.indexOf(oldValue);
       setState(() {
@@ -272,7 +366,7 @@ class _EditOrderScreenState extends State<EditOrderScreen>
     });
   }
 
-  void _onDeleteProduct(EditingOrderProduct product) {
+  void _onDeleteProduct(EditingOrderProductDto product) {
     setState(() {
       _products.remove(product);
       _cost -= product.cost;

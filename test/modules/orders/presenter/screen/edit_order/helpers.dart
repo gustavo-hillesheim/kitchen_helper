@@ -1,13 +1,12 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/models/editing_order_product.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 
 import '../../../../../finders.dart';
-import '../../../../../mocks.dart';
+import '../../../../../utils.dart';
 
 const discountOne =
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10);
@@ -101,8 +100,8 @@ void expectOrderProductFormState({
   if (name != null) {
     expect(
       find.byWidgetPredicate((widget) =>
-          widget is DropdownSearch<RecipeIngredientSelectorItem> &&
-          widget.selectedItem?.name == name),
+          widget is SearchTextField<RecipeIngredientSelectorItem> &&
+          widget.value?.name == name),
       findsOneWidget,
     );
   }
@@ -132,45 +131,38 @@ Future<void> inputOrderProductInfo(
   await tester.pumpAndSettle();
 }
 
-List<EditingOrderProduct> editingOrderProducts(List<OrderProduct> ops) {
-  return ops.map(editingOrderProduct).toList();
-}
-
-EditingOrderProduct editingOrderProduct(OrderProduct op) {
-  return EditingOrderProduct(
-    name: recipesMap[op.id]!.name,
-    quantity: op.quantity,
-    measurementUnit: recipesMap[op.id]!.measurementUnit,
-    cost: op.id.toDouble(),
-    id: op.id,
-    price: op.id.toDouble(),
-  );
-}
-
-final clientNameFinder = AppTextFormFieldFinder(name: 'Cliente');
-final clientAddressFinder = AppTextFormFieldFinder(name: 'Endereço');
+final clientNameFinder = SearchTextFieldFinder(name: 'Cliente');
+final clientContactFinder = SearchTextFieldFinder(name: 'Contato');
+final clientAddressFinder = SearchTextFieldFinder(name: 'Endereço');
 final orderDateFinder = AppDateTimeFieldFinder(name: 'Data do pedido');
 final deliveryDateFinder = AppDateTimeFieldFinder(name: 'Data de entrega');
 final statusFinder =
     find.byWidgetPredicate((widget) => widget is DropdownButton<OrderStatus>);
 
 expectGeneralOrderInformationFormState({
-  String? clientName,
-  String? clientAddress,
+  SelectedClient? client,
+  SelectedContact? contact,
+  SelectedAddress? address,
   OrderStatus? status,
   DateTime? orderDate,
   DateTime? deliveryDate,
 }) {
   final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
-  if (clientName != null) {
+  if (client != null) {
     expect(
-      AppTextFormFieldFinder(name: 'Cliente', value: clientName),
+      SearchTextFieldFinder(name: 'Cliente', value: client),
       findsOneWidget,
     );
   }
-  if (clientAddress != null) {
+  if (contact != null) {
     expect(
-      AppTextFormFieldFinder(name: 'Endereço', value: clientAddress),
+      SearchTextFieldFinder(name: 'Contato', value: contact),
+      findsOneWidget,
+    );
+  }
+  if (address != null) {
+    expect(
+      SearchTextFieldFinder(name: 'Endereço', value: address),
       findsOneWidget,
     );
   }
@@ -194,16 +186,29 @@ expectGeneralOrderInformationFormState({
 Future<void> inputGeneralOrderInfo(
   WidgetTester tester, {
   String? clientName,
+  String? clientContact,
   String? clientAddress,
   OrderStatus? status,
   DateTime? orderDate,
   DateTime? deliveryDate,
 }) async {
   if (clientName != null) {
-    await tester.enterText(clientNameFinder, clientName);
+    await tester.tap(clientNameFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(clientName));
+    await tester.pumpAndSettle();
+  }
+  if (clientContact != null) {
+    await tester.tap(clientContactFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(clientContact).last);
+    await tester.pumpAndSettle();
   }
   if (clientAddress != null) {
-    await tester.enterText(clientAddressFinder, clientAddress);
+    await tester.tap(clientAddressFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(clientAddress).last);
+    await tester.pumpAndSettle();
   }
   if (status != null) {
     await tester.tap(statusFinder);
@@ -264,7 +269,7 @@ Future<void> delete(WidgetTester tester, Finder finder) async {
   await tester.pump();
 }
 
-void expectOrderProductListTile(EditingOrderProduct orderProduct) {
+void expectOrderProductListTile(EditingOrderProductDto orderProduct) {
   expect(find.text(orderProduct.name), findsOneWidget);
   expect(find.text(Formatter.currency(orderProduct.price)), findsOneWidget);
   expect(

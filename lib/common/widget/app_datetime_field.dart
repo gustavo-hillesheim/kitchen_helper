@@ -29,9 +29,11 @@ class AppDateTimeField extends StatelessWidget {
       validator: required ? Validator.required : null,
       format: DateFormat('dd/MM/yyyy HH:mm'),
       decoration: InputDecoration(labelText: name),
+      resetIcon: required ? null : const Icon(Icons.close),
       onShowPicker: (context, currentValue) async {
         final date = await showDatePicker(
           context: context,
+          fieldLabelText: name,
           initialDate: currentValue ?? DateTime.now(),
           firstDate: DateTime(2000),
           lastDate: DateTime(2100),

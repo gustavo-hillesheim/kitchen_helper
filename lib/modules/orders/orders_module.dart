@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../ingredients/ingredients_module.dart';
 import '../recipes/recipes_module.dart';
+import '../clients/clients_module.dart';
 import 'data/repository/sqlite_order_discount_repository.dart';
 import 'data/repository/sqlite_order_product_repository.dart';
 import 'data/repository/sqlite_order_repository.dart';
@@ -11,19 +12,25 @@ import 'presenter/screen/orders_list/orders_list_screen.dart';
 
 class OrdersModule extends Module {
   @override
-  List<Module> get imports => [RecipesModule(), IngredientsModule()];
+  List<Module> get imports => [
+        RecipesModule(),
+        IngredientsModule(),
+        ClientsModule(),
+      ];
 
   @override
   List<Bind<Object>> get binds => [
         Bind<OrderDiscountRepository>(
             (i) => SQLiteOrderDiscountRepository(i())),
         Bind<OrderProductRepository>((i) => SQLiteOrderProductRepository(i())),
-        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i())),
+        Bind<OrderRepository>((i) => SQLiteOrderRepository(i(), i(), i(), i())),
         Bind((i) => SaveOrderUseCase(i())),
         Bind((i) => GetOrdersUseCase(i())),
         Bind((i) => GetOrderUseCase(i())),
         Bind((i) => DeleteOrderUseCase(i())),
         Bind((i) => GetListingOrderProductsUseCase(i())),
+        Bind((i) => GetEditingOrderDtoUseCase(i())),
+        Bind((i) => SaveEditingOrderDtoUseCase(i(), i(), i(), i())),
       ];
 
   @override

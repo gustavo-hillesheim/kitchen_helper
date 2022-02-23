@@ -1,28 +1,32 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../database/database.dart';
 import '../domain.dart';
 
-part 'order.g.dart';
+part 'editing_order_dto.g.dart';
 
 @JsonSerializable()
-class Order extends Equatable implements Entity<int> {
-  @override
+class EditingOrderDto extends Equatable {
   final int? id;
-  final int clientId;
+  final int? clientId;
+  final String? clientName;
   final int? contactId;
+  final String? clientContact;
   final int? addressId;
+  final String? clientAddress;
   final DateTime orderDate;
   final DateTime deliveryDate;
   final OrderStatus status;
-  final List<OrderProduct> products;
+  final List<EditingOrderProductDto> products;
   final List<Discount> discounts;
 
-  const Order({
+  const EditingOrderDto({
     this.id,
     required this.clientId,
+    required this.clientName,
     required this.contactId,
+    required this.clientContact,
+    required this.clientAddress,
     required this.addressId,
     required this.orderDate,
     required this.deliveryDate,
@@ -31,27 +35,32 @@ class Order extends Equatable implements Entity<int> {
     required this.discounts,
   });
 
-  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
+  factory EditingOrderDto.fromJson(Map<String, dynamic> json) =>
+      _$EditingOrderDtoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OrderToJson(this);
+  Map<String, dynamic> toJson() => _$EditingOrderDtoToJson(this);
 
-  Order copyWith({
+  EditingOrderDto copyWith({
     int? id,
     int? clientId,
+    String? client,
     int? contactId,
+    String? contact,
     int? addressId,
-    String? clientName,
-    String? clientAddress,
+    String? address,
     DateTime? orderDate,
     DateTime? deliveryDate,
     OrderStatus? status,
-    List<OrderProduct>? products,
+    List<EditingOrderProductDto>? products,
     List<Discount>? discounts,
   }) {
-    return Order(
+    return EditingOrderDto(
       id: id ?? this.id,
       clientId: clientId ?? this.clientId,
+      clientName: client ?? clientName,
       contactId: contactId ?? this.contactId,
+      clientContact: contact ?? clientContact,
+      clientAddress: address ?? clientAddress,
       addressId: addressId ?? this.addressId,
       orderDate: orderDate ?? this.orderDate,
       deliveryDate: deliveryDate ?? this.deliveryDate,
@@ -65,25 +74,15 @@ class Order extends Equatable implements Entity<int> {
   List<Object?> get props => [
         id,
         clientId,
+        clientName,
         contactId,
+        clientContact,
         addressId,
+        clientAddress,
         orderDate,
         deliveryDate,
         status,
         products,
         discounts,
       ];
-}
-
-enum OrderStatus { ordered, delivered }
-
-extension OrderStatusExtension on OrderStatus {
-  String get label {
-    switch (this) {
-      case OrderStatus.ordered:
-        return 'Recebido';
-      case OrderStatus.delivered:
-        return 'Entregue';
-    }
-  }
 }

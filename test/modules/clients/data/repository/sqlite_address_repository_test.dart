@@ -1,6 +1,6 @@
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -132,6 +132,56 @@ void main() {
       try {
         await repository.deleteByClient(1);
         fail('Should have thrown Exception');
+      } catch (e) {
+        expect(e, exception);
+      }
+    });
+  });
+
+  group('findAllDomain', () {
+    When<Future<List<Map<String, dynamic>>>> mockDomainQuery(int clientId) {
+      return when(() => database.query(
+            table: repository.tableName,
+            columns: ['id', 'identifier label'],
+            where: {'clientId': clientId},
+          ));
+    }
+
+    test('WHEN database has records SHOULD return dtos', () async {
+      mockDomainQuery(1).thenAnswer((_) async => [
+            {'id': 1, 'label': 'my address'},
+            {'id': 2, 'label': 'some other address'}
+          ]);
+
+      final result = await repository.findAllDomain(1);
+
+      expect(result.getRight().toNullable(), const [
+        AddressDomainDto(id: 1, label: 'my address'),
+        AddressDomainDto(id: 2, label: 'some other address'),
+      ]);
+    });
+
+    test('WHEN database throws DatabaseException SHOULD return Failure',
+        () async {
+      final exception = FakeDatabaseException('query error');
+      mockDomainQuery(1).thenThrow(exception);
+
+      final result = await repository.findAllDomain(1);
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotQueryMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD throw Exception',
+        () async {
+      final exception = Exception('query error');
+      mockDomainQuery(1).thenThrow(exception);
+
+      try {
+        await repository.findAllDomain(1);
+        fail('Should have thrown exception');
       } catch (e) {
         expect(e, exception);
       }

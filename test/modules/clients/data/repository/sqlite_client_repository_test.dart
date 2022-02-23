@@ -1,12 +1,10 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_client_repository.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_contact_repository.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -453,6 +451,52 @@ void main() {
       expect(result.getLeft().toNullable(), failure);
     });
   });
+
+  group('findAllDomain', () {
+    When<Future<List<Map<String, dynamic>>>> whenQueryDomain() {
+      return when(() => database
+          .query(table: repository.tableName, columns: ['id', 'name label']));
+    }
+
+    test('WHEN database has records SHOULD return dtos', () async {
+      whenQueryDomain().thenAnswer((_) async => [
+            {'id': 1, 'label': 'Client one'},
+            {'id': 2, 'label': 'Client two'},
+          ]);
+
+      final result = await repository.findAllDomain();
+
+      expect(result.getRight().toNullable(), const [
+        ClientDomainDto(id: 1, label: 'Client one'),
+        ClientDomainDto(id: 2, label: 'Client two'),
+      ]);
+    });
+
+    test('WHEN database throw DatabaseException SHOULD return Failure',
+        () async {
+      final exception = FakeDatabaseException('error on query');
+      whenQueryDomain().thenThrow(exception);
+
+      final result = await repository.findAllDomain();
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        SQLiteRepository.couldNotFindAllMessage,
+      );
+    });
+
+    test('WHEN database throws unknown Exception SHOULD throw Exception',
+        () async {
+      final exception = Exception('some error');
+      whenQueryDomain().thenThrow(exception);
+      try {
+        await repository.findAllDomain();
+        fail('Should have thrown');
+      } catch (e) {
+        expect(e, exception);
+      }
+    });
+  });
 }
 
 class SQLiteAddressRepositoryMock extends Mock
@@ -460,7 +504,3 @@ class SQLiteAddressRepositoryMock extends Mock
 
 class SQLiteContactRepositoryMock extends Mock
     implements SQLiteContactRepository {}
-
-class FakeAddressEntity extends Fake implements AddressEntity {}
-
-class FakeContactEntity extends Fake implements ContactEntity {}

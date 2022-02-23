@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../../../common/common.dart';
 import '../../../../../recipes/recipes.dart';
 import '../../../../domain/domain.dart';
-import '../models/editing_order_product.dart';
 
 class EditOrderProductForm extends StatefulWidget {
   final ValueChanged<OrderProduct> onSave;
-  final EditingOrderProduct? initialValue;
+  final EditingOrderProductDto? initialValue;
 
   const EditOrderProductForm({
     Key? key,
@@ -105,6 +104,7 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
         measurementUnit: widget.initialValue!.measurementUnit,
       );
     }
+    return null;
   }
 
   void _save() {

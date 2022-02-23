@@ -2,109 +2,84 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/common/common.dart';
-import 'package:kitchen_helper/modules/orders/orders.dart';
+import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/edit_order_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../../mocks.dart';
-import 'helpers.dart';
 
 void main() {
   late EditOrderBloc bloc;
-  late SaveOrderUseCase saveOrderUseCase;
+  late SaveEditingOrderDtoUseCaseMock saveOrderUseCase;
+  late GetEditingOrderDtoUseCaseMock getOrderUseCase;
   late GetRecipeUseCase getRecipeUseCase;
   late GetRecipeCostUseCase getRecipeCostUseCase;
-  late GetOrderUseCase getOrderUseCase;
+  late GetClientsDomainUseCase getClientsDomainUseCase;
+  late GetContactsDomainUseCase getContactsDomainUseCase;
+  late GetAddressDomainUseCase getAddressDomainUseCase;
 
   setUp(() {
     registerFallbackValue(FakeOrder());
-    saveOrderUseCase = SaveOrderUseCaseMock();
+    registerFallbackValue(FakeEditingOrderDto());
+    saveOrderUseCase = SaveEditingOrderDtoUseCaseMock();
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipeCostUseCase = GetRecipeCostUseCaseMock();
-    getOrderUseCase = GetOrderUseCaseMock();
+    getOrderUseCase = GetEditingOrderDtoUseCaseMock();
+    getClientsDomainUseCase = GetClientsDomainUseCaseMock();
+    getContactsDomainUseCase = GetContactsDomainUseCaseMock();
+    getAddressDomainUseCase = GetAddressDomainUseCaseMock();
     bloc = EditOrderBloc(
       saveOrderUseCase,
       getRecipeUseCase,
       getRecipeCostUseCase,
       getOrderUseCase,
+      getClientsDomainUseCase,
+      getContactsDomainUseCase,
+      getAddressDomainUseCase,
     );
   });
 
   test('SHOULD start with EmptyState', () {
-    expect(bloc.state, const EmptyState<Order>());
+    expect(bloc.state, const EmptyState<void>());
   });
 
-  blocTest<EditOrderBloc, ScreenState<Order>>(
+  blocTest<EditOrderBloc, ScreenState<void>>(
     'WHEN saves SHOULD call saveOrderUseCase',
     setUp: () {
       when(() => saveOrderUseCase.execute(any()))
           .thenAnswer((_) async => Right(spidermanOrderWithId));
     },
     build: () => bloc,
-    act: (bloc) => bloc.save(spidermanOrder),
-    expect: () => <ScreenState<Order>>[
+    act: (bloc) => bloc.save(editingSpidermanOrderDtoWithId),
+    expect: () => <ScreenState<void>>[
       const LoadingState(),
-      SuccessState(spidermanOrderWithId),
+      const SuccessState(null),
     ],
   );
 
-  blocTest<EditOrderBloc, ScreenState<Order>>(
+  blocTest<EditOrderBloc, ScreenState<void>>(
     'WHEN saveOrderUseCase fails SHOULD return FailureState',
     setUp: () {
       when(() => saveOrderUseCase.execute(any()))
           .thenAnswer((_) async => const Left(FakeFailure('failure')));
     },
     build: () => bloc,
-    act: (bloc) => bloc.save(spidermanOrder),
-    expect: () => <ScreenState<Order>>[
+    act: (bloc) => bloc.save(editingSpidermanOrderDtoWithId),
+    expect: () => <ScreenState<void>>[
       const LoadingState(),
       const FailureState(FakeFailure('failure')),
     ],
   );
 
-  test(
-      'WHEN getEditingOrderProducts is called SHOULD return list of EditingOrderProduct',
-      () async {
-    when(() => getRecipeUseCase.execute(cakeRecipe.id!))
-        .thenAnswer((_) async => Right(cakeRecipe));
-    when(() => getRecipeUseCase.execute(iceCreamRecipe.id!))
-        .thenAnswer((_) async => Right(iceCreamRecipe));
-    when(() => getRecipeCostUseCase.execute(cakeRecipe))
-        .thenAnswer((_) async => Right(cakeRecipe.id!.toDouble()));
-    when(() => getRecipeCostUseCase.execute(iceCreamRecipe))
-        .thenAnswer((_) async => Right(iceCreamRecipe.id!.toDouble()));
-
-    final result = await bloc.getEditingOrderProducts(
-      [cakeOrderProduct, iceCreamOrderProduct],
-    );
-
-    expect(
-      result.getRight().toNullable(),
-      editingOrderProducts([cakeOrderProduct, iceCreamOrderProduct]),
-    );
-    verify(() => getRecipeUseCase.execute(cakeRecipe.id!));
-    verify(() => getRecipeUseCase.execute(iceCreamRecipe.id!));
-    verify(() => getRecipeCostUseCase.execute(cakeRecipe));
-    verify(() => getRecipeCostUseCase.execute(iceCreamRecipe));
-  });
-
   test('WHEN getRecipeUseCase fails SHOULD return Failure', () async {
-    when(() => getRecipeUseCase.execute(cakeRecipe.id!))
-        .thenAnswer((_) async => Right(cakeRecipe));
     when(() => getRecipeUseCase.execute(iceCreamRecipe.id!)).thenAnswer(
         (_) async => const Left(FakeFailure('can not get ice cream')));
-    when(() => getRecipeCostUseCase.execute(cakeRecipe))
-        .thenAnswer((_) async => const Right(50));
 
-    final result = await bloc.getEditingOrderProducts(
-      [cakeOrderProduct, iceCreamOrderProduct],
-    );
+    final result = await bloc.getEditingOrderProduct(iceCreamOrderProduct);
 
     expect(result.getLeft().toNullable()?.message, 'can not get ice cream');
-    verify(() => getRecipeUseCase.execute(cakeRecipe.id!));
     verify(() => getRecipeUseCase.execute(iceCreamRecipe.id!));
-    verify(() => getRecipeCostUseCase.execute(cakeRecipe));
     verifyNever(() => getRecipeCostUseCase.execute(iceCreamRecipe));
   });
 
@@ -114,9 +89,7 @@ void main() {
     when(() => getRecipeCostUseCase.execute(cakeRecipe))
         .thenAnswer((_) async => const Left(FakeFailure('can not get cost')));
 
-    final result = await bloc.getEditingOrderProducts(
-      [cakeOrderProduct],
-    );
+    final result = await bloc.getEditingOrderProduct(cakeOrderProduct);
 
     expect(result.getLeft().toNullable()?.message, 'can not get cost');
     verify(() => getRecipeUseCase.execute(cakeRecipe.id!));

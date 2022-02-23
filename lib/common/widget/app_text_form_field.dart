@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../common.dart';
 
@@ -8,7 +7,9 @@ class AppTextFormField extends StatefulWidget {
   final bool required;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final ValueChanged<String>? onChanged;
   final String? prefixText;
+  final Widget? prefixIcon;
   final String? example;
   final bool? multiline;
   final String? initialValue;
@@ -18,9 +19,11 @@ class AppTextFormField extends StatefulWidget {
     Key? key,
     required this.name,
     this.required = true,
+    this.onChanged,
     this.controller,
     this.keyboardType,
     this.prefixText,
+    this.prefixIcon,
     this.example,
     this.multiline,
     this.initialValue,
@@ -31,8 +34,10 @@ class AppTextFormField extends StatefulWidget {
     Key? key,
     required this.name,
     this.required = true,
+    this.onChanged,
     this.controller,
     this.prefixText,
+    this.prefixIcon,
     this.example = '10',
     this.multiline,
     this.maxLength,
@@ -46,10 +51,12 @@ class AppTextFormField extends StatefulWidget {
     Key? key,
     required this.name,
     this.required = true,
+    this.onChanged,
     this.controller,
     this.example = '9.90',
     this.multiline,
     this.maxLength,
+    this.prefixIcon,
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         prefixText = 'R\$',
@@ -84,6 +91,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       onEditingComplete: () {
         FocusScope.of(context).nextFocus();
       },
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         counterText: "",
         label: Wrap(
@@ -97,6 +105,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
           ],
         ),
         prefixText: widget.prefixText,
+        prefixIcon: widget.prefixIcon,
         hintText: widget.example != null ? 'Ex.: ${widget.example}' : null,
       ),
       controller: controller,
