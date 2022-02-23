@@ -261,8 +261,8 @@ WHERE o.id = ?
   Future<List<Map<String, dynamic>>> _getEditingProducts(int orderId) async {
     try {
       final queryResult = await database.rawQuery('''
-SELECT op.id id, r.name name, r.measurementUnit measurementUnit, 
-  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price, op.productId productId
+SELECT op.productId id, r.name name, r.measurementUnit measurementUnit, 
+  op.quantity quantity, (r.price / r.quantitySold * op.quantity) price
 FROM orderProducts op
 INNER JOIN recipes r ON op.productId = r.id
 WHERE op.orderId = ?
@@ -271,7 +271,7 @@ WHERE op.orderId = ?
       for (final row in queryResult) {
         final data = Map<String, dynamic>.from(row);
         final cost = await recipeRepository
-            .getCost(data['productId'], quantity: data['quantity'])
+            .getCost(data['id'], quantity: data['quantity'])
             .throwOnFailure();
         data['cost'] = cost;
         editingProducts.add(data);
