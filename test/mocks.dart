@@ -119,7 +119,10 @@ class FakeContactEntity extends Fake implements ContactEntity {}
 class FakeOrdersFilter extends Fake implements OrdersFilter {}
 
 class FakeFailure extends Failure {
-  const FakeFailure(String message) : super(message);
+  FakeFailure(String message) : super(message);
+
+  @override
+  void report() {}
 }
 
 class FakeDatabaseException extends DatabaseException with EquatableMixin {

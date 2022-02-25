@@ -73,7 +73,7 @@ void main() {
       'WHEN repository returns Failure on findAllDomain '
       'SHOULD return Failure', () async {
     mockFindAllDomain()
-        .thenAnswer((_) async => const Left(FakeFailure('find failure')));
+        .thenAnswer((_) async => Left(FakeFailure('find failure')));
 
     final result = await usecase.execute(null);
 
@@ -84,8 +84,8 @@ void main() {
       'WHEN repository returns Failure on getRecipesThatDependOn '
       'SHOULD return Failure', () async {
     mockFindAllDomain().thenAnswer((_) async => const Right([]));
-    when(() => repository.getRecipesThatDependOn(any())).thenAnswer(
-        (_) async => const Left(FakeFailure('get recipes failure')));
+    when(() => repository.getRecipesThatDependOn(any()))
+        .thenAnswer((_) async => Left(FakeFailure('get recipes failure')));
 
     final result = await usecase.execute(
       const RecipeDomainFilter(ignoreRecipesThatDependOn: 1),

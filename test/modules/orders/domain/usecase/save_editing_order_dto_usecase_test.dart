@@ -50,10 +50,10 @@ void main() {
   });
 
   test('WHEN has Failure on save client SHOULD return Failure', () async {
-    const failure = FakeFailure('failure on save client');
+    final failure = FakeFailure('failure on save client');
     final order = editingOrderWithNonExistingClient;
     when(() => clientRepository.save(any()))
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
     when(() => orderRepository.save(any()))
         .thenAnswer((_) async => const Right(2));
 
@@ -81,10 +81,10 @@ void main() {
   });
 
   test('WHEN has Failure on save address SHOULD return Failure', () async {
-    const failure = FakeFailure('failure on save address');
+    final failure = FakeFailure('failure on save address');
     final order = editingOrderWithNonExistingAddress;
     when(() => addressRepository.save(any()))
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
     when(() => orderRepository.save(any()))
         .thenAnswer((_) async => const Right(2));
 
@@ -112,10 +112,10 @@ void main() {
   });
 
   test('WHEN has Failure on save contact SHOULD return Failure', () async {
-    const failure = FakeFailure('failure on save contact');
+    final failure = FakeFailure('failure on save contact');
     final order = editingOrderWithNonExistingContact;
     when(() => contactRepository.save(any()))
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
     when(() => orderRepository.save(any()))
         .thenAnswer((_) async => const Right(2));
 

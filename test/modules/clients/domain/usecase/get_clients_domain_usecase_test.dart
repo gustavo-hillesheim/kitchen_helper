@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
-import 'package:kitchen_helper/modules/clients/domain/usecase/get_clients_domain_usecase.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -29,8 +28,8 @@ void main() {
   });
 
   test('WHEN repository return Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('error on query');
-    mockQuery().thenAnswer((_) async => const Left(failure));
+    final failure = FakeFailure('error on query');
+    mockQuery().thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(const NoParams());
 

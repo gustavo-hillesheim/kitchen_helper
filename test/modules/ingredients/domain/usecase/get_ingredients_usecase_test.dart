@@ -28,7 +28,7 @@ void main() {
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
     when(() => repository.findAllListing())
-        .thenAnswer((_) async => const Left(FakeFailure('error')));
+        .thenAnswer((_) async => Left(FakeFailure('error')));
 
     final result = await usecase.execute(const NoParams());
 

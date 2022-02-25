@@ -143,9 +143,9 @@ void main() {
     test(
         'WHEN address query return Failure '
         'SHOULD not query contacts', () async {
-      const failure = FakeFailure('address failure');
+      final failure = FakeFailure('address failure');
       mockFindClient().thenAnswer((_) async => {'id': 1, 'name': 'Batman'});
-      mockFindAddresses().thenAnswer((_) async => const Left(failure));
+      mockFindAddresses().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findById(1);
 
@@ -156,10 +156,10 @@ void main() {
     test(
         'WHEN contacts query return Failure '
         'SHOULD return Failure', () async {
-      const failure = FakeFailure('contact failure');
+      final failure = FakeFailure('contact failure');
       mockFindClient().thenAnswer((_) async => {'id': 1, 'name': 'Batman'});
       mockFindAddresses().thenAnswer((_) async => const Right([]));
-      mockFindContacts().thenAnswer((_) async => const Left(failure));
+      mockFindContacts().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findById(1);
 
@@ -298,13 +298,13 @@ void main() {
     test(
         'WHEN has Failure on create address '
         'SHOULD not create contacts', () async {
-      const failure = FakeFailure('address failure');
+      final failure = FakeFailure('address failure');
       mockTransaction<Either<Failure, int>>(() {
         verifyNever(() => contactRepository.create(any()));
       });
       mockInsertClient(client: batmanClient).thenAnswer((_) async => 1);
       mockCreateAddress(address: batmanClient.addresses[0], clientId: 1)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.create(batmanClient);
 
@@ -314,13 +314,13 @@ void main() {
     test(
         'WHEN has Failure on create contact '
         'SHOULD return Failure', () async {
-      const failure = FakeFailure('contact failure');
+      final failure = FakeFailure('contact failure');
       mockTransaction<Either<Failure, int>>(() {});
       mockInsertClient(client: batmanClient).thenAnswer((_) async => 1);
       mockCreateAddress(address: batmanClient.addresses[0], clientId: 1)
           .thenAnswer((_) async => const Right(1));
       mockCreateContact(contact: batmanClient.contacts[0], clientId: 1)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.create(batmanClient);
 
@@ -359,7 +359,7 @@ void main() {
     test(
         'WHEN has Failure on delete addresses '
         'SHOULD not recreate contacts', () async {
-      const failure = FakeFailure('delete address failure');
+      final failure = FakeFailure('delete address failure');
       mockTransaction<Either<Failure, void>>(() {
         verify(() => addressRepository.deleteByClient(batmanClient.id!));
         verifyNever(() => contactRepository.deleteByClient(batmanClient.id!));
@@ -369,7 +369,7 @@ void main() {
       mockUpdateClient(client: batmanClient)
           .thenAnswer((_) async => const Right(null));
       mockDeleteAddresses(clientId: batmanClient.id!)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.update(batmanClient);
 
@@ -379,7 +379,7 @@ void main() {
     test(
         'WHEN has Failure on create addresses '
         'SHOULD not recreate contacts', () async {
-      const failure = FakeFailure('create address failure');
+      final failure = FakeFailure('create address failure');
       mockTransaction<Either<Failure, void>>(() {
         verify(() => addressRepository.deleteByClient(batmanClient.id!));
         verifyNever(() => contactRepository.deleteByClient(batmanClient.id!));
@@ -392,7 +392,7 @@ void main() {
           .thenAnswer((_) async => const Right(null));
       mockCreateAddress(
               address: batmanClient.addresses[0], clientId: batmanClient.id!)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.update(batmanClient);
 
@@ -402,7 +402,7 @@ void main() {
     test(
         'WHEN has Failure on delete contacts '
         'SHOULD not create contacts', () async {
-      const failure = FakeFailure('delete contacts failure');
+      final failure = FakeFailure('delete contacts failure');
       mockTransaction<Either<Failure, void>>(() {
         verify(() => addressRepository.deleteByClient(batmanClient.id!));
         verify(() => contactRepository.deleteByClient(batmanClient.id!));
@@ -417,7 +417,7 @@ void main() {
               address: batmanClient.addresses[0], clientId: batmanClient.id!)
           .thenAnswer((_) async => const Right(1));
       mockDeleteContacts(clientId: batmanClient.id!)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.update(batmanClient);
 
@@ -426,7 +426,7 @@ void main() {
     test(
         'WHEN create contacts returns Failure '
         'SHOULD return Failure', () async {
-      const failure = FakeFailure('create contacts failure');
+      final failure = FakeFailure('create contacts failure');
       mockTransaction<Either<Failure, void>>(() {
         verify(() => addressRepository.deleteByClient(batmanClient.id!));
         verify(() => contactRepository.deleteByClient(batmanClient.id!));
@@ -444,7 +444,7 @@ void main() {
           .thenAnswer((_) async => const Right(null));
       mockCreateContact(
               contact: batmanClient.contacts[0], clientId: batmanClient.id!)
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.update(batmanClient);
 

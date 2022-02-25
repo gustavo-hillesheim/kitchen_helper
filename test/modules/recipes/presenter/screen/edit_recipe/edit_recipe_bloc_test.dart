@@ -54,13 +54,13 @@ void main() {
     setUp: () {
       setup();
       when(() => saveRecipeUseCase.execute(any())).thenAnswer(
-        (invocation) async => const Left(FakeFailure('some error')),
+        (invocation) async => Left(FakeFailure('some error')),
       );
     },
     build: () => bloc,
     expect: () => <ScreenState<Recipe>>[
       const LoadingState(),
-      const FailureState(FakeFailure('some error')),
+      FailureState(FakeFailure('some error')),
     ],
     act: (bloc) => bloc.save(sugarWithEggRecipeWithId),
   );

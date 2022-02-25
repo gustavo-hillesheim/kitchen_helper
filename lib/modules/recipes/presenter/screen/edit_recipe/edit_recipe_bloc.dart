@@ -32,7 +32,7 @@ class EditRecipeBloc extends AppCubit<Recipe> {
       (f) => emit(FailureState(f)),
       (recipe) {
         if (recipe == null) {
-          emit(const FailureState(
+          emit(FailureState(
             BusinessFailure('Não foi possível encontrar a receita'),
           ));
         } else {

@@ -26,17 +26,17 @@ class SaveEditingOrderDtoUseCase extends UseCase<EditingOrderDto, Order> {
   @override
   Future<Either<Failure, Order>> execute(EditingOrderDto dto) async {
     if (dto.clientId == null && dto.clientName == null) {
-      return const Left(BusinessFailure(clientIdOrNameAreRequiredMessage));
+      return Left(BusinessFailure(clientIdOrNameAreRequiredMessage));
     }
     if (dto.clientId != null && dto.clientName != null) {
-      return const Left(BusinessFailure(cantSaveWithClientNAmeAndIdMessage));
+      return Left(BusinessFailure(cantSaveWithClientNAmeAndIdMessage));
     }
     if (dto.clientContact != null && dto.contactId != null) {
-      return const Left(
+      return Left(
           BusinessFailure(cantSaveWithClientContactAndContactIdMessage));
     }
     if (dto.clientAddress != null && dto.addressId != null) {
-      return const Left(
+      return Left(
           BusinessFailure(cantSaveWithClientAddressAndAddressIdMessage));
     }
     return _save(dto);

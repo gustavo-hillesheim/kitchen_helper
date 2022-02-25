@@ -66,9 +66,9 @@ class AddressData extends Equatable {
 }
 
 class InvalidCepFailure extends Failure {
-  const InvalidCepFailure(int cep) : super('O CEP "$cep" é inválido');
+  InvalidCepFailure(int cep) : super('O CEP "$cep" é inválido');
 }
 
 class NonExistingCepFailure extends Failure {
-  const NonExistingCepFailure(int cep) : super('O CEP "$cep" não existe');
+  NonExistingCepFailure(int cep) : super('O CEP "$cep" não existe');
 }

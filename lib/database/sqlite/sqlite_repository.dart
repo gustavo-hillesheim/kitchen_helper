@@ -59,7 +59,7 @@ class SQLiteRepository<T extends Entity<int>> extends Repository<T, int> {
   @override
   Future<Either<Failure, void>> update(T entity) async {
     if (entity.id == null) {
-      return const Left(RepositoryFailure(canNotUpdateWithIdMessage));
+      return Left(RepositoryFailure(canNotUpdateWithIdMessage));
     }
     try {
       await database.update(tableName, toMap(entity), idColumn, entity.id!);
