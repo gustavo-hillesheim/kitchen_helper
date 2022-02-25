@@ -49,3 +49,4 @@ app.*.map.json
 **/*.g.dart
 .vscode
 android/key.properties
+android/app/google-services.json

@@ -21,7 +21,7 @@ class EditIngredientBloc extends AppCubit<Ingredient> {
       (f) => emit(FailureState(f)),
       (ingredient) {
         if (ingredient == null) {
-          emit(const FailureState(
+          emit(FailureState(
             BusinessFailure('Não foi possível encontrar o ingrediente'),
           ));
         } else {

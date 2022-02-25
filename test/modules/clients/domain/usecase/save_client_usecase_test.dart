@@ -25,9 +25,9 @@ void main() {
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('save failure');
+    final failure = FakeFailure('save failure');
     when(() => repository.save(batmanClient))
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(batmanClient);
 

@@ -24,9 +24,9 @@ void main() {
   });
 
   test('WHNE repository returns Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('some failure');
+    final failure = FakeFailure('some failure');
     when(() => repository.findEditingDtoById(1))
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(1);
 

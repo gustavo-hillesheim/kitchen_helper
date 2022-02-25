@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
-import 'package:kitchen_helper/modules/clients/domain/dto/listing_client_dto.dart';
 import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
 import 'package:kitchen_helper/modules/clients/domain/usecase/get_clients_usecase.dart';
 import 'package:mocktail/mocktail.dart';
@@ -27,9 +26,9 @@ void main() {
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('find failure');
+    final failure = FakeFailure('find failure');
     when(() => repository.findAllListing())
-        .thenAnswer((_) async => const Left(failure));
+        .thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(const NoParams());
 

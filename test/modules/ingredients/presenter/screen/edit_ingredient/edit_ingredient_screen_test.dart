@@ -156,7 +156,7 @@ void main() {
     when(() => bloc.loadIngredient(egg.id!)).thenAnswer(
         (_) async => streamController.sink.add(const SuccessState(egg)));
     when(() => bloc.save(egg))
-        .thenAnswer((_) async => const Left(FakeFailure('Error text')));
+        .thenAnswer((_) async => Left(FakeFailure('Error text')));
 
     await tester.pumpWidget(MaterialApp(
         home: EditIngredientScreen(

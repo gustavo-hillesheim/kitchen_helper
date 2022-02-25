@@ -15,7 +15,7 @@ class GetEditingOrderDtoUseCase extends UseCase<int, EditingOrderDto> {
     final result = await repository.findEditingDtoById(id);
     return result.bind((e) {
       if (e == null) {
-        return const Left(BusinessFailure(couldntFindEntityMessage));
+        return Left(BusinessFailure(couldntFindEntityMessage));
       }
       return Right(e);
     });

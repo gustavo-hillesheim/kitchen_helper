@@ -92,8 +92,8 @@ void main() {
 
   testWidgets('Should show Empty with error message if there is a Failure',
       (tester) async {
-    when(() => bloc.load()).thenAnswer((_) async => streamController.sink
-        .add(const FailureState(FakeFailure('fake error'))));
+    when(() => bloc.load()).thenAnswer((_) async =>
+        streamController.sink.add(FailureState(FakeFailure('fake error'))));
 
     await tester.pumpWidget(
       MaterialApp(home: IngredientsListScreen(bloc: bloc)),
@@ -219,10 +219,9 @@ void main() {
       await tester.drag(find.byType(IngredientListTile), const Offset(-500, 0));
       await tester.pump();
 
-      await delete(tester, listingEggDto,
-          result: const Left(FakeFailure('error')));
+      await delete(tester, listingEggDto, result: Left(FakeFailure('error')));
       await retryDelete(tester, listingEggDto, result: const Right(egg));
-      await undoDelete(tester, egg, result: const Left(FakeFailure('error')));
+      await undoDelete(tester, egg, result: Left(FakeFailure('error')));
       await retryUndoDelete(tester, egg, result: const Right(egg));
     },
   );

@@ -89,8 +89,8 @@ void main() {
     when(() => bloc.getEditingOrderProduct(spidermanOrder.products[0]))
         .thenAnswer((_) async =>
             Right(editingOrderProduct(spidermanOrder.products[0])));
-    when(() => bloc.save(any())).thenAnswer(
-        (_) async => const FailureState((FakeFailure('error message'))));
+    when(() => bloc.save(any()))
+        .thenAnswer((_) async => FailureState((FakeFailure('error message'))));
 
     await pumpWidget(tester);
     await inputOrderInfo(tester, editingSpidermanOrderDtoWithId);

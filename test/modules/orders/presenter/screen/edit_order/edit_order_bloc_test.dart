@@ -62,19 +62,19 @@ void main() {
     'WHEN saveOrderUseCase fails SHOULD return FailureState',
     setUp: () {
       when(() => saveOrderUseCase.execute(any()))
-          .thenAnswer((_) async => const Left(FakeFailure('failure')));
+          .thenAnswer((_) async => Left(FakeFailure('failure')));
     },
     build: () => bloc,
     act: (bloc) => bloc.save(editingSpidermanOrderDtoWithId),
     expect: () => <ScreenState<void>>[
       const LoadingState(),
-      const FailureState(FakeFailure('failure')),
+      FailureState(FakeFailure('failure')),
     ],
   );
 
   test('WHEN getRecipeUseCase fails SHOULD return Failure', () async {
-    when(() => getRecipeUseCase.execute(iceCreamRecipe.id!)).thenAnswer(
-        (_) async => const Left(FakeFailure('can not get ice cream')));
+    when(() => getRecipeUseCase.execute(iceCreamRecipe.id!))
+        .thenAnswer((_) async => Left(FakeFailure('can not get ice cream')));
 
     final result = await bloc.getEditingOrderProduct(iceCreamOrderProduct);
 
@@ -87,7 +87,7 @@ void main() {
     when(() => getRecipeUseCase.execute(cakeRecipe.id!))
         .thenAnswer((_) async => Right(cakeRecipe));
     when(() => getRecipeCostUseCase.execute(cakeRecipe))
-        .thenAnswer((_) async => const Left(FakeFailure('can not get cost')));
+        .thenAnswer((_) async => Left(FakeFailure('can not get cost')));
 
     final result = await bloc.getEditingOrderProduct(cakeOrderProduct);
 

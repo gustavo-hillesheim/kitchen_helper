@@ -80,7 +80,7 @@ void main() {
         .thenAnswer((_) async {
       setState(const LoadingState());
       await Future.delayed(const Duration(seconds: 1));
-      setState(const FailureState(FakeFailure('failure')));
+      setState(FailureState(FakeFailure('failure')));
     });
 
     await tester.pumpWidget(MaterialApp(
