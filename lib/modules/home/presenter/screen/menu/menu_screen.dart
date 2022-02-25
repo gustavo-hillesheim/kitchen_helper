@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:kitchen_helper/core/device_info.dart';
 
 import 'widgets/page_description_tile.dart';
 
@@ -10,6 +12,25 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ajudante de cozinha'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              final deviceId = DeviceInfo.instance.deviceId;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Seu ID: $deviceId'),
+                  action: SnackBarAction(
+                    label: 'Copiar',
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: deviceId));
+                    },
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.bug_report_outlined),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
