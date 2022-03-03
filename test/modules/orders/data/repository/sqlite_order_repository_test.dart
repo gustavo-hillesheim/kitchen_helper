@@ -118,9 +118,9 @@ void main() {
 
     test('WHEN orderProductRepository returns Failure SHOULD return Failure',
         () async {
-      const failure = FakeFailure('failure');
+      final failure = FakeFailure('failure');
       mockFindById().thenAnswer((_) async => repository.toMap(batmanOrder));
-      mockFindProductsByOrder().thenAnswer((_) async => const Left(failure));
+      mockFindProductsByOrder().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findById(batmanOrder.id!);
 
@@ -129,10 +129,10 @@ void main() {
 
     test('WHEN orderDiscountRepository returns Failure SHOULD return Failure',
         () async {
-      const failure = FakeFailure('failure');
+      final failure = FakeFailure('failure');
       mockFindById().thenAnswer((_) async => repository.toMap(batmanOrder));
       mockFindProductsByOrder().thenAnswer((_) async => const Right([]));
-      mockFindDiscountsByOrder().thenAnswer((_) async => const Left(failure));
+      mockFindDiscountsByOrder().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findById(batmanOrder.id!);
 
@@ -214,12 +214,12 @@ void main() {
 
     test('WHEN orderProductRepository returns Failure SHOULD return Failure',
         () async {
-      const failure = FakeFailure('failure');
+      final failure = FakeFailure('failure');
       mockFindAll().thenAnswer(
         (_) async => [repository.toMap(batmanOrder)],
       );
       mockFindDiscountsByOrder().thenAnswer((_) async => const Right([]));
-      mockFindProductsByOrder().thenAnswer((_) async => const Left(failure));
+      mockFindProductsByOrder().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findAll();
 
@@ -232,11 +232,11 @@ void main() {
 
     test('WHEN orderDiscountRepository returns Failure SHOULD return Failure',
         () async {
-      const failure = FakeFailure('failure');
+      final failure = FakeFailure('failure');
       mockFindAll().thenAnswer(
         (_) async => [repository.toMap(batmanOrder)],
       );
-      mockFindDiscountsByOrder().thenAnswer((_) async => const Left(failure));
+      mockFindDiscountsByOrder().thenAnswer((_) async => Left(failure));
 
       final result = await repository.findAll();
 
@@ -309,7 +309,7 @@ void main() {
       mockDeleteById().thenAnswer((_) async {});
       mockDeleteDiscountsByOrder().thenAnswer((_) async => const Right(null));
       mockDeleteProductsByOrder().thenAnswer(
-        (_) async => const Left(FakeFailure('failure')),
+        (_) async => Left(FakeFailure('failure')),
       );
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
         final result = await executeTransaction(invocation);
@@ -330,7 +330,7 @@ void main() {
         'SHOULD return Failure', () async {
       mockDeleteById().thenAnswer((_) async {});
       mockDeleteDiscountsByOrder()
-          .thenAnswer((_) async => const Left(FakeFailure('failure')));
+          .thenAnswer((_) async => Left(FakeFailure('failure')));
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
         final result = await executeTransaction(invocation);
         verify(() => database.deleteById(tableName, idColumn, batmanOrder.id!));
@@ -420,7 +420,7 @@ void main() {
       });
       mockInsert().thenAnswer((_) async => batmanOrder.id!);
       mockCreateProduct().thenAnswer(
-        (_) async => const Left(FakeFailure('failure')),
+        (_) async => Left(FakeFailure('failure')),
       );
 
       final result = await repository.create(batmanOrder);
@@ -442,7 +442,7 @@ void main() {
       mockInsert().thenAnswer((_) async => batmanOrder.id!);
       mockCreateProduct().thenAnswer((_) async => const Right(1));
       mockCreateDiscount()
-          .thenAnswer((_) async => const Left(FakeFailure('failure')));
+          .thenAnswer((_) async => Left(FakeFailure('failure')));
 
       final result = await repository.create(batmanOrder);
 
@@ -543,7 +543,7 @@ void main() {
       });
       mockUpdate().thenAnswer((_) async {});
       mockDeleteProductsByOrder().thenAnswer(
-        (_) async => const Left(FakeFailure('failure')),
+        (_) async => Left(FakeFailure('failure')),
       );
       mockDeleteDiscountsByOrder().thenAnswer((_) async => const Right(null));
 
@@ -574,7 +574,7 @@ void main() {
       });
       mockUpdate().thenAnswer((_) async {});
       mockDeleteDiscountsByOrder()
-          .thenAnswer((_) async => const Left(FakeFailure('failure')));
+          .thenAnswer((_) async => Left(FakeFailure('failure')));
 
       final result = await repository.update(batmanOrder);
 
@@ -607,7 +607,7 @@ void main() {
       mockCreateDiscount().thenAnswer((_) async => const Right(1));
       mockDeleteDiscountsByOrder().thenAnswer((_) async => const Right(null));
       mockCreateProduct().thenAnswer(
-        (_) async => const Left(FakeFailure('create failure')),
+        (_) async => Left(FakeFailure('create failure')),
       );
 
       final result = await repository.update(batmanOrder);
@@ -638,7 +638,7 @@ void main() {
       });
       mockUpdate().thenAnswer((_) async {});
       mockCreateDiscount()
-          .thenAnswer((_) async => const Left(FakeFailure('create failure')));
+          .thenAnswer((_) async => Left(FakeFailure('create failure')));
       mockDeleteDiscountsByOrder().thenAnswer((_) async => const Right(null));
       mockDeleteProductsByOrder().thenAnswer((_) async => const Right(null));
 
@@ -855,10 +855,10 @@ void main() {
 
     test('WHEN has failure on getting discounts SHOULD return Failure',
         () async {
-      const failure = FakeFailure('error on discounts');
+      final failure = FakeFailure('error on discounts');
       mockExists(1, true);
       mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
-      mockFindDiscounts(1, const Left(failure));
+      mockFindDiscounts(1, Left(failure));
 
       final result = await repository.findEditingDtoById(1);
 
@@ -883,7 +883,7 @@ void main() {
 
     test('WHEN has failure on getting product cost SHOULD return Failure',
         () async {
-      const failure = FakeFailure('failure on cost');
+      final failure = FakeFailure('failure on cost');
       mockExists(1, true);
       mockGetEditingOrderData(1, editingSpidermanOrderDtoWithId);
       mockFindDiscounts(1, const Right([]));
@@ -895,7 +895,7 @@ void main() {
       ]);
       when(() =>
               recipeRepository.getCost(any(), quantity: any(named: 'quantity')))
-          .thenAnswer((_) async => const Left(failure));
+          .thenAnswer((_) async => Left(failure));
 
       final result = await repository.findEditingDtoById(1);
 

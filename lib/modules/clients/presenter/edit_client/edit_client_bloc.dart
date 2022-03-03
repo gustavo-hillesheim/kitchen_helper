@@ -21,9 +21,8 @@ class EditClientBloc extends AppCubit<Client> {
       (f) => emit(FailureState(f)),
       (client) {
         if (client == null) {
-          emit(const FailureState(
-            BusinessFailure('Não foi possível encontrar o cliente'),
-          ));
+          emit(FailureState(
+              BusinessFailure('Não foi possível encontrar o cliente')));
         } else {
           emit(SuccessState(client));
         }

@@ -1,7 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/address.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/client.dart';
-import 'package:kitchen_helper/modules/clients/domain/model/contact.dart';
 import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
 import 'package:kitchen_helper/modules/clients/domain/usecase/get_client_usecase.dart';
 import 'package:mocktail/mocktail.dart';
@@ -28,9 +25,8 @@ void main() {
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('get failure');
-    when(() => repository.findById(2))
-        .thenAnswer((_) async => const Left(failure));
+    final failure = FakeFailure('get failure');
+    when(() => repository.findById(2)).thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(2);
 

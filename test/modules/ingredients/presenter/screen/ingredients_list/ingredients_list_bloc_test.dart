@@ -72,13 +72,13 @@ void main() {
     build: () {
       createInstances();
       when(() => getAllUseCase.execute(const NoParams()))
-          .thenAnswer((_) async => const Left(FakeFailure('Some error on '
+          .thenAnswer((_) async => Left(FakeFailure('Some error on '
               'load')));
       return bloc;
     },
     expect: () => <ScreenState<List<ListingIngredientDto>>>[
       const LoadingState(),
-      const FailureState(FakeFailure('Some error on load')),
+      FailureState(FakeFailure('Some error on load')),
     ],
     act: (bloc) async => await bloc.load(),
   );
@@ -88,13 +88,13 @@ void main() {
       'Failure', () async {
     createInstances();
     when(() => deleteUseCase.execute(egg.id!))
-        .thenAnswer((_) async => const Left(FakeFailure('Delete error')));
+        .thenAnswer((_) async => Left(FakeFailure('Delete error')));
     when(() => getAllUseCase.execute(const NoParams()))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.delete(egg.id!);
 
-    expect(result.getLeft().toNullable(), const FakeFailure('Delete error'));
+    expect(result.getLeft().toNullable(), FakeFailure('Delete error'));
   });
 
   test(
@@ -102,12 +102,12 @@ void main() {
       'Failure', () async {
     createInstances();
     when(() => saveUseCase.execute(egg))
-        .thenAnswer((_) async => const Left(FakeFailure('Save error')));
+        .thenAnswer((_) async => Left(FakeFailure('Save error')));
     when(() => getAllUseCase.execute(const NoParams()))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.save(egg);
 
-    expect(result.getLeft().toNullable(), const FakeFailure('Save error'));
+    expect(result.getLeft().toNullable(), FakeFailure('Save error'));
   });
 }

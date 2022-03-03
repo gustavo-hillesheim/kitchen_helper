@@ -68,7 +68,7 @@ void main() {
   testWidgets('WHEN service returns Failure SHOULD render Error state',
       (tester) async {
     when(() => service.getItems(getOnly: any(named: 'getOnly'))).thenAnswer(
-      (_) async => const Left(FakeFailure('some error')),
+      (_) async => Left(FakeFailure('some error')),
     );
 
     await pumpWidget(tester);

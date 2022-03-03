@@ -39,7 +39,7 @@ void main() {
       setup();
       final getResponses = <Either<Failure, List<ListingRecipeDto>>>[
         const Right([]),
-        const Left(FakeFailure('get error'))
+        Left(FakeFailure('get error'))
       ];
       when(() => getRecipesUseCase.execute(any()))
           .thenAnswer((_) async => getResponses.removeAt(0));
@@ -49,7 +49,7 @@ void main() {
       const LoadingState(),
       const SuccessState([]),
       const LoadingState(),
-      const FailureState(FakeFailure('get error')),
+      FailureState(FakeFailure('get error')),
     ],
     act: (bloc) async {
       await bloc.load();
@@ -68,7 +68,7 @@ void main() {
       setup();
       final deleteResponses = <Either<Failure, void>>[
         const Right(null),
-        const Left(FakeFailure('error'))
+        Left(FakeFailure('error'))
       ];
       when(() => deleteRecipeUseCase.execute(any()))
           .thenAnswer((_) async => deleteResponses.removeAt(0));
@@ -104,7 +104,7 @@ void main() {
       setup();
       final saveResponses = <Either<Failure, Recipe>>[
         Right(cakeRecipe),
-        const Left(FakeFailure('error'))
+        Left(FakeFailure('error'))
       ];
       when(() => saveRecipeUseCase.execute(any()))
           .thenAnswer((_) async => saveResponses.removeAt(0));

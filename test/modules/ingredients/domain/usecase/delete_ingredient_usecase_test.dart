@@ -27,7 +27,7 @@ void main() {
   test('WHEN ingredient returns a Failure SHOULD return a Failure too',
       () async {
     when(() => repository.deleteById(any()))
-        .thenAnswer((_) async => const Left(FakeFailure('delete error')));
+        .thenAnswer((_) async => Left(FakeFailure('delete error')));
 
     final result = await usecase.execute(sugarWithId.id!);
 

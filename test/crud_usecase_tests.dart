@@ -31,7 +31,7 @@ void saveUseCaseTests<T extends Entity<ID>, ID>({
       final repository = repositoryFn();
       final usecase = usecaseFn();
       when(() => repository.save(any()))
-          .thenAnswer((_) async => const Left(FakeFailure('error')));
+          .thenAnswer((_) async => Left(FakeFailure('error')));
 
       final result = await usecase.execute(entityWithoutId);
 
@@ -66,7 +66,7 @@ void getUseCaseTests<T extends Entity<ID>, ID>({
       final usecase = usecaseFn();
       final repository = repositoryFn();
       when(() => repository.findById(id))
-          .thenAnswer((_) async => const Left(FakeFailure('error')));
+          .thenAnswer((_) async => Left(FakeFailure('error')));
 
       final result = await usecase.execute(id);
 
@@ -121,7 +121,7 @@ void getAllUseCaseTests<T extends Entity<ID>, ID>({
     final usecase = usecaseFn();
     final repository = repositoryFn();
     mockRepository(repository)
-        .thenAnswer((_) async => const Left(FakeFailure('error')));
+        .thenAnswer((_) async => Left(FakeFailure('error')));
 
     final result = await executeUsecase(usecase);
 
@@ -153,7 +153,7 @@ void deleteUseCaseTests<T extends Entity<ID>, ID>({
     final usecase = usecaseFn();
     final repository = repositoryFn();
     when(() => repository.deleteById(any()))
-        .thenAnswer((_) async => const Left(FakeFailure('delete error')));
+        .thenAnswer((_) async => Left(FakeFailure('delete error')));
 
     final result = await usecase.execute(entityWithId);
 

@@ -33,8 +33,8 @@ void main() {
   });
 
   test('WHEN repository returns Failure SHOULD return Failure', () async {
-    const failure = FakeFailure('query failure');
-    mockDomainQuery(1).thenAnswer((_) async => const Left(failure));
+    final failure = FakeFailure('query failure');
+    mockDomainQuery(1).thenAnswer((_) async => Left(failure));
 
     final result = await usecase.execute(1);
 

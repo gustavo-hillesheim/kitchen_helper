@@ -74,8 +74,7 @@ void main() {
 
         expect(
           result,
-          const Left(
-              RepositoryFailure(SQLiteRepository.canNotUpdateWithIdMessage)),
+          Left(RepositoryFailure(SQLiteRepository.canNotUpdateWithIdMessage)),
         );
       },
     );

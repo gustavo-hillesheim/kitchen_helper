@@ -174,7 +174,7 @@ mixin ListPageBloc<T, E extends Entity<int>>
     final getResult = await getUseCase.execute(id);
     return getResult.bindFuture<E>((entity) async {
       if (entity == null) {
-        return const Left(BusinessFailure('Registro não encontrado'));
+        return Left(BusinessFailure('Registro não encontrado'));
       }
       return deleteUseCase.execute(id).then((result) {
         load();

@@ -111,7 +111,7 @@ void main() {
     'WHEN recipe is saved with failure SHOULD show snackbar message',
     (tester) async {
       when(() => bloc.save(any()))
-          .thenAnswer((_) async => const FailureState(FakeFailure('error')));
+          .thenAnswer((_) async => FailureState(FakeFailure('error')));
 
       await tester.pumpWidget(MaterialApp(home: EditRecipeScreen(bloc: bloc)));
 
@@ -129,7 +129,7 @@ void main() {
   testWidgets('WHEN has initialValue SHOULD render fields with value',
       (tester) async {
     when(() => bloc.save(any()))
-        .thenAnswer((_) async => const FailureState(FakeFailure('error')));
+        .thenAnswer((_) async => FailureState(FakeFailure('error')));
     when(() => bloc.getCost(any())).thenAnswer((_) async => const Right(10));
     when(() => bloc.getEditingRecipeIngredients(any())).thenAnswer(
       (_) async => Right(editingRecipeIngredients(sugarWithEggRecipeWithId)),
@@ -196,7 +196,7 @@ void main() {
 
   testWidgets('SHOULD be able to edit and delete ingredients', (tester) async {
     when(() => bloc.save(any()))
-        .thenAnswer((_) async => const FailureState(FakeFailure('error')));
+        .thenAnswer((_) async => FailureState(FakeFailure('error')));
     when(() => bloc.getCost(any())).thenAnswer((_) async => const Right(10));
     when(() => bloc.getEditingRecipeIngredients(any())).thenAnswer(
       (invocation) async =>

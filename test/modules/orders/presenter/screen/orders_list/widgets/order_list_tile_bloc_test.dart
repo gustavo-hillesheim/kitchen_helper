@@ -40,12 +40,12 @@ void main() {
     setUp: () {
       setup();
       when(() => getListingOrderProductsUseCase.execute(any()))
-          .thenAnswer((_) async => const Left(FakeFailure('could not load')));
+          .thenAnswer((_) async => Left(FakeFailure('could not load')));
     },
     build: () => bloc,
     expect: () => <ScreenState<List<ListingOrderProductDto>>>[
       const LoadingState(),
-      const FailureState(FakeFailure('could not load')),
+      FailureState(FakeFailure('could not load')),
     ],
     act: (bloc) => bloc.loadProducts(batmanOrder.id!),
   );
