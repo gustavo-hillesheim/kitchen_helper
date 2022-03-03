@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:path/path.dart';
@@ -24,7 +25,12 @@ class SQLiteDatabase {
   SQLiteDatabase(this._database) : _executor = _database;
 
   static Future<SQLiteDatabase> getInstance() async {
-    _instance ??= SQLiteDatabase(await _initDatabase());
+    final database = await _initDatabase().catchError((e) {
+      FirebaseCrashlytics.instance
+          .recordError(e, null, reason: 'Error while creating SQLiteDatabase');
+      return Future<Database>.error(e);
+    });
+    _instance ??= SQLiteDatabase(database);
     return _instance!;
   }
 
