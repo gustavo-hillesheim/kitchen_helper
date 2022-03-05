@@ -77,31 +77,32 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   Future<void> _updateClientContacts() async {
     final client = _clientNotifier.value;
     if (client == null) {
-      setState(() {
-        _clientContacts = null;
-      });
+      _clientContacts = null;
+      if (mounted) {
+        setState(() {});
+      }
     } else if (client.id == null) {
-      setState(() {
-        _clientContacts = [];
-      });
+      _clientContacts = [];
+      if (mounted) {
+        setState(() {});
+      }
     } else {
       final contactsResult = await bloc.findContactsDomain(client.id!);
+      contactsResult.fold(
+        (l) => _clientContacts = [],
+        (contacts) {
+          if (contacts.isNotEmpty) {
+            final lastContact = contacts.last;
+            _contactNotifier.value = SelectedContact(
+              id: lastContact.id,
+              contact: lastContact.label,
+            );
+          }
+          _clientContacts = contacts;
+        },
+      );
       if (mounted) {
-        setState(() {
-          contactsResult.fold(
-            (l) => _clientContacts = [],
-            (contacts) {
-              if (contacts.isNotEmpty) {
-                final lastContact = contacts.last;
-                _contactNotifier.value = SelectedContact(
-                  id: lastContact.id,
-                  contact: lastContact.label,
-                );
-              }
-              _clientContacts = contacts;
-            },
-          );
-        });
+        setState(() {});
       }
     }
   }
@@ -109,31 +110,32 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   Future<void> _updateClientAddresses() async {
     final client = _clientNotifier.value;
     if (client == null) {
-      setState(() {
-        _clientAddresses = null;
-      });
+      _clientAddresses = null;
+      if (mounted) {
+        setState(() {});
+      }
     } else if (client.id == null) {
-      setState(() {
-        _clientAddresses = [];
-      });
+      _clientAddresses = [];
+      if (mounted) {
+        setState(() {});
+      }
     } else {
       final addressesResult = await bloc.findAddressDomain(client.id!);
+      addressesResult.fold(
+        (l) => _clientAddresses = [],
+        (addresses) {
+          if (addresses.isNotEmpty) {
+            final lastAddress = addresses.last;
+            _addressNotifier.value = SelectedAddress(
+              id: lastAddress.id,
+              identifier: lastAddress.label,
+            );
+          }
+          _clientAddresses = addresses;
+        },
+      );
       if (mounted) {
-        setState(() {
-          addressesResult.fold(
-            (l) => _clientAddresses = [],
-            (addresses) {
-              if (addresses.isNotEmpty) {
-                final lastAddress = addresses.last;
-                _addressNotifier.value = SelectedAddress(
-                  id: lastAddress.id,
-                  identifier: lastAddress.label,
-                );
-              }
-              _clientAddresses = addresses;
-            },
-          );
-        });
+        setState(() {});
       }
     }
   }
@@ -157,14 +159,15 @@ class _EditOrderScreenState extends State<EditOrderScreen>
   }
 
   void _fillVariables(EditingOrderDto order) async {
-    setState(() {
-      for (final product in order.products) {
-        _cost += product.cost;
-        _price += product.price;
-        _products.add(product);
-      }
-      _discounts.addAll(order.discounts);
-    });
+    for (final product in order.products) {
+      _cost += product.cost;
+      _price += product.price;
+      _products.add(product);
+    }
+    _discounts.addAll(order.discounts);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

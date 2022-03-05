@@ -7,6 +7,9 @@ splash_screen:
 build_app:
 	fvm flutter build appbundle --obfuscate --split-debug-info=symbols
 
+read_stacktrace:
+	fvm flutter symbolize -i stacktraces/$(filter-out $@, $(MAKECMDGOALS)) -d symbols/app.android-arm64.symbols
+
 code_coverage:
 	fvm flutter pub run code_coverage \
 	-m 80 -u --ignoreBarrelFiles \
