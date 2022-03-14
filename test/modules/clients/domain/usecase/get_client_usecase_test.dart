@@ -17,7 +17,7 @@ void main() {
 
   test('WHEN repository returns Client SHOULD return Client', () async {
     when(() => repository.findById(1))
-        .thenAnswer((_) async => const Right(batmanClient));
+        .thenAnswer((_) async => Right(batmanClient));
 
     final result = await usecase.execute(1);
 

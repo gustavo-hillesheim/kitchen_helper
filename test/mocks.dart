@@ -435,7 +435,7 @@ final listingBatmanOrderDto = ListingOrderDto(
   status: OrderStatus.delivered,
   price: 50,
 );
-const batmanClient = Client(
+final batmanClient = Client(
   id: 1,
   name: 'Batman',
   addresses: [

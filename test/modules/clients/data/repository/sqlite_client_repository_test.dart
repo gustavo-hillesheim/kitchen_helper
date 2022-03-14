@@ -331,11 +331,10 @@ void main() {
   group('update', () {
     test(
         'WHEN updates client '
-        'SHOULD recreate addresses and contacts', () async {
+        'SHOULD update addresses and contacts', () async {
       mockTransaction<Either<Failure, void>>(() {
-        verify(() => addressRepository.deleteByClient(batmanClient.id!));
         verify(() => contactRepository.deleteByClient(batmanClient.id!));
-        verify(() => addressRepository.create(any()));
+        verify(() => addressRepository.update(any()));
         verify(() => contactRepository.create(any()));
       });
       mockUpdateClient(client: batmanClient)
