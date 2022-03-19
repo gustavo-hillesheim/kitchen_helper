@@ -256,6 +256,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
       final address = Address(
+        id: widget.initialValue?.id,
         identifier: _identifierController.text,
         cep: int.tryParse(_cepController.text),
         city: _cityController.text,
