@@ -107,25 +107,79 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
   Future<Either<Failure, void>> update(Client client) async {
     return database.insideTransaction(() async {
       var result = await super.update(client);
-      result = await result.bindFuture((_) => _recreateAddresses(client)).run();
-      result = await result.bindFuture((_) => _recreateContacts(client)).run();
+      result = await result.bindFuture((_) => _updateAddresses(client)).run();
+      result = await result.bindFuture((_) => _updateContacts(client)).run();
       return result;
     });
   }
 
-  Future<Either<Failure, void>> _recreateAddresses(Client client) async {
-    var result = await addressRepository.deleteByClient(client.id!);
-    result = await result
-        .bindFuture((_) => _createAddresses(client.addresses, client.id!))
-        .run();
+  Future<Either<Failure, void>> _updateAddresses(Client client) async {
+    try {
+      final currentAddresses =
+          await addressRepository.findByClient(client.id!).throwOnFailure();
+      final newAddresses = client.addresses;
+      final addressesToDelete =
+          _findAddressesToDelete(currentAddresses, newAddresses);
+      for (final address in addressesToDelete) {
+        await addressRepository.deleteById(address.id!).throwOnFailure();
+      }
+      for (final address in newAddresses) {
+        await addressRepository
+            .save(AddressEntity.fromAddress(address, clientId: client.id))
+            .throwOnFailure();
+      }
+      return const Right(null);
+    } on Failure catch (f) {
+      return Left(f);
+    }
+  }
+
+  List<AddressEntity> _findAddressesToDelete(
+    List<AddressEntity> currentAddresses,
+    List<Address> newAddresses,
+  ) {
+    final result = <AddressEntity>[];
+    for (final address in currentAddresses) {
+      final exists = newAddresses.any((a) => address.id == a.id);
+      if (!exists) {
+        result.add(address);
+      }
+    }
     return result;
   }
 
-  Future<Either<Failure, void>> _recreateContacts(Client client) async {
-    var result = await contactRepository.deleteByClient(client.id!);
-    result = await result
-        .bindFuture((_) => _createContacts(client.contacts, client.id!))
-        .run();
+  Future<Either<Failure, void>> _updateContacts(Client client) async {
+    try {
+      final currentContacts =
+          await contactRepository.findByClient(client.id!).throwOnFailure();
+      final newContacts = client.contacts;
+      final contactsToDelete =
+          _findContactsToDelete(currentContacts, newContacts);
+      for (final contact in contactsToDelete) {
+        await contactRepository.deleteById(contact.id!).throwOnFailure();
+      }
+      for (final contact in newContacts) {
+        await contactRepository
+            .save(ContactEntity.fromContact(contact, clientId: client.id))
+            .throwOnFailure();
+      }
+      return const Right(null);
+    } on Failure catch (f) {
+      return Left(f);
+    }
+  }
+
+  List<ContactEntity> _findContactsToDelete(
+    List<ContactEntity> currentContacts,
+    List<Contact> newContacts,
+  ) {
+    final result = <ContactEntity>[];
+    for (final contact in currentContacts) {
+      final exists = newContacts.any((a) => contact.id == a.id);
+      if (!exists) {
+        result.add(contact);
+      }
+    }
     return result;
   }
 

@@ -74,7 +74,7 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
     try {
       final where = filter != null ? _filterToWhereMap(filter) : null;
       final result = await database.rawQuery('''
-      SELECT o.id id, c.name clientName, ca.identifier clientAddress,
+      SELECT o.id id, coalesce(c.name, 'Sem cliente') clientName, coalesce(ca.identifier, 'Sem endereço') clientAddress,
         o.deliveryDate deliveryDate, o.status status,
         (SELECT SUM(op.quantity / r.quantitySold * r.price) FROM orderProducts op INNER JOIN recipes r ON r.id = op.productId WHERE op.orderId = o.id) basePrice, 
         (SELECT SUM(d.value) FROM orderDiscounts d WHERE o.id = d.orderId AND d.type = 'fixed') fixedDiscount, 

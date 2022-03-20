@@ -154,7 +154,10 @@ class _EditContactFormState extends State<EditContactForm> {
 
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
-      final contact = Contact(contact: _contactController.text);
+      final contact = Contact(
+        id: widget.initialValue?.id,
+        contact: _contactController.text,
+      );
       widget.onSave(contact);
     }
   }

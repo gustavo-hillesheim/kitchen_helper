@@ -185,16 +185,17 @@ class DatabaseMigrator {
 
   Future<int> _getClientIdOrInsert(
       DatabaseExecutor db, Map<String, dynamic> client) async {
+    final clientName = client['clientName'];
     final clientData = await db.query(
       'clients',
       columns: ['id'],
       where: 'name = ?',
-      whereArgs: [client['name']],
+      whereArgs: [clientName],
     );
     if (clientData.isNotEmpty) {
       return clientData.first['id'] as int;
     } else {
-      return await db.insert('clients', {'name': client['name']});
+      return await db.insert('clients', {'name': clientName});
     }
   }
 
@@ -211,7 +212,7 @@ class DatabaseMigrator {
     } else {
       return await db.insert(
         'clientAddresses',
-        {'identifier': client['clientAddress']},
+        {'identifier': client['clientAddress'], 'clientId': clientId},
       );
     }
   }

@@ -22,7 +22,7 @@ class ContactEntity extends Equatable implements Entity<int> {
   const ContactEntity({this.id, required this.contact, this.clientId});
 
   ContactEntity.fromContact(Contact contact, {this.clientId})
-      : id = null,
+      : id = contact.id,
         contact = contact.contact;
 
   factory ContactEntity.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +30,7 @@ class ContactEntity extends Equatable implements Entity<int> {
 
   Map<String, dynamic> toJson() => _$ContactEntityToJson(this);
 
-  Contact toContact() => Contact(contact: contact);
+  Contact toContact() => Contact(id: id, contact: contact);
 
   @override
   List<Object?> get props => [id, clientId, contact];

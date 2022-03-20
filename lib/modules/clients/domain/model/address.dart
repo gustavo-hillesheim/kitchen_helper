@@ -1,12 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kitchen_helper/database/database.dart';
 
 import 'states.dart';
 
 part 'address.g.dart';
 
 @JsonSerializable()
-class Address extends Equatable {
+class Address extends Entity with EquatableMixin {
+  @override
+  final int? id;
   final String identifier;
   final int? cep;
   final String? street;
@@ -16,8 +19,9 @@ class Address extends Equatable {
   final String? city;
   final States? state;
 
-  const Address({
+  Address({
     required this.identifier,
+    this.id,
     this.cep,
     this.street,
     this.number,
@@ -34,6 +38,7 @@ class Address extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         identifier,
         cep,
         street,

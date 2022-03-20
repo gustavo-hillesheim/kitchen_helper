@@ -40,7 +40,7 @@ class AddressEntity extends Equatable implements Entity<int> {
   });
 
   AddressEntity.fromAddress(Address address, {this.clientId})
-      : id = null,
+      : id = address.id,
         identifier = address.identifier,
         cep = address.cep,
         street = address.street,
@@ -56,6 +56,7 @@ class AddressEntity extends Equatable implements Entity<int> {
   Map<String, dynamic> toJson() => _$AddressEntityToJson(this);
 
   Address toAddress() => Address(
+        id: id,
         identifier: identifier,
         cep: cep,
         street: street,
