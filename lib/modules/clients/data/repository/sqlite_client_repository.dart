@@ -8,11 +8,13 @@ import '../../../../core/failure.dart';
 import '../../../../extensions.dart';
 import '../../../../database/sqlite/sqlite.dart';
 
-class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientRepository {
+class SQLiteClientRepository extends SQLiteRepository<Client>
+    implements ClientRepository {
   final SQLiteAddressRepository addressRepository;
   final SQLiteContactRepository contactRepository;
 
-  SQLiteClientRepository(this.addressRepository, this.contactRepository, SQLiteDatabase database)
+  SQLiteClientRepository(
+      this.addressRepository, this.contactRepository, SQLiteDatabase database)
       : super(
           'clients',
           'id',
@@ -91,8 +93,12 @@ class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientR
   Future<Either<Failure, int>> create(Client client) async {
     return database.insideTransaction(() async {
       var result = await super.create(client);
-      result = await result.bindFuture((id) => _createAddresses(client.addresses, id)).run();
-      result = await result.bindFuture((id) => _createContacts(client.contacts, id)).run();
+      result = await result
+          .bindFuture((id) => _createAddresses(client.addresses, id))
+          .run();
+      result = await result
+          .bindFuture((id) => _createContacts(client.contacts, id))
+          .run();
       return result;
     });
   }
@@ -108,16 +114,24 @@ class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientR
   }
 
   Future<Either<Failure, void>> _updateAddresses(Client client) async {
-    final currentAddresses = await addressRepository.findByClient(client.id!).throwOnFailure();
-    final newAddresses = client.addresses;
-    final addressesToDelete = _findAddressesToDelete(currentAddresses, newAddresses);
-    for (final address in addressesToDelete) {
-      await addressRepository.deleteById(address.id!).throwOnFailure();
+    try {
+      final currentAddresses =
+          await addressRepository.findByClient(client.id!).throwOnFailure();
+      final newAddresses = client.addresses;
+      final addressesToDelete =
+          _findAddressesToDelete(currentAddresses, newAddresses);
+      for (final address in addressesToDelete) {
+        await addressRepository.deleteById(address.id!).throwOnFailure();
+      }
+      for (final address in newAddresses) {
+        await addressRepository
+            .save(AddressEntity.fromAddress(address, clientId: client.id))
+            .throwOnFailure();
+      }
+      return const Right(null);
+    } on Failure catch (f) {
+      return Left(f);
     }
-    for (final address in newAddresses) {
-      await addressRepository.save(AddressEntity.fromAddress(address, clientId: client.id)).throwOnFailure();
-    }
-    return const Right(null);
   }
 
   List<AddressEntity> _findAddressesToDelete(
@@ -135,16 +149,24 @@ class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientR
   }
 
   Future<Either<Failure, void>> _updateContacts(Client client) async {
-    final currentContacts = await contactRepository.findByClient(client.id!).throwOnFailure();
-    final newContacts = client.contacts;
-    final contactsToDelete = _findContactsToDelete(currentContacts, newContacts);
-    for (final contact in contactsToDelete) {
-      await contactRepository.deleteById(contact.id!).throwOnFailure();
+    try {
+      final currentContacts =
+          await contactRepository.findByClient(client.id!).throwOnFailure();
+      final newContacts = client.contacts;
+      final contactsToDelete =
+          _findContactsToDelete(currentContacts, newContacts);
+      for (final contact in contactsToDelete) {
+        await contactRepository.deleteById(contact.id!).throwOnFailure();
+      }
+      for (final contact in newContacts) {
+        await contactRepository
+            .save(ContactEntity.fromContact(contact, clientId: client.id))
+            .throwOnFailure();
+      }
+      return const Right(null);
+    } on Failure catch (f) {
+      return Left(f);
     }
-    for (final contact in newContacts) {
-      await contactRepository.save(ContactEntity.fromContact(contact, clientId: client.id)).throwOnFailure();
-    }
-    return const Right(null);
   }
 
   List<ContactEntity> _findContactsToDelete(
@@ -161,7 +183,8 @@ class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientR
     return result;
   }
 
-  Future<Either<Failure, int>> _createAddresses(List<Address> addresses, int clientId) async {
+  Future<Either<Failure, int>> _createAddresses(
+      List<Address> addresses, int clientId) async {
     for (final address in addresses) {
       final result = await addressRepository.create(
         AddressEntity.fromAddress(address, clientId: clientId),
@@ -173,7 +196,8 @@ class SQLiteClientRepository extends SQLiteRepository<Client> implements ClientR
     return Right(clientId);
   }
 
-  Future<Either<Failure, int>> _createContacts(List<Contact> contacts, int clientId) async {
+  Future<Either<Failure, int>> _createContacts(
+      List<Contact> contacts, int clientId) async {
     for (final contact in contacts) {
       final result = await contactRepository.create(
         ContactEntity.fromContact(contact, clientId: clientId),
