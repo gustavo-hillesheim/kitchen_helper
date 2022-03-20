@@ -50,7 +50,8 @@ class AddressEntity extends Equatable implements Entity<int> {
         city = address.city,
         state = address.state;
 
-  factory AddressEntity.fromJson(Map<String, dynamic> json) => _$AddressEntityFromJson(json);
+  factory AddressEntity.fromJson(Map<String, dynamic> json) =>
+      _$AddressEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddressEntityToJson(this);
 
