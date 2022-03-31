@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/database/sqlite/query_operators.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -177,8 +178,13 @@ class _Where {
       if (whereStr.isNotEmpty) {
         whereStr += ' AND ';
       }
-      whereStr += '$key = ?';
-      whereArgs.add(value);
+      if (value is QueryOperator) {
+        whereStr += '$key ${value.operation}';
+        whereArgs.add(value.value);
+      } else {
+        whereStr += '$key = ?';
+        whereArgs.add(value);
+      }
     });
     return _Where(
       whereStr.isEmpty ? null : whereStr,

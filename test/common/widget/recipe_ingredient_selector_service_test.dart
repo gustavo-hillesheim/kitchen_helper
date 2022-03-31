@@ -29,7 +29,7 @@ void main() {
     when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => const Right([cakeRecipeDomain, sugarWithEggRecipeDomain]),
     );
-    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getIngredientsUseCase.execute(null)).thenAnswer(
       (_) async => const Right([
         listingSugarDto,
         listingEggDto,
@@ -53,7 +53,7 @@ void main() {
     when(() => getRecipesUseCase.execute(any())).thenAnswer(
       (_) async => const Right([sugarWithEggRecipeDomain]),
     );
-    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getIngredientsUseCase.execute(null)).thenAnswer(
       (_) async =>
           const Right([listingSugarDto, listingEggDto, listingFlourDto]),
     );
@@ -72,9 +72,8 @@ void main() {
       'contain that recipe', () async {
     when(() => getRecipesUseCase.execute(any()))
         .thenAnswer((_) async => const Right([]));
-    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
-        (_) async =>
-            const Right([listingSugarDto, listingEggDto, listingFlourDto]));
+    when(() => getIngredientsUseCase.execute(null)).thenAnswer((_) async =>
+        const Right([listingSugarDto, listingEggDto, listingFlourDto]));
 
     final result = await service.getItems(
       recipeToIgnore: sugarWithEggRecipeWithId.id,
@@ -105,7 +104,7 @@ void main() {
 
   test('WHEN getOnly is ingredients SHOULD only call getIngredientsUseCase',
       () async {
-    when(() => getIngredientsUseCase.execute(const NoParams())).thenAnswer(
+    when(() => getIngredientsUseCase.execute(null)).thenAnswer(
       (_) async =>
           const Right([listingSugarDto, listingEggDto, listingFlourDto]),
     );

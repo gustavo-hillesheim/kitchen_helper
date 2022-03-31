@@ -38,7 +38,7 @@ void main() {
           [listingFlourDto, listingEggDto],
           [listingFlourDto, listingEggDto, listingOrangeJuiceDto],
         ];
-        when(() => getAllUseCase.execute(const NoParams()))
+        when(() => getAllUseCase.execute(null))
             .thenAnswer((_) async => Right(getResponses.removeAt(0)));
         when(() => deleteUseCase.execute(orangeJuice.id!))
             .thenAnswer((_) async => const Right(null));
@@ -62,7 +62,7 @@ void main() {
         await bloc.save(orangeJuice);
       },
       verify: (_) {
-        verify(() => getAllUseCase.execute(const NoParams())).called(3);
+        verify(() => getAllUseCase.execute(null)).called(3);
         verify(() => deleteUseCase.execute(orangeJuice.id!));
         verify(() => saveUseCase.execute(orangeJuice));
       });
@@ -71,7 +71,7 @@ void main() {
     'Should emit FailureState if load fail',
     build: () {
       createInstances();
-      when(() => getAllUseCase.execute(const NoParams()))
+      when(() => getAllUseCase.execute(null))
           .thenAnswer((_) async => Left(FakeFailure('Some error on '
               'load')));
       return bloc;
@@ -89,7 +89,7 @@ void main() {
     createInstances();
     when(() => deleteUseCase.execute(egg.id!))
         .thenAnswer((_) async => Left(FakeFailure('Delete error')));
-    when(() => getAllUseCase.execute(const NoParams()))
+    when(() => getAllUseCase.execute(null))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.delete(egg.id!);
@@ -103,7 +103,7 @@ void main() {
     createInstances();
     when(() => saveUseCase.execute(egg))
         .thenAnswer((_) async => Left(FakeFailure('Save error')));
-    when(() => getAllUseCase.execute(const NoParams()))
+    when(() => getAllUseCase.execute(null))
         .thenAnswer((_) async => const Right([]));
 
     final result = await bloc.save(egg);

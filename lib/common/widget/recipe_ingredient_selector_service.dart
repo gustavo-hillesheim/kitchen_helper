@@ -56,7 +56,7 @@ class RecipeIngredientSelectorService {
   Future<Either<Failure, List<ListingIngredientDto>>> _getIngredients(
       bool shouldGet) async {
     return shouldGet
-        ? (await getIngredientsUseCase.execute(const NoParams()))
+        ? (await getIngredientsUseCase.execute(null))
         : const Right([]);
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:kitchen_helper/database/sqlite/query_operators.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
@@ -170,12 +171,18 @@ void main() {
     final result = await database.query(
       table: 'people',
       columns: ['name', 'age', 'id'],
-      where: {'age': 20},
+      where: {'age': 20, 'name': const Contains('test')},
     );
 
     expect(result, []);
-    verify(() => sqfliteDatabase.query('people',
-        columns: ['name', 'age', 'id'], where: 'age = ?', whereArgs: [20]));
+    verify(
+      () => sqfliteDatabase.query(
+        'people',
+        columns: ['name', 'age', 'id'],
+        where: "age = ? AND name LIKE '%?%'",
+        whereArgs: [20, 'test'],
+      ),
+    );
   });
 
   test(

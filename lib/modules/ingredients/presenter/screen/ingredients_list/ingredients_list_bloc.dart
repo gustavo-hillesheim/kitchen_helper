@@ -18,4 +18,14 @@ class IngredientsListBloc extends AppCubit<List<ListingIngredientDto>>
     this.deleteUseCase,
     this.getUseCase,
   ) : super(const LoadingState());
+
+  @override
+  Future<void> load() async {
+    emit(const LoadingState<List<ListingIngredientDto>>());
+    final result = await getAllUseCase.execute(null);
+    result.fold(
+      (failure) => emit(FailureState<List<ListingIngredientDto>>(failure)),
+      (value) => emit(SuccessState<List<ListingIngredientDto>>(value)),
+    );
+  }
 }
