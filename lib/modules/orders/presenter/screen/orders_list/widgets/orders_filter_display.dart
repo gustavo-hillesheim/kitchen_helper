@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import '../../../../../../common/common.dart';
 import '../../../../domain/domain.dart';
 
-class OrderFilter extends StatefulWidget {
+class OrdersFilterDisplay extends StatefulWidget {
   final ValueChanged<OrdersFilter> onChange;
 
-  const OrderFilter({
+  const OrdersFilterDisplay({
     Key? key,
     required this.onChange,
   }) : super(key: key);
 
   @override
-  _OrderFilterState createState() => _OrderFilterState();
+  _OrdersFilterDisplayState createState() => _OrdersFilterDisplayState();
 }
 
-class _OrderFilterState extends State<OrderFilter> {
+class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
   OrderStatus? _filterStatus;
 
   @override

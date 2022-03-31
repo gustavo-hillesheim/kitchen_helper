@@ -7,7 +7,7 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/orders_list_bloc.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/orders_list_screen.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_filter.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:modular_test/modular_test.dart';
@@ -37,7 +37,7 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    expect(find.byType(OrderFilter), findsOneWidget);
+    expect(find.byType(OrdersFilterDisplay), findsOneWidget);
     expect(find.text('Pedidos'), findsOneWidget);
     expect(find.text('Adicionar'), findsOneWidget);
     expect(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_filter.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 
 import '../../../../../../finders.dart';
 
@@ -17,7 +17,7 @@ void main() {
         scaffoldBackgroundColor: backgroundColor,
       ),
       home: Scaffold(
-        body: OrderFilter(onChange: (newFilter) => filter = newFilter),
+        body: OrdersFilterDisplay(onChange: (newFilter) => filter = newFilter),
       ),
     ));
 
