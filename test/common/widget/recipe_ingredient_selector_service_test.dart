@@ -15,7 +15,7 @@ void main() {
   late GetIngredientsUseCase getIngredientsUseCase;
 
   setUp(() {
-    registerFallbackValue(const RecipeFilter());
+    registerFallbackValue(const RecipesFilter());
     getRecipesUseCase = GetRecipesDomainUseCaseMock();
     getIngredientsUseCase = GetIngredientsUseCaseMock();
     service = RecipeIngredientSelectorService(

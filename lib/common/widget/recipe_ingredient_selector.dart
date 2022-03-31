@@ -23,7 +23,7 @@ class RecipeIngredientSelector extends StatefulWidget {
   final RecipeIngredientSelectorItem? initialValue;
   final ValueChanged<RecipeIngredientSelectorItem?> onChanged;
   final RecipeIngredientSelectorService? service;
-  final RecipeFilter? recipeFilter;
+  final RecipesFilter? recipeFilter;
   final int? recipeToIgnore;
   final RecipeIngredientSelectorItems showOnly;
 

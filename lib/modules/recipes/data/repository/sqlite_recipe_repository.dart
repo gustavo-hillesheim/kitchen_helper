@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/core.dart';
+import '../../../../database/sqlite/query_operators.dart';
 import '../../../../database/sqlite/sqlite.dart';
 import '../../../../extensions.dart';
 import '../../recipes.dart';
@@ -43,7 +44,7 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
   }
 
   @override
-  Future<Either<Failure, List<Recipe>>> findAll({RecipeFilter? filter}) async {
+  Future<Either<Failure, List<Recipe>>> findAll({RecipesFilter? filter}) async {
     try {
       final where = filter != null ? _filterToMap(filter) : null;
       final entities = await database.findAll(tableName, where: where);
@@ -56,13 +57,16 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
     }
   }
 
-  Map<String, dynamic> _filterToMap(RecipeFilter filter) {
+  Map<String, dynamic> _filterToMap(RecipesFilter filter) {
     final where = <String, dynamic>{};
     if (filter.canBeSold == true) {
       where['canBeSold'] = 1;
     }
     if (filter.canBeSold == false) {
       where['canBeSold'] = 0;
+    }
+    if (filter.name != null) {
+      where['name'] = Contains(filter.name!);
     }
     return where;
   }
@@ -132,8 +136,11 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
   }
 
   @override
-  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing() async {
+  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing({
+    RecipesFilter? filter,
+  }) async {
     try {
+      final where = filter != null ? _filterToMap(filter) : null;
       final records = await database.query(
         table: tableName,
         columns: [
@@ -145,6 +152,7 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
           'measurementUnit'
         ],
         orderBy: 'name COLLATE NOCASE',
+        where: where,
       );
       return Right(records.map(ListingRecipeDto.fromJson).toList());
     } on DatabaseException catch (e) {
@@ -154,7 +162,7 @@ class SQLiteRecipeRepository extends SQLiteRepository<Recipe>
 
   @override
   Future<Either<Failure, List<RecipeDomainDto>>> findAllDomain(
-      {RecipeFilter? filter}) async {
+      {RecipesFilter? filter}) async {
     try {
       final where = filter != null ? _filterToMap(filter) : null;
       final records = await database.query(

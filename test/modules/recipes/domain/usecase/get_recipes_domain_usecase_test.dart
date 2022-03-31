@@ -13,7 +13,7 @@ void main() {
   late GetRecipesDomainUseCase usecase;
 
   setUp(() {
-    registerFallbackValue(const RecipeFilter());
+    registerFallbackValue(const RecipesFilter());
     repository = RecipeRepositoryMock();
     usecase = GetRecipesDomainUseCase(repository);
   });

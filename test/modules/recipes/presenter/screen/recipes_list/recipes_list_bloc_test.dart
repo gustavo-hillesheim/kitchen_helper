@@ -17,7 +17,7 @@ void main() {
   late RecipesListBloc bloc;
 
   void setup() {
-    registerFallbackValue(const RecipeFilter());
+    registerFallbackValue(const RecipesFilter());
     registerFallbackValue(FakeRecipe());
     registerFallbackValue(const NoParams());
     saveRecipeUseCase = SaveRecipeUseCaseMock();
@@ -56,7 +56,7 @@ void main() {
       await bloc.load();
     },
     verify: (_) {
-      verify(() => getRecipesUseCase.execute(const NoParams()));
+      verify(() => getRecipesUseCase.execute());
     },
   );
 
@@ -92,7 +92,7 @@ void main() {
     },
     verify: (_) {
       verify(() => deleteRecipeUseCase.execute(cakeRecipe.id!)).called(2);
-      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
+      verify(() => getRecipesUseCase.execute()).called(2);
     },
   );
 
@@ -126,7 +126,7 @@ void main() {
     },
     verify: (_) {
       verify(() => saveRecipeUseCase.execute(cakeRecipe)).called(2);
-      verify(() => getRecipesUseCase.execute(const NoParams())).called(2);
+      verify(() => getRecipesUseCase.execute()).called(2);
     },
   );
 }

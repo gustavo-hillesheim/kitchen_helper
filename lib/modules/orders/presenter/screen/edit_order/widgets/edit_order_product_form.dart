@@ -65,7 +65,7 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
                     children: [
                       RecipeIngredientSelector(
                         showOnly: RecipeIngredientSelectorItems.recipes,
-                        recipeFilter: const RecipeFilter(
+                        recipeFilter: const RecipesFilter(
                           canBeSold: true,
                         ),
                         initialValue: selectorInitialValue,
