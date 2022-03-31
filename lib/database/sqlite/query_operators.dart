@@ -12,7 +12,7 @@ class Contains extends QueryOperator<String> {
   const Contains(String value) : super(value);
 
   @override
-  String get operation => "LIKE '%?%'";
+  String get operation => "LIKE '%' || ? || '%'";
 
   @override
   List<Object?> get props => [value];

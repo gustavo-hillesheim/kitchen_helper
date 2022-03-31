@@ -179,7 +179,7 @@ void main() {
       () => sqfliteDatabase.query(
         'people',
         columns: ['name', 'age', 'id'],
-        where: "age = ? AND name LIKE '%?%'",
+        where: "age = ? AND name LIKE '%' || ? || '%'",
         whereArgs: [20, 'test'],
       ),
     );
