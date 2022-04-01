@@ -26,7 +26,7 @@ class _IngredientsFilterDisplayState extends State<IngredientsFilterDisplay> {
       tags: [
         if (_filter?.name != null && _filter!.name!.isNotEmpty)
           Tag(
-            label: 'Nome: ${_filter!.name!}',
+            label: 'Nome inclui: ${_filter!.name!}',
             onDelete: _removeNameFromFilter,
           ),
       ],

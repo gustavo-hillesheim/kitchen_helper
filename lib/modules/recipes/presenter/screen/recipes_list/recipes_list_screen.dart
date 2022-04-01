@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/modules/recipes/presenter/screen/recipes_list/widgets/recipes_filter_display.dart';
 
 import '../../../../../common/common.dart';
 import '../../../recipes.dart';
@@ -37,6 +38,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
         recipe,
         onTap: () => _goToEditRecipeScreen(recipe),
       ),
+      headerBottom: RecipesFilterDisplay(onFilter: bloc.load),
       deletedMessage: (recipe) => '${recipe.name} foi excluída',
       emptyText: 'Sem receitas',
       emptySubtext: 'Adicione receitas e elas aparecerão aqui',

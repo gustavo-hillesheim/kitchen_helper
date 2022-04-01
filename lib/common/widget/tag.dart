@@ -30,12 +30,13 @@ class Tag extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(label, style: TextStyle(color: efectiveColor)),
-          kSmallSpacerHorizontal,
-          if (onDelete != null)
+          if (onDelete != null) ...[
+            kSmallSpacerHorizontal,
             GestureDetector(
               onTap: onDelete,
               child: const Icon(Icons.close, size: 14),
             ),
+          ]
         ],
       ),
     );
