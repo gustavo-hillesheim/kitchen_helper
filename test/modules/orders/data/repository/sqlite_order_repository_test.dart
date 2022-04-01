@@ -695,6 +695,44 @@ void main() {
           ));
     });
 
+    test('WHEN filter is provided SHOULD call database with where', () async {
+      when(() => database.rawQuery(any(), any())).thenAnswer((_) async => []);
+
+      final result = await repository.findAllListing(
+        filter: OrdersFilter(
+          status: OrderStatus.delivered,
+          clientId: 1,
+          orderDateStart: DateTime(2019),
+          orderDateEnd: DateTime(2020),
+          deliveryDateStart: DateTime(2021),
+          deliveryDateEnd: DateTime(2022),
+        ),
+      );
+
+      expect(result.getRight().toNullable(), []);
+      verify(() => database.rawQuery(
+            any(
+                that: allOf(
+              contains('WHERE'),
+              contains('status = ?'),
+              contains('clientId = ?'),
+              contains('orderDate >= ?'),
+              contains('orderDate <= ?'),
+              contains('deliveryDate >= ?'),
+              contains('deliveryDate <= ?'),
+            )),
+            any(
+                that: allOf(
+              contains('delivered'),
+              contains(1),
+              contains('2019-01-01T00:00:00.000'),
+              contains('2020-01-01T00:00:00.000'),
+              contains('2021-01-01T00:00:00.000'),
+              contains('2022-01-01T00:00:00.000'),
+            )),
+          ));
+    });
+
     test('WHEN database throws DatabaseException SHOULD return Failure',
         () async {
       when(() => database.rawQuery(any()))

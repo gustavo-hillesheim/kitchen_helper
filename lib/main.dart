@@ -8,8 +8,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/core/device_info.dart';
 
+import 'core/device_info.dart';
 import 'app_module.dart';
 import 'app_widget.dart';
 

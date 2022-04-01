@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/database/sqlite/query_operators.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'where.dart';
 import 'database_migrator.dart';
 import '../../core/core.dart';
 
@@ -109,7 +109,7 @@ class SQLiteDatabase {
     String table, {
     Map<String, dynamic>? where,
   }) async {
-    final whereObj = _Where.fromMap(where ?? {});
+    final whereObj = Where.fromMap(where ?? {});
     return await _executor.query(
       table,
       where: whereObj.where,
@@ -138,7 +138,7 @@ class SQLiteDatabase {
       required List<String> columns,
       Map<String, dynamic>? where,
       String? orderBy}) {
-    final whereObj = _Where.fromMap(where ?? {});
+    final whereObj = Where.fromMap(where ?? {});
     return _executor.query(
       table,
       columns: columns,
@@ -156,39 +156,11 @@ class SQLiteDatabase {
     required String table,
     required Map<String, dynamic> where,
   }) {
-    final whereObj = _Where.fromMap(where);
+    final whereObj = Where.fromMap(where);
     return _executor.delete(
       table,
       where: whereObj.where,
       whereArgs: whereObj.whereArgs,
-    );
-  }
-}
-
-class _Where {
-  final String? where;
-  final List<dynamic>? whereArgs;
-
-  _Where(this.where, this.whereArgs);
-
-  factory _Where.fromMap(Map<String, dynamic> map) {
-    var whereStr = '';
-    final whereArgs = [];
-    map.forEach((key, value) {
-      if (whereStr.isNotEmpty) {
-        whereStr += ' AND ';
-      }
-      if (value is QueryOperator) {
-        whereStr += '$key ${value.operation}';
-        whereArgs.add(value.value);
-      } else {
-        whereStr += '$key = ?';
-        whereArgs.add(value);
-      }
-    });
-    return _Where(
-      whereStr.isEmpty ? null : whereStr,
-      whereStr.isEmpty ? null : whereArgs,
     );
   }
 }

@@ -17,3 +17,23 @@ class Contains extends QueryOperator<String> {
   @override
   List<Object?> get props => [value];
 }
+
+class GreaterOrEqualThan extends QueryOperator<Object> {
+  const GreaterOrEqualThan(Object value) : super(value);
+
+  @override
+  String get operation => '>= ?';
+
+  @override
+  List<Object?> get props => [value];
+}
+
+class LowerOrEqualThan extends QueryOperator<Object> {
+  const LowerOrEqualThan(Object value) : super(value);
+
+  @override
+  String get operation => '<= ?';
+
+  @override
+  List<Object?> get props => [value];
+}
