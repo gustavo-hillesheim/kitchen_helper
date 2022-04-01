@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 
 import '../../../../../clients/clients.dart';
+import '../../../../../../core/core.dart';
 import '../../../../../../common/common.dart';
 import '../../../../../../extensions.dart';
 import '../../../../domain/domain.dart';
@@ -22,7 +22,6 @@ class GeneralOrderInformationForm extends StatelessWidget {
   final ValueNotifier<SelectedClient?> clientNotifier;
   final ValueNotifier<SelectedContact?> contactNotifier;
   final ValueNotifier<SelectedAddress?> addressNotifier;
-  final SearchClientDomainFn searchClientDomainFn;
   final SearchContactDomainFn? searchContactDomainFn;
   final SearchAddressDomainFn? searchAddressDomainFn;
   final double cost;
@@ -37,7 +36,6 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.cost,
     required this.price,
     required this.discount,
-    required this.searchClientDomainFn,
     required this.clientNotifier,
     required this.searchContactDomainFn,
     required this.contactNotifier,
@@ -58,15 +56,9 @@ class GeneralOrderInformationForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: clientNotifier.builder(
-                    (_, client, onChange) => SearchTextField<SelectedClient>(
-                      name: 'Cliente',
+                    (_, client, onChange) => ClientSelector(
                       value: client,
-                      onChanged: onChange,
-                      onSearch: _getClients,
-                      onFilter: _filterClients,
-                      getContentLabel: _getClientContentLabel,
-                      getListItemLabel: _getClientListItemLabel,
-                      emptySubtext: 'Crie um novo cliente usando o campo acima',
+                      onChange: onChange,
                     ),
                   ),
                 ),
@@ -171,41 +163,6 @@ class GeneralOrderInformationForm extends StatelessWidget {
     );
   }
 
-  String _getClientContentLabel(SelectedClient? client) {
-    return client?.name ?? '';
-  }
-
-  String _getClientListItemLabel(SelectedClient? client) {
-    if (client == null) {
-      return '';
-    }
-    if (client.id == null) {
-      return 'Novo cliente "${client.name}"';
-    }
-    return client.name;
-  }
-
-  Future<List<SelectedClient>> _getClients(String? search) async {
-    final clients = await searchClientDomainFn().throwOnFailure();
-    return clients.map((c) => SelectedClient(id: c.id, name: c.label)).toList();
-  }
-
-  List<SelectedClient> _filterClients(
-      List<SelectedClient> clients, String? search) {
-    if (search == null || search.isEmpty) {
-      return clients;
-    }
-    final result = <SelectedClient>[];
-    final lowerCaseSearch = search.toLowerCase();
-    for (final client in clients) {
-      if (client.name.toLowerCase().startsWith(lowerCaseSearch)) {
-        result.add(client);
-      }
-    }
-    result.add(SelectedClient(name: search));
-    return result;
-  }
-
   String _getContactContentLabel(SelectedContact? contact) {
     return contact?.contact ?? '';
   }
@@ -285,16 +242,6 @@ class GeneralOrderInformationForm extends StatelessWidget {
     result.add(SelectedAddress(identifier: search));
     return result;
   }
-}
-
-class SelectedClient extends Equatable {
-  final int? id;
-  final String name;
-
-  const SelectedClient({this.id, required this.name});
-
-  @override
-  List<Object?> get props => [id, name];
 }
 
 class SelectedContact extends Equatable {

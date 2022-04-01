@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/common/common.dart';
+import 'package:kitchen_helper/common/widget/client_selector_service.dart';
+import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:modular_test/modular_test.dart';
 
 import '../../../../../../finders.dart';
+import '../../../../../../mocks.dart';
 import '../helpers.dart';
 
 void main() {
@@ -16,6 +22,7 @@ void main() {
   late ValueNotifier<DateTime?> orderDateNotifier;
   late ValueNotifier<DateTime?> deliveryDateNotifier;
   late ValueNotifier<OrderStatus?> statusNotifier;
+  late GetClientsDomainUseCase getClientsDomainUseCase;
   const price = 15.0;
   const cost = 5.0;
   const discount = 1.0;
@@ -27,6 +34,12 @@ void main() {
     clientNotifier = ValueNotifier(null);
     contactNotifier = ValueNotifier(null);
     addressNotifier = ValueNotifier(null);
+    getClientsDomainUseCase = GetClientsDomainUseCaseMock();
+    when(() => getClientsDomainUseCase.execute(const NoParams()))
+        .thenAnswer((_) async => const Right([
+              ClientDomainDto(id: 1, label: 'Test Client'),
+            ]));
+    initModule(FakeModule(getClientsDomainUseCase));
   });
 
   Future<void> pumpWidget(WidgetTester tester) async {
@@ -39,9 +52,6 @@ void main() {
           contactNotifier: contactNotifier,
           clientNotifier: clientNotifier,
           addressNotifier: addressNotifier,
-          searchClientDomainFn: () async => const Right([
-            ClientDomainDto(id: 1, label: 'Test Client'),
-          ]),
           searchContactDomainFn: () async =>
               const Right([ContactDomainDto(id: 1, label: 'Contact')]),
           searchAddressDomainFn: () async =>
@@ -145,4 +155,15 @@ void main() {
       findsOneWidget,
     );
   });
+}
+
+class FakeModule extends Module {
+  final GetClientsDomainUseCase getClientsDomainUseCase;
+
+  FakeModule(this.getClientsDomainUseCase);
+
+  @override
+  List<Bind<Object>> get binds => [
+        Bind((i) => ClientSelectorService(getClientsDomainUseCase)),
+      ];
 }

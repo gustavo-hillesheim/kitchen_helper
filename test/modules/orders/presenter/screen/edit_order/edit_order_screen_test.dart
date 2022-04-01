@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:kitchen_helper/common/common.dart';
+import 'package:kitchen_helper/common/widget/client_selector_service.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/edit_order_bloc.dart';
@@ -12,6 +14,7 @@ import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widget
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/order_products_list.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:modular_test/modular_test.dart';
 
 import '../../../../../mocks.dart';
 import 'helpers.dart';
@@ -23,6 +26,7 @@ void main() {
       AddressDomainDto(id: 1, label: editingSpidermanOrderDto.clientAddress!);
   late EditOrderBloc bloc;
   late StreamController<ScreenState<void>> streamController;
+  late ClientSelectorService clientSelectorService;
   ScreenState<void> state = const EmptyState();
 
   setUp(() {
@@ -32,16 +36,20 @@ void main() {
     mockRecipeIngredientsSelectorService();
     streamController = StreamController.broadcast();
     streamController.stream.listen((newState) => state = newState);
+    clientSelectorService = ClientSelectorServiceMock();
     bloc = EditOrderBlocMock();
     when(() => bloc.stream).thenAnswer((_) => streamController.stream);
     when(() => bloc.state).thenAnswer((_) => state);
-    when(() => bloc.findClientDomain()).thenAnswer((_) async => Right([
-          ClientDomainDto(id: spidermanClient.id!, label: spidermanClient.name),
-        ]));
     when(() => bloc.findContactsDomain(spidermanClient.id!))
         .thenAnswer((_) async => Right([contact]));
     when(() => bloc.findAddressDomain(spidermanClient.id!))
         .thenAnswer((_) async => Right([address]));
+    when(() => clientSelectorService.findClientsDomain())
+        .thenAnswer((_) async => Right([
+              ClientDomainDto(
+                  id: spidermanClient.id!, label: spidermanClient.name),
+            ]));
+    initModule(FakeModule(clientSelectorService));
   });
 
   Future<void> pumpWidget(WidgetTester tester,
@@ -266,3 +274,14 @@ final editingSpidermanOrderDtoWithoutClientDataWithoutId = EditingOrderDto(
 );
 
 class EditOrderBlocMock extends Mock implements EditOrderBloc {}
+
+class ClientSelectorServiceMock extends Mock implements ClientSelectorService {}
+
+class FakeModule extends Module {
+  final ClientSelectorService clientSelectorService;
+
+  FakeModule(this.clientSelectorService);
+
+  @override
+  List<Bind<Object>> get binds => [Bind((i) => clientSelectorService)];
+}

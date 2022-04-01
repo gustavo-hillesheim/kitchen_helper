@@ -15,7 +15,6 @@ void main() {
   late GetEditingOrderDtoUseCaseMock getOrderUseCase;
   late GetRecipeUseCase getRecipeUseCase;
   late GetRecipeCostUseCase getRecipeCostUseCase;
-  late GetClientsDomainUseCase getClientsDomainUseCase;
   late GetContactsDomainUseCase getContactsDomainUseCase;
   late GetAddressDomainUseCase getAddressDomainUseCase;
 
@@ -26,7 +25,6 @@ void main() {
     getRecipeUseCase = GetRecipeUseCaseMock();
     getRecipeCostUseCase = GetRecipeCostUseCaseMock();
     getOrderUseCase = GetEditingOrderDtoUseCaseMock();
-    getClientsDomainUseCase = GetClientsDomainUseCaseMock();
     getContactsDomainUseCase = GetContactsDomainUseCaseMock();
     getAddressDomainUseCase = GetAddressDomainUseCaseMock();
     bloc = EditOrderBloc(
@@ -34,7 +32,6 @@ void main() {
       getRecipeUseCase,
       getRecipeCostUseCase,
       getOrderUseCase,
-      getClientsDomainUseCase,
       getContactsDomainUseCase,
       getAddressDomainUseCase,
     );

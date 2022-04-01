@@ -63,7 +63,6 @@ class _RecipesFilterDisplayState extends State<RecipesFilterDisplay> {
   }
 
   void _removeCanBeSold() {
-    print('removing can be sold');
     _setFilter(RecipesFilter(name: _filter?.name, canBeSold: null));
   }
 

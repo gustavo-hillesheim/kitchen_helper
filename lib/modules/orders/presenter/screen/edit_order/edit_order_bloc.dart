@@ -12,7 +12,6 @@ class EditOrderBloc extends AppCubit<void> {
   final GetRecipeUseCase getRecipeUseCase;
   final GetRecipeCostUseCase getRecipeCostUseCase;
   final GetEditingOrderDtoUseCase getOrderUseCase;
-  final GetClientsDomainUseCase getClientsDomainUseCase;
   final GetContactsDomainUseCase getContactsDomainUseCase;
   final GetAddressDomainUseCase getAddressDomainUseCase;
 
@@ -21,7 +20,6 @@ class EditOrderBloc extends AppCubit<void> {
     this.getRecipeUseCase,
     this.getRecipeCostUseCase,
     this.getOrderUseCase,
-    this.getClientsDomainUseCase,
     this.getContactsDomainUseCase,
     this.getAddressDomainUseCase,
   ) : super(const EmptyState());
@@ -60,10 +58,6 @@ class EditOrderBloc extends AppCubit<void> {
                 ),
               ),
         );
-  }
-
-  Future<Either<Failure, List<ClientDomainDto>>> findClientDomain() {
-    return getClientsDomainUseCase.execute(const NoParams());
   }
 
   Future<Either<Failure, List<ContactDomainDto>>> findContactsDomain(

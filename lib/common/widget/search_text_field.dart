@@ -229,6 +229,7 @@ class _SearchDialogState<T> extends State<_SearchDialog<T>> {
       );
 
   Widget _errorBuilder(Object error) {
+    debugPrint('Error on SearchTextField: $error');
     if (error is Error) {
       debugPrintStack(stackTrace: error.stackTrace);
     }
