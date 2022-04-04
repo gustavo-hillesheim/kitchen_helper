@@ -24,9 +24,9 @@ void main() {
     ));
 
     final inactiveOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', isActive: false);
+        ToggleableTagFinder(label: 'Recebido', isActive: false);
     final activeOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', isActive: true);
+        ToggleableTagFinder(label: 'Recebido', isActive: true);
     final inactiveDeliveredFinder =
         ToggleableTagFinder(label: 'Entregue', isActive: false);
     final activeDeliveredFinder =
@@ -38,14 +38,20 @@ void main() {
     await tester.pump();
 
     expect(activeOrderedFinder, findsOneWidget);
-    expect(inactiveDeliveredFinder, findsOneWidget);
+    expect(inactiveOrderedFinder, findsNothing);
+    expect(activeDeliveredFinder, findsNothing);
+    expect(inactiveDeliveredFinder, findsNothing);
     expect(filter, const OrdersFilter(status: OrderStatus.ordered));
 
+    await tester.tap(activeOrderedFinder);
+    await tester.pump();
     await tester.tap(inactiveDeliveredFinder);
     await tester.pump();
 
-    expect(inactiveOrderedFinder, findsOneWidget);
     expect(activeDeliveredFinder, findsOneWidget);
+    expect(inactiveOrderedFinder, findsNothing);
+    expect(activeOrderedFinder, findsNothing);
+    expect(inactiveDeliveredFinder, findsNothing);
     expect(filter, const OrdersFilter(status: OrderStatus.delivered));
   });
 }

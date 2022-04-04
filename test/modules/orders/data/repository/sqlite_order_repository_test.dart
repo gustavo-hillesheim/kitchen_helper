@@ -690,7 +690,7 @@ void main() {
         ),
       ]);
       verify(() => database.rawQuery(
-            any(that: contains('WHERE status = ?')),
+            any(that: contains('WHERE o.status = ?')),
             ['delivered'],
           ));
     });

@@ -59,7 +59,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
     if (filter != null) {
       lastFilter = filter;
     }
-    return bloc.load(filter);
+    return bloc.load(lastFilter);
   }
 
   void _goToEditScreen([ListingOrderDto? order]) async {

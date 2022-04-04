@@ -123,8 +123,7 @@ void main() {
     await tester.pump();
     verify(() => bloc.load());
 
-    await tester
-        .tap(ToggleableTagFinder(label: 'Não Entregue', isActive: false));
+    await tester.tap(ToggleableTagFinder(label: 'Recebido', isActive: false));
     verify(() => bloc.load(const OrdersFilter(status: OrderStatus.ordered)));
   });
 
