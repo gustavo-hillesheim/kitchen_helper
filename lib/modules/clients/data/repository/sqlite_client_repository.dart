@@ -6,6 +6,7 @@ import 'sqlite_address_repository.dart';
 import 'sqlite_contact_repository.dart';
 import '../../../../core/failure.dart';
 import '../../../../extensions.dart';
+import '../../../../database/sqlite/query_operators.dart';
 import '../../../../database/sqlite/sqlite.dart';
 
 class SQLiteClientRepository extends SQLiteRepository<Client>
@@ -34,11 +35,13 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
         );
 
   @override
-  Future<Either<Failure, List<ListingClientDto>>> findAllListing() async {
+  Future<Either<Failure, List<ListingClientDto>>> findAllListing(
+      {ClientsFilter? filter}) async {
     try {
       final result = await database.query(
         table: tableName,
         columns: ['id', 'name'],
+        where: filter?.toMap(),
       );
       return Right(result.map(ListingClientDto.fromJson).toList());
     } on DatabaseException catch (e) {
@@ -220,5 +223,13 @@ class SQLiteClientRepository extends SQLiteRepository<Client>
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(SQLiteRepository.couldNotFindAllMessage, e));
     }
+  }
+}
+
+extension on ClientsFilter {
+  Map<String, dynamic> toMap() {
+    return {
+      if (name != null) 'name': Contains(name!),
+    };
   }
 }

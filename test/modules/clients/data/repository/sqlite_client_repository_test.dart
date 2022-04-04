@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/database/sqlite/query_operators.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/clients/data/repository/sqlite_address_repository.dart';
@@ -42,9 +43,15 @@ void main() {
   });
 
   group('findAllListing', () {
-    When<Future<List<Map<String, dynamic>>>> whenQuery() {
-      return when(() =>
-          database.query(table: repository.tableName, columns: ['id', 'name']));
+    When<Future<List<Map<String, dynamic>>>> whenQuery(
+        {Map<String, dynamic>? where}) {
+      return when(
+        () => database.query(
+          table: repository.tableName,
+          columns: ['id', 'name'],
+          where: where,
+        ),
+      );
     }
 
     test('WHEN database has records SHOULD return DTOs', () async {
@@ -56,6 +63,17 @@ void main() {
       final result = await repository.findAllListing();
 
       expect(result.getRight().toNullable(), listingClientDtos);
+    });
+
+    test('WHEN filter is provided SHOULD call database with where', () async {
+      whenQuery(where: const {'name': Contains('test')})
+          .thenAnswer((_) async => []);
+
+      final result = await repository.findAllListing(
+        filter: const ClientsFilter(name: 'test'),
+      );
+
+      expect(result.getRight().toNullable(), []);
     });
 
     test('WHEN database throws DatabaseException SHOULD return Failure',
