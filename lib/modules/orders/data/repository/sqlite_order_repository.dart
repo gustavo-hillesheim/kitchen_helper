@@ -74,8 +74,9 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   Future<Either<Failure, List<ListingOrderDto>>> findAllListing(
       {OrdersFilter? filter}) async {
     try {
-      final where =
-          filter != null ? Where.fromMap(_filterToWhereMap(filter)) : null;
+      final where = filter != null
+          ? Where.fromMap(_filterToWhereMap(filter), tableName: 'o')
+          : null;
       final result = await database.rawQuery(
         '''
       SELECT o.id id, coalesce(c.name, 'Sem cliente') clientName, coalesce(ca.identifier, 'Sem endereço') clientAddress,

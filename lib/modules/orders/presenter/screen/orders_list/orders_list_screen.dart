@@ -48,18 +48,18 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',
       emptyActionText: 'Adicionar pedido',
       headerBottom: OrdersFilterDisplay(
-        onChange: (newFilter) => _load(filter: newFilter?.toOrdersFilter()),
+        onChange: (newFilter) => _load(newFilter?.toOrdersFilter()),
       ),
       onAdd: _goToEditScreen,
       onLoad: _load,
     );
   }
 
-  Future<void> _load({OrdersFilter? filter}) {
+  Future<void> _load([OrdersFilter? filter]) {
     if (filter != null) {
       lastFilter = filter;
     }
-    return bloc.load(status: lastFilter?.status);
+    return bloc.load(filter);
   }
 
   void _goToEditScreen([ListingOrderDto? order]) async {

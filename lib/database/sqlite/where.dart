@@ -6,7 +6,7 @@ class Where {
 
   Where(this.where, this.whereArgs);
 
-  factory Where.fromMap(Map<String, dynamic> map) {
+  factory Where.fromMap(Map<String, dynamic> map, {String? tableName}) {
     var whereStr = '';
     final whereArgs = [];
     map.forEach((key, filters) {
@@ -14,6 +14,9 @@ class Where {
       for (final filter in filters) {
         if (whereStr.isNotEmpty) {
           whereStr += ' AND ';
+        }
+        if (tableName?.isNotEmpty ?? false) {
+          whereStr += '$tableName.';
         }
         if (filter is QueryOperator) {
           whereStr += '$key ${filter.operation}';

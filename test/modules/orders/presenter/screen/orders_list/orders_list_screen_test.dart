@@ -112,7 +112,7 @@ void main() {
   });
 
   testWidgets('WHEN changes filter SHOULD reload', (tester) async {
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -125,7 +125,7 @@ void main() {
 
     await tester
         .tap(ToggleableTagFinder(label: 'Não Entregue', isActive: false));
-    verify(() => bloc.load(status: OrderStatus.ordered));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.ordered)));
   });
 
   testWidgets(
@@ -133,7 +133,7 @@ void main() {
       'SHOULD reload with filter', (tester) async {
     final navigator = mockNavigator();
     when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
     await tester.pumpWidget(MaterialApp(
@@ -143,12 +143,12 @@ void main() {
     await tester.pump();
 
     await tester.tap(ToggleableTagFinder(label: 'Entregue', isActive: false));
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.delivered)));
 
     await tester.tap(find.text('Adicionar'));
     await tester.pumpAndSettle();
 
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.delivered)));
   });
 }
 

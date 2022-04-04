@@ -20,9 +20,7 @@ class OrdersListBloc extends AppCubit<List<ListingOrderDto>>
   ) : super(const LoadingState());
 
   @override
-  Future<void> load({OrderStatus? status}) async {
-    runEither(() => getAllUseCase.execute(OrdersFilter(
-          status: status,
-        )));
+  Future<void> load([OrdersFilter? filter]) async {
+    runEither(() => getAllUseCase.execute(filter));
   }
 }

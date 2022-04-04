@@ -17,7 +17,9 @@ void main() {
         scaffoldBackgroundColor: backgroundColor,
       ),
       home: Scaffold(
-        body: OrdersFilterDisplay(onChange: (newFilter) => filter = newFilter),
+        body: OrdersFilterDisplay(
+          onChange: (newFilter) => filter = newFilter?.toOrdersFilter(),
+        ),
       ),
     ));
 
