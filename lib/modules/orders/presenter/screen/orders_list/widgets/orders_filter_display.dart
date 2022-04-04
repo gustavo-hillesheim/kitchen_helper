@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kitchen_helper/extensions.dart';
 
+import '../model/editing_orders_filter.dart';
 import '../../../../../../common/common.dart';
 import '../../../../domain/domain.dart';
 
 class OrdersFilterDisplay extends StatefulWidget {
-  final ValueChanged<OrdersFilter?> onChange;
+  final ValueChanged<EditingOrdersFilter?> onChange;
 
   const OrdersFilterDisplay({
     Key? key,
@@ -17,32 +18,90 @@ class OrdersFilterDisplay extends StatefulWidget {
 }
 
 class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
-  OrdersFilter? _filter;
+  EditingOrdersFilter? _filter;
 
   @override
   Widget build(BuildContext context) {
     return FilterWithTags(
       onOpenFilter: _showFilterForm,
       tags: [
-        ToggleableTag(
-          label: 'Não Entregue',
-          isActive: _filter?.status == OrderStatus.ordered,
-          onChange: (value) =>
-              _updateFilterStatus(value ? OrderStatus.ordered : null),
-        ),
-        ToggleableTag(
-          label: 'Entregue',
-          isActive: _filter?.status == OrderStatus.delivered,
-          onChange: (value) =>
-              _updateFilterStatus(value ? OrderStatus.delivered : null),
-        ),
+        if (const {null, OrderStatus.ordered}.contains(_filter?.status))
+          ToggleableTag(
+            label: 'Recebido',
+            isActive: _filter?.status == OrderStatus.ordered,
+            onChange: (value) =>
+                _updateFilterStatus(value ? OrderStatus.ordered : null),
+          ),
+        if (const {null, OrderStatus.delivered}.contains(_filter?.status))
+          ToggleableTag(
+            label: 'Entregue',
+            isActive: _filter?.status == OrderStatus.delivered,
+            onChange: (value) =>
+                _updateFilterStatus(value ? OrderStatus.delivered : null),
+          ),
+        if (_filter?.client != null)
+          Tag(
+            label: 'Pedido por ${_filter?.client?.name}',
+            onDelete: _removeClientFilter,
+          ),
+        if (_filter?.orderDateStart != null || _filter?.orderDateEnd != null)
+          DateRangeTag(
+            identifier: 'Pedido',
+            start: _filter?.orderDateStart,
+            end: _filter?.orderDateEnd,
+            onDelete: _removeOrderDateFilter,
+          ),
+        if (_filter?.deliveryDateStart != null ||
+            _filter?.deliveryDateEnd != null)
+          DateRangeTag(
+            identifier: 'Entregue',
+            start: _filter?.deliveryDateStart,
+            end: _filter?.deliveryDateEnd,
+            onDelete: _removeDeliveryDateFilter,
+          ),
       ],
     );
   }
 
+  void _removeClientFilter() {
+    final filter = EditingOrdersFilter(
+      client: null,
+      deliveryDateStart: _filter?.deliveryDateStart,
+      deliveryDateEnd: _filter?.deliveryDateEnd,
+      orderDateStart: _filter?.orderDateStart,
+      orderDateEnd: _filter?.orderDateEnd,
+      status: _filter?.status,
+    );
+    _updateFilter(filter);
+  }
+
+  void _removeOrderDateFilter() {
+    final filter = EditingOrdersFilter(
+      client: _filter?.client,
+      deliveryDateStart: _filter?.deliveryDateStart,
+      deliveryDateEnd: _filter?.deliveryDateEnd,
+      orderDateStart: null,
+      orderDateEnd: null,
+      status: _filter?.status,
+    );
+    _updateFilter(filter);
+  }
+
+  void _removeDeliveryDateFilter() {
+    final filter = EditingOrdersFilter(
+      client: _filter?.client,
+      deliveryDateStart: null,
+      deliveryDateEnd: null,
+      orderDateStart: _filter?.orderDateStart,
+      orderDateEnd: _filter?.orderDateEnd,
+      status: _filter?.status,
+    );
+    _updateFilter(filter);
+  }
+
   void _updateFilterStatus(OrderStatus? status) {
-    final filter = OrdersFilter(
-      clientId: _filter?.clientId,
+    final filter = EditingOrdersFilter(
+      client: _filter?.client,
       deliveryDateStart: _filter?.deliveryDateStart,
       deliveryDateEnd: _filter?.deliveryDateEnd,
       orderDateStart: _filter?.orderDateStart,
@@ -52,7 +111,7 @@ class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
     _updateFilter(filter);
   }
 
-  void _updateFilter(OrdersFilter? filter) {
+  void _updateFilter(EditingOrdersFilter? filter) {
     setState(() {
       _filter = filter;
       widget.onChange(_filter);
@@ -76,8 +135,8 @@ class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
 }
 
 class _OrdersFilterForm extends StatefulWidget {
-  final OrdersFilter? initialValue;
-  final ValueChanged<OrdersFilter> onFilter;
+  final EditingOrdersFilter? initialValue;
+  final ValueChanged<EditingOrdersFilter> onFilter;
 
   const _OrdersFilterForm({
     Key? key,
@@ -91,7 +150,7 @@ class _OrdersFilterForm extends StatefulWidget {
 
 class __OrdersFilterFormState extends State<_OrdersFilterForm> {
   final _formKey = GlobalKey<FormState>();
-  final _clientIdNotifier = ValueNotifier<SelectedClient?>(null);
+  final _clientNotifier = ValueNotifier<SelectedClient?>(null);
   final _orderDateStartNotifier = ValueNotifier<DateTime?>(null);
   final _orderDateEndNotifier = ValueNotifier<DateTime?>(null);
   final _deliveryDateStartNotifier = ValueNotifier<DateTime?>(null);
@@ -103,10 +162,12 @@ class __OrdersFilterFormState extends State<_OrdersFilterForm> {
     super.initState();
     final initialValue = widget.initialValue;
     if (initialValue != null) {
+      _clientNotifier.value = initialValue.client;
       _orderDateStartNotifier.value = initialValue.orderDateStart;
       _orderDateEndNotifier.value = initialValue.orderDateEnd;
       _deliveryDateStartNotifier.value = initialValue.deliveryDateStart;
       _deliveryDateEndNotifier.value = initialValue.deliveryDateEnd;
+      _statusNotifier.value = initialValue.status;
     }
   }
 
@@ -124,7 +185,7 @@ class __OrdersFilterFormState extends State<_OrdersFilterForm> {
               style: Theme.of(context).textTheme.headline6,
             ),
             kMediumSpacerVertical,
-            _clientIdNotifier.builder(
+            _clientNotifier.builder(
               (_, client, onChange) => ClientSelector(
                 value: client,
                 onChange: onChange,
@@ -193,12 +254,13 @@ class __OrdersFilterFormState extends State<_OrdersFilterForm> {
 
   void _onFilter() {
     if (_formKey.currentState?.validate() ?? false) {
-      final filter = OrdersFilter(
-        clientId: _clientIdNotifier.value?.id,
+      final filter = EditingOrdersFilter(
+        client: _clientNotifier.value,
         deliveryDateEnd: _deliveryDateEndNotifier.value,
         deliveryDateStart: _deliveryDateStartNotifier.value,
         orderDateEnd: _orderDateEndNotifier.value,
         orderDateStart: _orderDateStartNotifier.value,
+        status: _statusNotifier.value,
       );
       widget.onFilter(filter);
     }

@@ -48,7 +48,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',
       emptyActionText: 'Adicionar pedido',
       headerBottom: OrdersFilterDisplay(
-        onChange: (newFilter) => _load(filter: newFilter),
+        onChange: (newFilter) => _load(filter: newFilter?.toOrdersFilter()),
       ),
       onAdd: _goToEditScreen,
       onLoad: _load,
