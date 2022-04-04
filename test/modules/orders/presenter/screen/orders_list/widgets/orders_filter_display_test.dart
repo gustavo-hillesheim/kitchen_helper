@@ -22,13 +22,13 @@ void main() {
     ));
 
     final inactiveOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', value: false);
+        ToggleableTagFinder(label: 'Não Entregue', isActive: false);
     final activeOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', value: true);
+        ToggleableTagFinder(label: 'Não Entregue', isActive: true);
     final inactiveDeliveredFinder =
-        ToggleableTagFinder(label: 'Entregue', value: false);
+        ToggleableTagFinder(label: 'Entregue', isActive: false);
     final activeDeliveredFinder =
-        ToggleableTagFinder(label: 'Entregue', value: true);
+        ToggleableTagFinder(label: 'Entregue', isActive: true);
     expect(inactiveOrderedFinder, findsOneWidget);
     expect(inactiveDeliveredFinder, findsOneWidget);
 

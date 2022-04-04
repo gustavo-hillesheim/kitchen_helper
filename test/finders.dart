@@ -132,18 +132,18 @@ class CalculatedValueFinder extends MatchFinder {
 
 class ToggleableTagFinder extends MatchFinder {
   final String label;
-  final bool value;
+  final bool isActive;
 
-  ToggleableTagFinder({required this.label, required this.value});
+  ToggleableTagFinder({required this.label, required this.isActive});
 
   @override
-  String get description => 'ToggleableTag(label: $label, value: $value)';
+  String get description => 'ToggleableTag(label: $label, isActive: $isActive)';
 
   @override
   bool matches(Element candidate) {
     if (candidate.widget is ToggleableTag) {
       final widget = candidate.widget as ToggleableTag;
-      return widget.label == label && widget.value == value;
+      return widget.label == label && widget.isActive == isActive;
     }
     return false;
   }

@@ -9,11 +9,13 @@ import 'client_selector_service.dart';
 class ClientSelector extends StatefulWidget {
   final SelectedClient? value;
   final ValueChanged<SelectedClient?> onChange;
+  final bool required;
 
   const ClientSelector({
     Key? key,
-    this.value,
     required this.onChange,
+    this.value,
+    this.required = true,
   }) : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class _ClientSelectorState extends State<ClientSelector> {
       name: 'Cliente',
       value: widget.value,
       onChanged: widget.onChange,
+      required: widget.required,
       onSearch: _getClients,
       onFilter: _filterClients,
       getContentLabel: _getClientContentLabel,

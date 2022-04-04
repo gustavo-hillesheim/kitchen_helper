@@ -123,7 +123,8 @@ void main() {
     await tester.pump();
     verify(() => bloc.load());
 
-    await tester.tap(ToggleableTagFinder(label: 'Não Entregue', value: false));
+    await tester
+        .tap(ToggleableTagFinder(label: 'Não Entregue', isActive: false));
     verify(() => bloc.load(status: OrderStatus.ordered));
   });
 
@@ -141,7 +142,7 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    await tester.tap(ToggleableTagFinder(label: 'Entregue', value: false));
+    await tester.tap(ToggleableTagFinder(label: 'Entregue', isActive: false));
     verify(() => bloc.load(status: OrderStatus.delivered));
 
     await tester.tap(find.text('Adicionar'));

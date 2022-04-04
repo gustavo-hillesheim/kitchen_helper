@@ -34,7 +34,7 @@ class _RecipesFilterDisplayState extends State<RecipesFilterDisplay> {
             label: _filter?.canBeSold == true
                 ? 'Pode ser vendida'
                 : 'Não pode ser vendida',
-            value: true,
+            isActive: true,
             onChange: (_) => _removeCanBeSold(),
           ),
       ],
