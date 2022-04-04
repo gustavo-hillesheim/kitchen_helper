@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kitchen_helper/common/common.dart';
 
 import 'tag.dart';
 
@@ -10,10 +11,12 @@ class DateRangeTag extends StatelessWidget {
   final DateTime? start;
   final DateTime? end;
   final VoidCallback? onDelete;
+  final bool isActive;
 
   const DateRangeTag({
     Key? key,
     required this.identifier,
+    this.isActive = false,
     this.start,
     this.end,
     this.onDelete,
@@ -21,9 +24,10 @@ class DateRangeTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tag(
+    return ToggleableTag(
       label: _createLabel(),
-      onDelete: onDelete,
+      isActive: isActive,
+      onChange: (_) => onDelete,
     );
   }
 

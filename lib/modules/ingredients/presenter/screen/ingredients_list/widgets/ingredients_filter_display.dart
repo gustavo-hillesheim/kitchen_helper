@@ -25,9 +25,10 @@ class _IngredientsFilterDisplayState extends State<IngredientsFilterDisplay> {
       onOpenFilter: _showIngredientsFilterForm,
       tags: [
         if (_filter?.name != null && _filter!.name!.isNotEmpty)
-          Tag(
+          ToggleableTag(
             label: 'Nome inclui: ${_filter!.name!}',
-            onDelete: _removeNameFromFilter,
+            isActive: true,
+            onChange: (_) => _removeNameFromFilter(),
           ),
       ],
     );

@@ -40,13 +40,15 @@ class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
                 _updateFilterStatus(value ? OrderStatus.delivered : null),
           ),
         if (_filter?.client != null)
-          Tag(
+          ToggleableTag(
             label: 'Pedido por ${_filter?.client?.name}',
-            onDelete: _removeClientFilter,
+            isActive: true,
+            onChange: (_) => _removeClientFilter(),
           ),
         if (_filter?.orderDateStart != null || _filter?.orderDateEnd != null)
           DateRangeTag(
             identifier: 'Pedido',
+            isActive: true,
             start: _filter?.orderDateStart,
             end: _filter?.orderDateEnd,
             onDelete: _removeOrderDateFilter,
@@ -55,6 +57,7 @@ class _OrdersFilterDisplayState extends State<OrdersFilterDisplay> {
             _filter?.deliveryDateEnd != null)
           DateRangeTag(
             identifier: 'Entregue',
+            isActive: true,
             start: _filter?.deliveryDateStart,
             end: _filter?.deliveryDateEnd,
             onDelete: _removeDeliveryDateFilter,
