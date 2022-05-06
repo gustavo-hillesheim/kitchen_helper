@@ -6,12 +6,14 @@ import '../models/editing_recipe_ingredient.dart';
 
 class EditRecipeIngredientForm extends StatefulWidget {
   final ValueChanged<RecipeIngredient> onSave;
+  final VoidCallback onCancel;
   final EditingRecipeIngredient? initialValue;
   final int? recipeToIgnore;
 
   const EditRecipeIngredientForm({
     Key? key,
     required this.onSave,
+    required this.onCancel,
     this.recipeToIgnore,
     this.initialValue,
   }) : super(key: key);
@@ -83,9 +85,25 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     ],
                   ),
                   kMediumSpacerVertical,
-                  PrimaryButton(
-                    child: const Text('Salvar'),
-                    onPressed: _save,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SecondaryButton(
+                          child: const Text('Cancelar'),
+                          onPressed: _cancel,
+                        ),
+                      ),
+                      kSmallSpacerHorizontal,
+                      Expanded(
+                        child: PrimaryButton(
+                          child: Text(widget.initialValue != null
+                              ? 'Salvar'
+                              : 'Adicionar'),
+                          size: null,
+                          onPressed: _save,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -106,6 +124,10 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
       );
     }
     return null;
+  }
+
+  void _cancel() {
+    widget.onCancel();
   }
 
   void _save() {

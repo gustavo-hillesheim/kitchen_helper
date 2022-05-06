@@ -70,6 +70,9 @@ class IngredientsList extends StatelessWidget {
         return EditRecipeIngredientForm(
           initialValue: initialValue,
           recipeToIgnore: recipeId,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
           onSave: (recipeIngredient) {
             if (initialValue != null) {
               onEdit(initialValue, recipeIngredient);

@@ -9,11 +9,13 @@ import 'edit_address_form_bloc.dart';
 class EditAddressForm extends StatefulWidget {
   final Address? initialValue;
   final ValueChanged<Address> onSave;
+  final VoidCallback onCancel;
 
   const EditAddressForm({
     Key? key,
     required this.initialValue,
     required this.onSave,
+    required this.onCancel,
   }) : super(key: key);
 
   @override
@@ -245,13 +247,32 @@ class _EditAddressFormState extends State<EditAddressForm> {
               controller: _identifierController,
             ),
             kMediumSpacerVertical,
-            PrimaryButton(
-              child: const Text('Salvar'),
-              onPressed: _save,
+            Row(
+              children: [
+                Expanded(
+                  child: SecondaryButton(
+                    child: const Text('Cancelar'),
+                    onPressed: _cancel,
+                  ),
+                ),
+                kSmallSpacerHorizontal,
+                Expanded(
+                  child: PrimaryButton(
+                    child: Text(
+                        widget.initialValue != null ? 'Salvar' : 'Adicionar'),
+                    size: null,
+                    onPressed: _save,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       );
+
+  void _cancel() {
+    widget.onCancel();
+  }
 
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {

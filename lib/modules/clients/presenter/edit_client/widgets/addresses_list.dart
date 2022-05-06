@@ -55,6 +55,9 @@ class AddressesList extends StatelessWidget {
       builder: (_) {
         return EditAddressForm(
           initialValue: initialValue,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
           onSave: (address) {
             if (initialValue != null) {
               onEdit(initialValue, address);

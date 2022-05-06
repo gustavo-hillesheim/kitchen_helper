@@ -7,12 +7,14 @@ typedef OnPressedCallback = FutureOr<void> Function();
 class PrimaryButton extends StatefulWidget {
   final Widget child;
   final OnPressedCallback? onPressed;
+  final Size? size;
   final bool? isLoading;
 
   const PrimaryButton({
     Key? key,
     required this.child,
     required this.onPressed,
+    this.size = const Size.fromHeight(48),
     this.isLoading,
   }) : super(key: key);
 
@@ -27,9 +29,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
   @override
   void didChangeDependencies() {
     buttonStyle = ButtonStyle(
-      minimumSize: MaterialStateProperty.all(
-        const Size.fromHeight(48),
-      ),
+      minimumSize: MaterialStateProperty.all(widget.size),
       backgroundColor: MaterialStateProperty.all(
         Theme.of(context).colorScheme.secondary,
       ),
