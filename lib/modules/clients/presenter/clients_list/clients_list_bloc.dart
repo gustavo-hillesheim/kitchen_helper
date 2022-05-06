@@ -20,4 +20,9 @@ class ClientsListBloc extends AppCubit<List<ListingClientDto>>
     this.getUseCase,
     this.saveUseCase,
   ) : super(const EmptyState());
+
+  @override
+  Future<void> load([ClientsFilter? filter]) async {
+    runEither(() => getAllUseCase.execute(filter));
+  }
 }
