@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kitchen_helper/common/common.dart';
 
-import 'tag.dart';
-
 class DateRangeTag extends StatelessWidget {
   static final dateWithYearFormat = DateFormat('dd/MM/yyyy');
   static final dateWithoutYearFormat = DateFormat('dd/MM');

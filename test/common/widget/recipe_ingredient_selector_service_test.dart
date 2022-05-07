@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/common/widget/recipe_ingredient_selector_service.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/ingredients/ingredients.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:mocktail/mocktail.dart';

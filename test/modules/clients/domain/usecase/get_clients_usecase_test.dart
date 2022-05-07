@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/domain/repository/client_repository.dart';
 import 'package:kitchen_helper/modules/clients/domain/usecase/get_clients_usecase.dart';
 import 'package:mocktail/mocktail.dart';

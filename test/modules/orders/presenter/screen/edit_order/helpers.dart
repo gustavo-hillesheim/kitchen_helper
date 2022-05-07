@@ -6,7 +6,6 @@ import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 
 import '../../../../../finders.dart';
-import '../../../../../utils.dart';
 
 const discountOne =
     Discount(reason: 'Reason', type: DiscountType.fixed, value: 10);

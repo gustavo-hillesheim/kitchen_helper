@@ -82,7 +82,7 @@ Future<void> addIngredient(
     await tester.tap(find.text(ingredientName));
     await tester.pumpAndSettle();
   }
-  await tester.tap(find.text('Salvar').last);
+  await tester.tap(find.text('Adicionar').last);
 }
 
 List<EditingRecipeIngredient> editingRecipeIngredients(Recipe recipe) {

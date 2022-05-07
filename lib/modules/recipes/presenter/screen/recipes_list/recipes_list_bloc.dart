@@ -21,7 +21,6 @@ class RecipesListBloc extends AppCubit<List<ListingRecipeDto>>
 
   @override
   Future<void> load([RecipesFilter? filter]) async {
-    print('filtering with $filter');
     emit(const LoadingState<List<ListingRecipeDto>>());
     final result = await getAllUseCase.execute(filter);
     result.fold(
