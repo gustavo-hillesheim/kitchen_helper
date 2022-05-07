@@ -7,7 +7,7 @@ import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/orders_list_bloc.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/orders_list_screen.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_filter.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:modular_test/modular_test.dart';
@@ -37,7 +37,7 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    expect(find.byType(OrderFilter), findsOneWidget);
+    expect(find.byType(OrdersFilterDisplay), findsOneWidget);
     expect(find.text('Pedidos'), findsOneWidget);
     expect(find.text('Adicionar'), findsOneWidget);
     expect(
@@ -112,7 +112,7 @@ void main() {
   });
 
   testWidgets('WHEN changes filter SHOULD reload', (tester) async {
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
 
@@ -123,8 +123,8 @@ void main() {
     await tester.pump();
     verify(() => bloc.load());
 
-    await tester.tap(ToggleableTagFinder(label: 'Não Entregue', value: false));
-    verify(() => bloc.load(status: OrderStatus.ordered));
+    await tester.tap(ToggleableTagFinder(label: 'Recebido', isActive: false));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.ordered)));
   });
 
   testWidgets(
@@ -132,7 +132,7 @@ void main() {
       'SHOULD reload with filter', (tester) async {
     final navigator = mockNavigator();
     when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
-    when(() => bloc.load(status: any(named: 'status'))).thenAnswer((_) async {
+    when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
     await tester.pumpWidget(MaterialApp(
@@ -141,13 +141,13 @@ void main() {
     // Renders empty
     await tester.pump();
 
-    await tester.tap(ToggleableTagFinder(label: 'Entregue', value: false));
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    await tester.tap(ToggleableTagFinder(label: 'Entregue', isActive: false));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.delivered)));
 
     await tester.tap(find.text('Adicionar'));
     await tester.pumpAndSettle();
 
-    verify(() => bloc.load(status: OrderStatus.delivered));
+    verify(() => bloc.load(const OrdersFilter(status: OrderStatus.delivered)));
   });
 }
 

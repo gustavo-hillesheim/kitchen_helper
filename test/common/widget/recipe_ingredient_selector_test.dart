@@ -25,7 +25,7 @@ void main() {
     WidgetTester tester, {
     RecipeIngredientSelectorItem? initialValue,
     RecipeIngredientSelectorItems? showOnly,
-    RecipeFilter? recipeFilter,
+    RecipesFilter? recipeFilter,
   }) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
@@ -142,7 +142,7 @@ void main() {
 
   testWidgets('WHEN recipeFilter is informed SHOULD call service with it',
       (tester) async {
-    const filter = RecipeFilter(canBeSold: true);
+    const filter = RecipesFilter(canBeSold: true);
     when(() => service.getItems(
         getOnly: any(named: 'getOnly'),
         recipeFilter: any(named: 'recipeFilter'))).thenAnswer(

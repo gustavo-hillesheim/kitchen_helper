@@ -19,7 +19,7 @@ class GetRecipesDomainUseCase
     RecipeDomainFilter? filter,
   ) async {
     final domainResult = await repository.findAllDomain(
-        filter: RecipeFilter(canBeSold: filter?.canBeSold));
+        filter: RecipesFilter(canBeSold: filter?.canBeSold));
     return domainResult
         .bindFuture(
             _removeRecipesThatDependOn(filter?.ignoreRecipesThatDependOn))

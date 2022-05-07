@@ -7,23 +7,25 @@ import '../domain.dart';
 
 abstract class RecipeRepository extends Repository<Recipe, int> {
   @override
-  Future<Either<Failure, List<Recipe>>> findAll({RecipeFilter? filter});
+  Future<Either<Failure, List<Recipe>>> findAll({RecipesFilter? filter});
 
-  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing();
+  Future<Either<Failure, List<ListingRecipeDto>>> findAllListing(
+      {RecipesFilter? filter});
 
   Future<Either<Failure, List<RecipeDomainDto>>> findAllDomain(
-      {RecipeFilter? filter});
+      {RecipesFilter? filter});
 
   Future<Either<Failure, Set<int>>> getRecipesThatDependOn(int recipeId);
 
   Future<Either<Failure, double>> getCost(int recipeId, {double? quantity});
 }
 
-class RecipeFilter extends Equatable {
+class RecipesFilter extends Equatable {
+  final String? name;
   final bool? canBeSold;
 
-  const RecipeFilter({this.canBeSold});
+  const RecipesFilter({this.name, this.canBeSold});
 
   @override
-  List<Object?> get props => [canBeSold];
+  List<Object?> get props => [name, canBeSold];
 }

@@ -65,15 +65,12 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
           if (recipes.isEmpty) {
             return _buildEmptyState();
           }
-          return RefreshIndicator(
-            onRefresh: onLoad,
-            child: ListView.builder(
-              padding: kSmallEdgeInsets,
-              itemCount: recipes.length,
-              itemBuilder: (context, index) => _buildTile(
-                context,
-                recipes[index],
-              ),
+          return ListView.builder(
+            padding: kSmallEdgeInsets,
+            itemCount: recipes.length,
+            itemBuilder: (context, index) => _buildTile(
+              context,
+              recipes[index],
             ),
           );
         },

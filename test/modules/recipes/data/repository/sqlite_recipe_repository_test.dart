@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kitchen_helper/common/common.dart';
 import 'package:kitchen_helper/core/core.dart';
+import 'package:kitchen_helper/database/sqlite/query_operators.dart';
 import 'package:kitchen_helper/database/sqlite/sqlite.dart';
 import 'package:kitchen_helper/modules/recipes/data/repository/sqlite_recipe_ingredient_repository.dart';
 import 'package:kitchen_helper/modules/recipes/data/repository/sqlite_recipe_repository.dart';
@@ -109,13 +110,13 @@ void main() {
           .thenAnswer((_) async => []);
 
       await repository.findAll(
-        filter: const RecipeFilter(canBeSold: true),
+        filter: const RecipesFilter(canBeSold: true),
       );
       verify(() => database.findAll(repository.tableName, where: {
             'canBeSold': 1,
           }));
 
-      await repository.findAll(filter: const RecipeFilter(canBeSold: false));
+      await repository.findAll(filter: const RecipesFilter(canBeSold: false));
       verify(() => database.findAll(repository.tableName, where: {
             'canBeSold': 0,
           }));
@@ -339,16 +340,18 @@ void main() {
   });
 
   group('findAllListing', () {
-    When<Future<List<Map<String, dynamic>>>> mockQuery() {
-      return when(() => database.query(
-            table: repository.tableName,
-            columns: any(named: 'columns'),
-            orderBy: any(named: 'orderBy'),
-          ));
+    Future<List<Map<String, dynamic>>> findAllListingQuery(
+        {Map<String, dynamic>? where}) {
+      return database.query(
+        table: repository.tableName,
+        columns: any(named: 'columns'),
+        orderBy: any(named: 'orderBy'),
+        where: where,
+      );
     }
 
     test('WHEN database has records SHOULD return DTOs', () async {
-      mockQuery().thenAnswer((_) async => [
+      when(findAllListingQuery).thenAnswer((_) async => [
             cakeRecipe.toJson(),
             sugarWithEggRecipeWithId.toJson(),
           ]);
@@ -374,9 +377,44 @@ void main() {
           ));
     });
 
+    test('WHEN filter is provided SHOULD query with filter', () async {
+      const queryFilter = {
+        'name': Contains('Cake'),
+        'canBeSold': 0,
+      };
+      when(() => findAllListingQuery(where: queryFilter))
+          .thenAnswer((_) async => [
+                cakeRecipe.toJson(),
+                sugarWithEggRecipeWithId.toJson(),
+              ]);
+
+      final result = await repository.findAllListing(
+        filter: const RecipesFilter(name: 'Cake', canBeSold: false),
+      );
+
+      expect(result.isRight(), true);
+      expect(result.getRight().toNullable(), [
+        listingCakeRecipeDto,
+        listingSugarWithEggRecipeDto,
+      ]);
+      verify(() => database.query(
+            table: repository.tableName,
+            columns: [
+              'id',
+              'name',
+              'quantityProduced',
+              'quantitySold',
+              'price',
+              'measurementUnit'
+            ],
+            orderBy: 'name COLLATE NOCASE',
+            where: queryFilter,
+          ));
+    });
     test('WHEN database throws known Exception SHOULD return Failure',
         () async {
-      mockQuery().thenThrow(FakeDatabaseException('database exception'));
+      when(findAllListingQuery)
+          .thenThrow(FakeDatabaseException('database exception'));
 
       final result = await repository.findAllListing();
 
@@ -389,7 +427,7 @@ void main() {
 
     test('WHEN database throws unknown Exception SHOULD throw Exception',
         () async {
-      mockQuery().thenThrow(Exception('unknown exception'));
+      when(findAllListingQuery).thenThrow(Exception('unknown exception'));
 
       try {
         await repository.findAllListing();
@@ -432,7 +470,7 @@ void main() {
           where: {'canBeSold': 1})).thenThrow(FakeDatabaseException('error'));
 
       final result = await repository.findAllDomain(
-        filter: const RecipeFilter(canBeSold: true),
+        filter: const RecipesFilter(canBeSold: true),
       );
 
       expect(

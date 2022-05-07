@@ -1,11 +1,13 @@
 import 'package:fpdart/fpdart.dart' hide Order;
-import 'package:kitchen_helper/modules/recipes/domain/domain.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../../../database/sqlite/query_operators.dart';
+import '../../../../database/sqlite/where.dart';
 import '../../../../core/core.dart';
 import '../../../../database/sqlite/sqlite.dart';
 import '../../../../extensions.dart';
 import '../../domain/domain.dart';
+import '../../../recipes/domain/domain.dart';
 import 'sqlite_order_discount_repository.dart';
 import 'sqlite_order_product_repository.dart';
 
@@ -72,8 +74,11 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
   Future<Either<Failure, List<ListingOrderDto>>> findAllListing(
       {OrdersFilter? filter}) async {
     try {
-      final where = filter != null ? _filterToWhereMap(filter) : null;
-      final result = await database.rawQuery('''
+      final where = filter != null
+          ? Where.fromMap(_filterToWhereMap(filter), tableName: 'o')
+          : null;
+      final result = await database.rawQuery(
+        '''
       SELECT o.id id, coalesce(c.name, 'Sem cliente') clientName, coalesce(ca.identifier, 'Sem endereço') clientAddress,
         o.deliveryDate deliveryDate, o.status status,
         (SELECT SUM(op.quantity / r.quantitySold * r.price) FROM orderProducts op INNER JOIN recipes r ON r.id = op.productId WHERE op.orderId = o.id) basePrice, 
@@ -82,10 +87,12 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
       FROM orders o
       LEFT JOIN clients c ON c.id = o.clientId
       LEFT JOIN clientAddresses ca ON ca.id = o.addressId AND ca.clientId = c.id
-      ${where?.isNotEmpty ?? false ? 'WHERE ${where!.keys.map((key) => '$key = ?').join(' AND ')}' : ''}
+      ${where?.where?.isNotEmpty ?? false ? 'WHERE ${where!.where}' : ''}
       GROUP BY o.id
       ORDER BY o.deliveryDate
-      ''', where?.values.toList());
+      ''',
+        where?.whereArgs,
+      );
       final dtos = result.map((json) {
         // Creates muttable map
         json = Map.from(json);
@@ -122,6 +129,33 @@ class SQLiteOrderRepository extends SQLiteRepository<Order>
     final where = <String, dynamic>{};
     if (filter.status != null) {
       where['status'] = filter.status!.name;
+    }
+    if (filter.clientId != null) {
+      where['clientId'] = filter.clientId;
+    }
+    final orderDateFilters = [];
+    if (filter.orderDateStart != null) {
+      orderDateFilters
+          .add(GreaterOrEqualThan(filter.orderDateStart!.toIso8601String()));
+    }
+    if (filter.orderDateEnd != null) {
+      orderDateFilters
+          .add(LowerOrEqualThan(filter.orderDateEnd!.toIso8601String()));
+    }
+    if (orderDateFilters.isNotEmpty) {
+      where['orderDate'] = orderDateFilters;
+    }
+    final deliveryDateFilters = [];
+    if (filter.deliveryDateStart != null) {
+      deliveryDateFilters
+          .add(GreaterOrEqualThan(filter.deliveryDateStart!.toIso8601String()));
+    }
+    if (filter.deliveryDateEnd != null) {
+      deliveryDateFilters
+          .add(LowerOrEqualThan(filter.deliveryDateEnd!.toIso8601String()));
+    }
+    if (deliveryDateFilters.isNotEmpty) {
+      where['deliveryDate'] = deliveryDateFilters;
     }
     return where;
   }

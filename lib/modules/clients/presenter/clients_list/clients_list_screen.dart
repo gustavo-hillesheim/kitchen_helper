@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../edit_client/edit_client_screen.dart';
-import 'widgets/client_list_tile.dart';
 import '../../clients.dart';
-import 'clients_list_bloc.dart';
 import '../../../../../common/common.dart';
+import 'widgets/clients_filter_display.dart';
+import 'widgets/client_list_tile.dart';
+import 'clients_list_bloc.dart';
 
 class ClientsListScreen extends StatefulWidget {
   final ClientsListBloc? bloc;
@@ -18,6 +19,7 @@ class ClientsListScreen extends StatefulWidget {
 
 class _ClientsListScreenState extends State<ClientsListScreen> {
   late final ClientsListBloc bloc;
+  ClientsFilter? lastFilter;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
           Modular.get(),
           Modular.get(),
         );
-    bloc.load();
+    _load();
   }
 
   @override
@@ -45,8 +47,18 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
       emptyText: 'Sem clientes',
       emptySubtext: 'Adicione clientes e eles aparecerão aqui',
       emptyActionText: 'Adicionar clientes',
+      headerBottom: ClientsFilterDisplay(
+        onChange: (newFilter) => _load(newFilter?.toClientsFilter()),
+      ),
       onAdd: _goToEditClientScreen,
     );
+  }
+
+  Future<void> _load([ClientsFilter? filter]) {
+    if (filter != null) {
+      lastFilter = filter;
+    }
+    return bloc.load(lastFilter);
   }
 
   void _goToEditClientScreen([ListingClientDto? client]) async {

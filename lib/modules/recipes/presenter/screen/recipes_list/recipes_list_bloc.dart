@@ -18,4 +18,14 @@ class RecipesListBloc extends AppCubit<List<ListingRecipeDto>>
     this.saveUseCase,
     this.getUseCase,
   ) : super(const LoadingState());
+
+  @override
+  Future<void> load([RecipesFilter? filter]) async {
+    emit(const LoadingState<List<ListingRecipeDto>>());
+    final result = await getAllUseCase.execute(filter);
+    result.fold(
+      (failure) => emit(FailureState<List<ListingRecipeDto>>(failure)),
+      (value) => emit(SuccessState<List<ListingRecipeDto>>(value)),
+    );
+  }
 }

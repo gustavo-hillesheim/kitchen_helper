@@ -5,7 +5,7 @@ import '../../../../../common/common.dart';
 import '../../../domain/domain.dart';
 import '../edit_order/edit_order_screen.dart';
 import 'orders_list_bloc.dart';
-import 'widgets/order_filter.dart';
+import 'widgets/orders_filter_display.dart';
 import 'widgets/order_list_tile.dart';
 
 class OrdersListScreen extends StatefulWidget {
@@ -47,19 +47,19 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       emptyText: 'Sem pedidos',
       emptySubtext: 'Adicione pedidos e eles aparecerão aqui',
       emptyActionText: 'Adicionar pedido',
-      headerBottom: OrderFilter(
-        onChange: (newFilter) => _load(filter: newFilter),
+      headerBottom: OrdersFilterDisplay(
+        onChange: (newFilter) => _load(newFilter?.toOrdersFilter()),
       ),
       onAdd: _goToEditScreen,
       onLoad: _load,
     );
   }
 
-  Future<void> _load({OrdersFilter? filter}) {
+  Future<void> _load([OrdersFilter? filter]) {
     if (filter != null) {
       lastFilter = filter;
     }
-    return bloc.load(status: lastFilter?.status);
+    return bloc.load(lastFilter);
   }
 
   void _goToEditScreen([ListingOrderDto? order]) async {

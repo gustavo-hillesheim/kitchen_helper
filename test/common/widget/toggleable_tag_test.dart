@@ -61,7 +61,7 @@ void main() {
     var calledOnChange = false;
     final widget = ToggleableTag(
       label: 'Test',
-      value: false,
+      isActive: false,
       onChange: (_) => calledOnChange = true,
       activeColor: Colors.blue,
       inactiveColor: Colors.red,

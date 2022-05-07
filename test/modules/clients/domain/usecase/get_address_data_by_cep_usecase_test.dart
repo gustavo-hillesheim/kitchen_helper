@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:kitchen_helper/core/core.dart';
 import 'package:kitchen_helper/modules/clients/domain/model/states.dart';
 import 'package:kitchen_helper/modules/clients/domain/usecase/usecase.dart';
 import 'package:mocktail/mocktail.dart';

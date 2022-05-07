@@ -16,6 +16,7 @@ void main() {
     OrderProduct? orderProduct;
     await tester.pumpWidget(MaterialApp(
       home: EditOrderProductForm(
+        onCancel: () {},
         onSave: (o) => orderProduct = o,
       ),
     ));
@@ -37,6 +38,7 @@ void main() {
     OrderProduct? orderProduct;
     await tester.pumpWidget(MaterialApp(
       home: EditOrderProductForm(
+        onCancel: () {},
         initialValue: editingOrderProduct(iceCreamOrderProduct),
         onSave: (o) => orderProduct = o,
       ),
@@ -62,6 +64,7 @@ void main() {
     OrderProduct? orderProduct;
     await tester.pumpWidget(MaterialApp(
       home: EditOrderProductForm(
+        onCancel: () {},
         onSave: (o) => orderProduct = o,
       ),
     ));

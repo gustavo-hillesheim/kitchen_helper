@@ -6,11 +6,13 @@ import '../../../../domain/domain.dart';
 
 class EditOrderProductForm extends StatefulWidget {
   final ValueChanged<OrderProduct> onSave;
+  final VoidCallback onCancel;
   final EditingOrderProductDto? initialValue;
 
   const EditOrderProductForm({
     Key? key,
     required this.onSave,
+    required this.onCancel,
     this.initialValue,
   }) : super(key: key);
 
@@ -65,7 +67,7 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
                     children: [
                       RecipeIngredientSelector(
                         showOnly: RecipeIngredientSelectorItems.recipes,
-                        recipeFilter: const RecipeFilter(
+                        recipeFilter: const RecipesFilter(
                           canBeSold: true,
                         ),
                         initialValue: selectorInitialValue,
@@ -82,9 +84,26 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
                     ],
                   ),
                   kMediumSpacerVertical,
-                  PrimaryButton(
-                    child: const Text('Salvar'),
-                    onPressed: _save,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SecondaryButton(
+                          child: const Text('Cancelar'),
+                          onPressed: _cancel,
+                        ),
+                      ),
+                      kSmallSpacerHorizontal,
+                      Expanded(
+                        child: PrimaryButton(
+                          child: Text(widget.initialValue != null
+                              ? 'Salvar'
+                              : 'Adicionar'),
+                          size: null,
+                          onPressed: _save,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -105,6 +124,10 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
       );
     }
     return null;
+  }
+
+  void _cancel() {
+    widget.onCancel();
   }
 
   void _save() {

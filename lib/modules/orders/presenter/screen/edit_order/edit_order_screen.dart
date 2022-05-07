@@ -59,7 +59,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
           Modular.get(),
           Modular.get(),
           Modular.get(),
-          Modular.get(),
         );
     _clientNotifier.addListener(() {
       _updateClientContacts();
@@ -246,7 +245,6 @@ class _EditOrderScreenState extends State<EditOrderScreen>
                     clientNotifier: _clientNotifier,
                     contactNotifier: _contactNotifier,
                     addressNotifier: _addressNotifier,
-                    searchClientDomainFn: bloc.findClientDomain,
                     searchContactDomainFn: _clientContacts == null
                         ? null
                         : () async => Right(_clientContacts!),

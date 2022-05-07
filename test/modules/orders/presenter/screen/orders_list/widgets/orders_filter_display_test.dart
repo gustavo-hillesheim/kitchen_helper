@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
-import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_filter.dart';
+import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 
 import '../../../../../../finders.dart';
 
@@ -17,18 +17,20 @@ void main() {
         scaffoldBackgroundColor: backgroundColor,
       ),
       home: Scaffold(
-        body: OrderFilter(onChange: (newFilter) => filter = newFilter),
+        body: OrdersFilterDisplay(
+          onChange: (newFilter) => filter = newFilter?.toOrdersFilter(),
+        ),
       ),
     ));
 
     final inactiveOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', value: false);
+        ToggleableTagFinder(label: 'Recebido', isActive: false);
     final activeOrderedFinder =
-        ToggleableTagFinder(label: 'Não Entregue', value: true);
+        ToggleableTagFinder(label: 'Recebido', isActive: true);
     final inactiveDeliveredFinder =
-        ToggleableTagFinder(label: 'Entregue', value: false);
+        ToggleableTagFinder(label: 'Entregue', isActive: false);
     final activeDeliveredFinder =
-        ToggleableTagFinder(label: 'Entregue', value: true);
+        ToggleableTagFinder(label: 'Entregue', isActive: true);
     expect(inactiveOrderedFinder, findsOneWidget);
     expect(inactiveDeliveredFinder, findsOneWidget);
 
@@ -36,14 +38,20 @@ void main() {
     await tester.pump();
 
     expect(activeOrderedFinder, findsOneWidget);
-    expect(inactiveDeliveredFinder, findsOneWidget);
+    expect(inactiveOrderedFinder, findsNothing);
+    expect(activeDeliveredFinder, findsNothing);
+    expect(inactiveDeliveredFinder, findsNothing);
     expect(filter, const OrdersFilter(status: OrderStatus.ordered));
 
+    await tester.tap(activeOrderedFinder);
+    await tester.pump();
     await tester.tap(inactiveDeliveredFinder);
     await tester.pump();
 
-    expect(inactiveOrderedFinder, findsOneWidget);
     expect(activeDeliveredFinder, findsOneWidget);
+    expect(inactiveOrderedFinder, findsNothing);
+    expect(activeOrderedFinder, findsNothing);
+    expect(inactiveDeliveredFinder, findsNothing);
     expect(filter, const OrdersFilter(status: OrderStatus.delivered));
   });
 }

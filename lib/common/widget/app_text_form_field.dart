@@ -94,16 +94,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       onChanged: widget.onChanged,
       decoration: InputDecoration(
         counterText: "",
-        label: Wrap(
-          alignment: WrapAlignment.start,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          runSpacing: kExtraSmallSpace,
-          spacing: kExtraSmallSpace,
-          children: [
-            Text(widget.name),
-            if (!widget.required) const Text('(Opcional)', textScaleFactor: 0.8)
-          ],
-        ),
+        labelText: widget.name,
         prefixText: widget.prefixText,
         prefixIcon: widget.prefixIcon,
         hintText: widget.example != null ? 'Ex.: ${widget.example}' : null,

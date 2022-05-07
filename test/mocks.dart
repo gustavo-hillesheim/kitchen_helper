@@ -489,7 +489,7 @@ IModularNavigator mockNavigator() {
 
 void mockRecipeIngredientsSelectorService() {
   registerFallbackValue(const NoParams());
-  registerFallbackValue(const RecipeFilter());
+  registerFallbackValue(const RecipesFilter());
   final getRecipeUseCase = GetRecipeUseCaseMock();
   final getRecipesUseCase = GetRecipesUseCaseMock();
   final getRecipesDomainUseCase = GetRecipesDomainUseCaseMock();

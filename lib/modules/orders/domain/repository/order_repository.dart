@@ -19,10 +19,29 @@ abstract class OrderRepository implements Repository<Order, int> {
 }
 
 class OrdersFilter extends Equatable {
+  final int? clientId;
+  final DateTime? orderDateStart;
+  final DateTime? orderDateEnd;
+  final DateTime? deliveryDateStart;
+  final DateTime? deliveryDateEnd;
   final OrderStatus? status;
 
-  const OrdersFilter({this.status});
+  const OrdersFilter({
+    this.status,
+    this.clientId,
+    this.orderDateStart,
+    this.orderDateEnd,
+    this.deliveryDateStart,
+    this.deliveryDateEnd,
+  });
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [
+        status,
+        clientId,
+        orderDateStart,
+        orderDateEnd,
+        deliveryDateStart,
+        deliveryDateEnd,
+      ];
 }

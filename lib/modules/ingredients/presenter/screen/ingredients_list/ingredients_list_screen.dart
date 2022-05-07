@@ -5,6 +5,7 @@ import '../../../../../common/common.dart';
 import '../../../ingredients.dart';
 import '../edit_ingredient/edit_ingredient_screen.dart';
 import 'ingredients_list_bloc.dart';
+import 'widgets/ingredients_filter_display.dart';
 import 'widgets/ingredient_list_tile.dart';
 
 class IngredientsListScreen extends StatefulWidget {
@@ -40,6 +41,9 @@ class _IngredientsListScreenState extends State<IngredientsListScreen> {
       tileBuilder: (_, ingredient) => IngredientListTile(
         ingredient,
         onTap: () => _goToEditIngredientScreen(ingredient),
+      ),
+      headerBottom: IngredientsFilterDisplay(
+        onFilter: (filter) => bloc.load(filter),
       ),
       deletedMessage: (ingredient) => '${ingredient.name} foi excluído',
       emptyText: 'Sem ingredientes',

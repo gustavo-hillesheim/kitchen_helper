@@ -50,10 +50,6 @@ class SearchTextField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final effectiveDecoration = InputDecoration(
-      labelText: name,
-      prefixIcon: const Icon(Icons.search_outlined),
-    ).applyDefaults(themeData.inputDecorationTheme).copyWith(enabled: enabled);
     final contentTextStyle = themeData.textTheme.subtitle1!;
 
     return FormField<T>(
@@ -61,23 +57,32 @@ class SearchTextField<T> extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       initialValue: value,
       enabled: enabled,
-      builder: (state) => GestureDetector(
-        onTap: enabled
-            ? () => _showSearchDialog(context, onChanged: (i) {
-                  onChanged(i);
-                  state.didChange(i);
-                })
-            : null,
-        child: InputDecorator(
-          decoration: effectiveDecoration,
-          isEmpty: getContentLabel(value).isEmpty,
-          child: Text(
-            getContentLabel(value),
-            style: contentTextStyle,
-            overflow: TextOverflow.ellipsis,
+      builder: (state) {
+        final effectiveDecoration = InputDecoration(
+          labelText: name,
+          prefixIcon: const Icon(Icons.search_outlined),
+          errorText: state.errorText,
+        )
+            .applyDefaults(themeData.inputDecorationTheme)
+            .copyWith(enabled: enabled);
+        return GestureDetector(
+          onTap: enabled
+              ? () => _showSearchDialog(context, onChanged: (i) {
+                    onChanged(i);
+                    state.didChange(i);
+                  })
+              : null,
+          child: InputDecorator(
+            decoration: effectiveDecoration,
+            isEmpty: getContentLabel(value).isEmpty,
+            child: Text(
+              getContentLabel(value),
+              style: contentTextStyle,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -229,6 +234,7 @@ class _SearchDialogState<T> extends State<_SearchDialog<T>> {
       );
 
   Widget _errorBuilder(Object error) {
+    debugPrint('Error on SearchTextField: $error');
     if (error is Error) {
       debugPrintStack(stackTrace: error.stackTrace);
     }

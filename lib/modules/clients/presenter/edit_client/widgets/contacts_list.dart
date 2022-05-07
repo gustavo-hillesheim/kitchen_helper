@@ -54,6 +54,9 @@ class ContactsList extends StatelessWidget {
       builder: (_) {
         return EditContactForm(
           initialValue: initialValue,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
           onSave: (contact) {
             if (initialValue != null) {
               onEdit(initialValue, contact);
@@ -90,10 +93,12 @@ class ContactListTile extends StatelessWidget {
 class EditContactForm extends StatefulWidget {
   final Contact? initialValue;
   final ValueChanged<Contact> onSave;
+  final VoidCallback onCancel;
 
   const EditContactForm({
     Key? key,
     required this.onSave,
+    required this.onCancel,
     this.initialValue,
   }) : super(key: key);
 
@@ -139,9 +144,25 @@ class _EditContactFormState extends State<EditContactForm> {
                     controller: _contactController,
                   ),
                   kMediumSpacerVertical,
-                  PrimaryButton(
-                    child: const Text('Salvar'),
-                    onPressed: _save,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SecondaryButton(
+                          child: const Text('Cancelar'),
+                          onPressed: _cancel,
+                        ),
+                      ),
+                      kSmallSpacerHorizontal,
+                      Expanded(
+                        child: PrimaryButton(
+                          child: Text(widget.initialValue != null
+                              ? 'Salvar'
+                              : 'Adicionar'),
+                          size: null,
+                          onPressed: _save,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -150,6 +171,10 @@ class _EditContactFormState extends State<EditContactForm> {
         ),
       ),
     );
+  }
+
+  void _cancel() {
+    widget.onCancel();
   }
 
   void _save() {

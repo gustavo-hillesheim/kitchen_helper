@@ -4,7 +4,7 @@ import '../common.dart';
 
 class ToggleableTag extends StatefulWidget {
   final String label;
-  final bool? value;
+  final bool? isActive;
   final Color? activeColor;
   final Color? inactiveColor;
   final ValueChanged<bool> onChange;
@@ -13,7 +13,7 @@ class ToggleableTag extends StatefulWidget {
     Key? key,
     required this.label,
     required this.onChange,
-    this.value,
+    this.isActive,
     this.activeColor,
     this.inactiveColor,
   }) : super(key: key);
@@ -31,7 +31,7 @@ class _ToggleableTagState extends State<ToggleableTag> {
         widget.inactiveColor ?? Theme.of(context).colorScheme.primary;
     final activeColor =
         widget.activeColor ?? Theme.of(context).scaffoldBackgroundColor;
-    final isActive = widget.value ?? _isActive;
+    final isActive = widget.isActive ?? _isActive;
     final foregroundColor = isActive ? inactiveColor : activeColor;
     final backgroundColor = isActive ? activeColor : inactiveColor;
 

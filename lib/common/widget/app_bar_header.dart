@@ -47,18 +47,21 @@ class AppBarHeader implements Header {
                   ),
                 ),
               ),
-              if (canPop)
-                const Positioned(
-                  top: 4,
-                  left: 4,
-                  child: BackButton(),
-                ),
               if (bottom != null)
                 Positioned(
                   bottom: 4,
                   left: 4,
                   right: 4,
-                  child: bottom!,
+                  child: Opacity(
+                    opacity: _animationProgress(availableHeight),
+                    child: bottom!,
+                  ),
+                ),
+              if (canPop)
+                const Positioned(
+                  top: 4,
+                  left: 4,
+                  child: BackButton(),
                 ),
             ],
           ),

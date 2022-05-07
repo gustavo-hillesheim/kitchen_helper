@@ -29,7 +29,7 @@ void main() {
     verifyTextFormField(validator: null);
     verifyTextField(type: TextInputType.emailAddress, controller: controller);
     verifyDecoration(prefixText: 'Prefix', hintText: 'Ex.: Example value');
-    verifyLabel(data: 'Test field (Opcional)');
+    verifyLabel(data: 'Test field');
   });
 
   testWidgets('SHOULD render default number AppTextFormField correctly',
@@ -153,13 +153,5 @@ InputDecoration? getDecoration() {
 String? getLabel() {
   final decoration = getDecoration();
   expect(decoration!.label, isA<Wrap?>());
-  final wrap = decoration.label as Wrap?;
-  if (wrap != null) {
-    return wrap.children
-        .whereType<Text>()
-        .map((t) => t.data!)
-        .fold('', (acc, v) => '$acc $v')
-        .trim();
-  }
-  return null;
+  return decoration.labelText;
 }

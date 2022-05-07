@@ -17,7 +17,10 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: EditRecipeIngredientForm(onSave: (_) {}),
+          body: EditRecipeIngredientForm(
+            onSave: (_) {},
+            onCancel: () {},
+          ),
         ),
       ),
     );
@@ -31,7 +34,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(PrimaryButton), findsOneWidget);
-    expect(find.text('Salvar'), findsOneWidget);
+    expect(find.text('Adicionar'), findsOneWidget);
     expect(find.text('Adicionar ingrediente'), findsOneWidget);
   });
 
@@ -43,6 +46,7 @@ void main() {
         home: Scaffold(
           body: EditRecipeIngredientForm(
             onSave: (_) {},
+            onCancel: () {},
             initialValue: const EditingRecipeIngredient(
               id: 1,
               name: 'Ingredient',
@@ -77,6 +81,7 @@ void main() {
         home: Scaffold(
           body: EditRecipeIngredientForm(
             onSave: (savedValue) => value = savedValue,
+            onCancel: () {},
           ),
         ),
       ),
@@ -97,7 +102,7 @@ void main() {
       '10',
     );
 
-    await tester.tap(find.text('Salvar'));
+    await tester.tap(find.text('Adicionar'));
 
     expect(
       value,

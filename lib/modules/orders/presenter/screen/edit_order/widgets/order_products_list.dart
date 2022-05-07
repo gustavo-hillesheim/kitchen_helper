@@ -64,6 +64,9 @@ class OrderProductsList extends StatelessWidget {
       builder: (_) {
         return EditOrderProductForm(
           initialValue: initialValue,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
           onSave: (orderProduct) {
             if (initialValue != null) {
               onEdit(initialValue, orderProduct);
