@@ -27,14 +27,14 @@ class Empty extends StatelessWidget {
         kLargeSpacerVertical,
         Text(
           text,
-          style: textTheme.headline6!.copyWith(fontWeight: FontWeight.bold),
+          style: textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         if (subtext != null) ...{
           kMediumSpacerVertical,
           Text(
             subtext!,
-            style: textTheme.subtitle1,
+            style: textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
         },

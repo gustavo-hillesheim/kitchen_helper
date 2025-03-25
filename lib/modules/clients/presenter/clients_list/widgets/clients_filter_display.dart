@@ -99,7 +99,7 @@ class __ClientsFilterFormState extends State<_ClientsFilterForm> {
           children: [
             Text(
               'Filtrar pedidos',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             kMediumSpacerVertical,
             AppTextFormField(

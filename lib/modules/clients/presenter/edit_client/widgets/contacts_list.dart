@@ -136,7 +136,7 @@ class _EditContactFormState extends State<EditContactForm> {
                     widget.initialValue != null
                         ? 'Editar contato'
                         : 'Adicionar contato',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   AppTextFormField(

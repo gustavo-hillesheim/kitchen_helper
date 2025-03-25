@@ -121,7 +121,7 @@ class __RecipesFilterFormState extends State<_RecipesFilterForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Filtrar receitas',
-                style: Theme.of(context).textTheme.headline6),
+                style: Theme.of(context).textTheme.titleLarge),
             kMediumSpacerVertical,
             AppTextFormField(
               name: 'Nome',

@@ -168,7 +168,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
               widget.initialValue != null
                   ? 'Editar endereço'
                   : 'Adicionar endereço',
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             kMediumSpacerVertical,
             Row(

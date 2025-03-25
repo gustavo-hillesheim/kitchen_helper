@@ -83,7 +83,7 @@ class _OrderListTileState extends State<OrderListTile> {
               Expanded(
                 child: AutoSizeText(
                   widget.order.clientName,
-                  style: textTheme.headline6?.copyWith(
+                  style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w400,
                   ),
                   softWrap: false,
@@ -92,7 +92,7 @@ class _OrderListTileState extends State<OrderListTile> {
               ),
               Text(
                 Formatter.currency(widget.order.price),
-                style: textTheme.headline6?.copyWith(
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -138,7 +138,7 @@ class _OrderListTileState extends State<OrderListTile> {
             '${product.measurementUnit.abbreviation} '
             'de ${product.name}',
             style: TextStyle(
-              color: textTheme.subtitle2?.color,
+              color: textTheme.titleSmall?.color,
             ),
           ),
           kExtraSmallSpacerVertical,

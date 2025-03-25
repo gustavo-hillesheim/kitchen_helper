@@ -10,10 +10,7 @@ class DeviceInfo {
   static Future<void> initialize() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
     final androidInfo = await deviceInfoPlugin.androidInfo;
-    if (androidInfo.androidId == null) {
-      throw Exception('Could not load DeviceInfo because androidId is null');
-    }
-    final deviceId = androidInfo.androidId!;
+    final deviceId = androidInfo.id;
     _instance ??= DeviceInfo._(deviceId: deviceId);
   }
 

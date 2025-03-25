@@ -18,7 +18,7 @@ class ClientListTile extends StatelessWidget {
     return FlatTile(
       child: Text(
         client.name,
-        style: Theme.of(context).textTheme.headline6!.copyWith(
+        style: Theme.of(context).textTheme.titleLarge!.copyWith(
               fontWeight: FontWeight.w400,
             ),
       ),

@@ -54,7 +54,7 @@ class _EditDiscountFormState extends State<EditDiscountForm> {
                     widget.initialValue != null
                         ? 'Editar desconto'
                         : 'Adicionar desconto',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   Column(

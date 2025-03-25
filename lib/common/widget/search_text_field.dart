@@ -50,7 +50,7 @@ class SearchTextField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final contentTextStyle = themeData.textTheme.subtitle1!;
+    final contentTextStyle = themeData.textTheme.titleMedium!;
 
     return FormField<T>(
       validator: required ? Validator.required : null,

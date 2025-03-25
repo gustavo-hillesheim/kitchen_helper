@@ -62,7 +62,7 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     widget.initialValue != null
                         ? 'Editar ingrediente'
                         : 'Adicionar ingrediente',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   Column(

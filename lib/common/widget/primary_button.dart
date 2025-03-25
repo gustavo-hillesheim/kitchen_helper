@@ -63,7 +63,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onPressed: null,
       child: Center(
           child: CircularProgressIndicator(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.surface,
       )),
     );
   }

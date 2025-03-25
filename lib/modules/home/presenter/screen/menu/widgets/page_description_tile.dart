@@ -43,14 +43,14 @@ class _PageDescriptionTileState extends State<PageDescriptionTile>
                 children: [
                   AutoSizeText(
                     widget.name,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                     maxFontSize:
-                        Theme.of(context).textTheme.headline6!.fontSize!,
+                        Theme.of(context).textTheme.titleLarge!.fontSize!,
                   ),
                   kExtraSmallSpacerVertical,
                   Text(
                     widget.description,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
               ),

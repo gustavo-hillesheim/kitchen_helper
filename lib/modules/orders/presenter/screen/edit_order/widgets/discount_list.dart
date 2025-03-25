@@ -88,10 +88,10 @@ class DiscountListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final reasonStyle = textTheme.headline6!.copyWith(
+    final reasonStyle = textTheme.titleLarge!.copyWith(
       fontWeight: FontWeight.w400,
     );
-    final valueStyle = textTheme.headline5!.copyWith(
+    final valueStyle = textTheme.headlineSmall!.copyWith(
       fontWeight: FontWeight.w300,
     );
 

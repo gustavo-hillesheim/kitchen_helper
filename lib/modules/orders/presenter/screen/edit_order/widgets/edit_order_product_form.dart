@@ -59,7 +59,7 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
                     widget.initialValue != null
                         ? 'Editar produto'
                         : 'Adicionar produto',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   Column(

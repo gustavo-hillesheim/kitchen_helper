@@ -108,7 +108,7 @@ class __IngredientsFilterFormState extends State<_IngredientsFilterForm> {
           children: [
             Text(
               'Filtrar ingredients',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             kMediumSpacerVertical,
             AppTextFormField(

@@ -96,7 +96,7 @@ class OrderProductListTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final nameText = AutoSizeText(
       product.name,
-      style: textTheme.headline6!.copyWith(
+      style: textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w400,
       ),
       softWrap: false,
@@ -104,14 +104,14 @@ class OrderProductListTile extends StatelessWidget {
     );
     final priceText = Text(
       Formatter.currency(product.price),
-      style: textTheme.headline5!.copyWith(
+      style: textTheme.headlineSmall!.copyWith(
         fontWeight: FontWeight.w300,
       ),
     );
     final quantityText = Text(
       '${Formatter.simpleNumber(product.quantity)} '
       '${product.measurementUnit.abbreviation}',
-      style: textTheme.subtitle2,
+      style: textTheme.titleSmall,
     );
     final productInfo = Row(
       children: [
