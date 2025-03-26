@@ -33,8 +33,10 @@ void main() async {
       }).sendPort);
 
       runApp(DevicePreview(
-        builder: (_) =>
-            ModularApp(module: AppModule(), child: const AppWidget()),
+        builder: (_) => ModularApp(
+          module: AppModule(),
+          child: const AppWidget(),
+        ),
         enabled: !kReleaseMode && Platform.isWindows,
       ));
     },

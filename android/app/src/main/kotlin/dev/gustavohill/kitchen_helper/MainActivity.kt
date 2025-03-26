@@ -1,4 +1,4 @@
-package com.example.kitchen_helper
+package dev.gustavohill.kitchen_helper
 
 import io.flutter.embedding.android.FlutterActivity
 
