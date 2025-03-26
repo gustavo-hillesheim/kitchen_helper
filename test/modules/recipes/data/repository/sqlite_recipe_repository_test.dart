@@ -25,7 +25,7 @@ void main() {
   });
 
   void mockTransaction<T>({Function()? verify}) {
-    when(() => database.insideTransaction(any()))
+    when(() => database.insideTransaction<T>(any()))
         .thenAnswer((invocation) async {
       final action = invocation.positionalArguments[0];
       final result = await action() as T;
@@ -139,7 +139,7 @@ void main() {
 
       await repository.deleteById(cakeRecipe.id!);
 
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test(
@@ -156,14 +156,15 @@ void main() {
 
       expect(result.getLeft().toNullable(),
           DatabaseFailure(SQLiteRepository.couldNotDeleteMessage, exception));
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
       verifyNever(() => recipeIngredientRepository.deleteByRecipe(any()));
     });
 
     testExceptionsOnDeleteById(
       () => repository,
       () {
-        when(() => database.insideTransaction(any())).thenAnswer((invocation) {
+        when(() => database.insideTransaction<Either<Failure, void>>(any()))
+            .thenAnswer((invocation) {
           final action = invocation.positionalArguments[0];
           return action();
         });
@@ -192,7 +193,7 @@ void main() {
       final result = await repository.create(sugarWithEggRecipeWithoutId);
 
       expect(result.getRight().toNullable(), sugarWithEggRecipeWithId.id!);
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
     });
 
     test(
@@ -209,14 +210,15 @@ void main() {
 
       expect(result.getLeft().toNullable(),
           DatabaseFailure(SQLiteRepository.couldNotInsertMessage, exception));
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
       verifyNever(() => recipeIngredientRepository.create(any()));
     });
 
     testExceptionsOnCreate(
       () => repository,
       () {
-        when(() => database.insideTransaction(any())).thenAnswer((invocation) {
+        when(() => database.insideTransaction<Either<Failure, int>>(any()))
+            .thenAnswer((invocation) {
           final action = invocation.positionalArguments[0];
           return action();
         });
@@ -250,7 +252,7 @@ void main() {
       final result = await repository.update(cakeRecipe);
 
       expect(result.isRight(), true);
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test(
@@ -272,7 +274,7 @@ void main() {
 
       expect(result.getLeft().toNullable(),
           DatabaseFailure(SQLiteRepository.couldNotUpdateMessage, exception));
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
       verifyNever(() => recipeIngredientRepository.deleteByRecipe(any()));
       verifyNever(() => recipeIngredientRepository.create(any()));
     });
@@ -280,7 +282,8 @@ void main() {
     testExceptionsOnUpdate(
       () => repository,
       () {
-        when(() => database.insideTransaction(any())).thenAnswer((invocation) {
+        when(() => database.insideTransaction<Either<Failure, void>>(any()))
+            .thenAnswer((invocation) {
           final action = invocation.positionalArguments[0];
           return action();
         });

@@ -69,7 +69,8 @@ void main() {
     mockOrderListTile();
     final navigator = mockNavigator();
     when(
-      () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
+      () =>
+          navigator.pushNamed<bool?>(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => true);
 
     when(() => bloc.load()).thenAnswer((_) async {
@@ -83,7 +84,8 @@ void main() {
     await tester.pump();
 
     await tester.tap(find.byType(OrderListTile));
-    verify(() => navigator.pushNamed('./edit', arguments: batmanOrder.id));
+    verify(
+        () => navigator.pushNamed<bool?>('./edit', arguments: batmanOrder.id));
     verify(() => bloc.load());
   });
 
@@ -91,7 +93,8 @@ void main() {
       (tester) async {
     final navigator = mockNavigator();
     when(
-      () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
+      () =>
+          navigator.pushNamed<bool?>(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => false);
 
     when(() => bloc.load()).thenAnswer((_) async {
@@ -106,7 +109,7 @@ void main() {
     verify(() => bloc.load());
 
     await tester.tap(find.text('Adicionar'));
-    verify(() => navigator.pushNamed('./edit', arguments: null));
+    verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
     verifyNever(() => bloc.load());
   });
 
@@ -130,7 +133,7 @@ void main() {
       'WHEN navigate to edit screen with filter on AND should reload '
       'SHOULD reload with filter', (tester) async {
     final navigator = mockNavigator();
-    when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
+    when(() => navigator.pushNamed<bool?>(any())).thenAnswer((_) async => true);
     when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
