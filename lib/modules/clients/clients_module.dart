@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/app_module.dart';
+import 'package:kitchen_helper/common/widget/client_selector_service.dart';
 
 import 'presenter/edit_client/edit_client_screen.dart';
 import 'presenter/clients_list/clients_list_screen.dart';
@@ -9,41 +12,38 @@ import 'domain/domain.dart';
 
 class ClientsModule extends Module {
   @override
-  List<Bind<Object>> get binds => [
-        Bind<AddressRepository>(
-          (i) => SQLiteAddressRepository(i()),
-          export: true,
-        ),
-        Bind<ContactRepository>(
-          (i) => SQLiteContactRepository(i()),
-          export: true,
-        ),
-        Bind<ClientRepository>(
-          (i) => SQLiteClientRepository(i(), i(), i()),
-          export: true,
-        ),
-        Bind((i) => GetClientsUseCase(i())),
-        Bind((i) => GetClientUseCase(i())),
-        Bind((i) => SaveClientUseCase(i())),
-        Bind((i) => DeleteClientUseCase(i())),
-        Bind((i) => GetAddressDataByCepUseCase(i())),
-        Bind((i) => GetClientsDomainUseCase(i()), export: true),
-        Bind((i) => GetContactsDomainUseCase(i()), export: true),
-        Bind((i) => GetAddressDomainUseCase(i()), export: true),
-      ];
+  List<Module> get imports => [AppModule()];
 
   @override
-  List<ModularRoute> get routes => [
-        ChildRoute(
-          Modular.initialRoute,
-          child: (_, __) => const ClientsListScreen(),
-        ),
-        ChildRoute('/edit', child: (_, route) {
-          if (route.data is! int?) {
-            throw Exception(
-                'The route /edit only accepts values of type int? as argument');
-          }
-          return EditClientScreen(id: route.data as int?);
-        }),
-      ];
+  void binds(Injector i) {
+    i.addLazySingleton<AddressRepository>(SQLiteAddressRepository.new);
+    i.addLazySingleton<ContactRepository>(SQLiteContactRepository.new);
+    i.addLazySingleton<ClientRepository>(SQLiteClientRepository.new);
+    i.addLazySingleton(GetClientsUseCase.new);
+    i.addLazySingleton(GetClientUseCase.new);
+    i.addLazySingleton(SaveClientUseCase.new);
+    i.addLazySingleton(DeleteClientUseCase.new);
+    i.addLazySingleton(GetAddressDataByCepUseCase.new);
+    i.addLazySingleton(GetClientsDomainUseCase.new);
+    i.addLazySingleton(GetContactsDomainUseCase.new);
+    i.addLazySingleton(GetAddressDomainUseCase.new);
+    i.addLazySingleton(ClientSelectorService.new);
+  }
+
+  @override
+  void routes(RouteManager r) {
+    r.child(
+      Modular.initialRoute,
+      child: (_) => const ClientsListScreen(),
+    );
+    r.child('/edit', child: (context) {
+      final route = ModalRoute.of(context);
+      final arguments = route?.settings.arguments;
+      if (arguments is! int?) {
+        throw Exception(
+            'The route /edit only accepts values of type int? as argument');
+      }
+      return EditClientScreen(id: arguments);
+    });
+  }
 }

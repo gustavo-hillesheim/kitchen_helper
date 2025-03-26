@@ -9,6 +9,8 @@ import '../../../../database/database.dart';
 part 'address_repository.g.dart';
 
 abstract class AddressRepository extends Repository<AddressEntity, int> {
+  Future<Either<Failure, List<AddressEntity>>> findByClient(int clientId);
+  Future<Either<Failure, void>> deleteByClient(int clientId);
   Future<Either<Failure, List<AddressDomainDto>>> findAllDomain(int clientId);
 }
 

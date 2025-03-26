@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:kitchen_helper/app_module.dart';
 
 class AppWidget extends StatelessWidget {
-  const AppWidget({Key? key}) : super(key: key);
+  const AppWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = createTheme();
-    return ModularApp(
-      module: AppModule(),
-      child: MaterialApp(
-        title: 'Ajudante de cozinha',
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-      ),
+    return MaterialApp.router(
+      routerConfig: Modular.routerConfig,
+      title: 'Ajudante de cozinha',
+      debugShowCheckedModeBanner: false,
+      theme: theme,
     );
   }
 

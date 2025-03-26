@@ -12,6 +12,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'core/device_info.dart';
 import 'app_module.dart';
 import 'app_widget.dart';
+import 'database/sqlite/sqlite.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -34,6 +35,8 @@ void main() async {
           errorAndStacktrace.last,
         );
       }).sendPort);
+
+      await SQLiteDatabase.getInstance();
 
       runApp(DevicePreview(
         builder: (_) => ModularApp(

@@ -9,6 +9,8 @@ import '../../clients.dart';
 part 'contact_repository.g.dart';
 
 abstract class ContactRepository extends Repository<ContactEntity, int> {
+  Future<Either<Failure, List<ContactEntity>>> findByClient(int clientId);
+  Future<Either<Failure, void>> deleteByClient(int clientId);
   Future<Either<Failure, List<ContactDomainDto>>> findAllDomain(int clientId);
 }
 

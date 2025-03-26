@@ -2,8 +2,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../clients.dart';
-import 'sqlite_address_repository.dart';
-import 'sqlite_contact_repository.dart';
 import '../../../../core/failure.dart';
 import '../../../../extensions.dart';
 import '../../../../database/sqlite/query_operators.dart';
@@ -11,8 +9,8 @@ import '../../../../database/sqlite/sqlite.dart';
 
 class SQLiteClientRepository extends SQLiteRepository<Client>
     implements ClientRepository {
-  final SQLiteAddressRepository addressRepository;
-  final SQLiteContactRepository contactRepository;
+  final AddressRepository addressRepository;
+  final ContactRepository contactRepository;
 
   SQLiteClientRepository(
       this.addressRepository, this.contactRepository, SQLiteDatabase database)

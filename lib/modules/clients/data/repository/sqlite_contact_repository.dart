@@ -16,6 +16,7 @@ class SQLiteContactRepository extends SQLiteRepository<ContactEntity>
           fromMap: (map) => ContactEntity.fromJson(map),
         );
 
+  @override
   Future<Either<Failure, List<ContactEntity>>> findByClient(
       int clientId) async {
     try {
@@ -30,6 +31,7 @@ class SQLiteContactRepository extends SQLiteRepository<ContactEntity>
     }
   }
 
+  @override
   Future<Either<Failure, void>> deleteByClient(int clientId) async {
     try {
       await database.delete(table: tableName, where: {'clientId': clientId});

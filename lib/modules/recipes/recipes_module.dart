@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kitchen_helper/app_module.dart';
 
 import '../ingredients/ingredients_module.dart';
 import 'data/repository/sqlite_recipe_ingredient_repository.dart';
@@ -9,41 +11,41 @@ import 'presenter/screen/recipes_list/recipes_list_screen.dart';
 
 class RecipesModule extends Module {
   @override
-  List<Module> get imports => [IngredientsModule()];
+  List<Module> get imports => [IngredientsModule(), AppModule()];
 
   @override
-  List<Bind<Object>> get binds => [
-        Bind<RecipeIngredientRepository>(
-          (i) => SQLiteRecipeIngredientRepository(i()),
-          export: true,
-        ),
-        Bind<RecipeRepository>(
-          (i) => SQLiteRecipeRepository(i(), i()),
-          export: true,
-        ),
-        Bind((i) => SaveRecipeUseCase(i())),
-        Bind((i) => GetRecipesUseCase(i())),
-        Bind((i) => GetRecipeUseCase(i()), export: true),
-        Bind((i) => DeleteRecipeUseCase(i())),
-        Bind((i) => GetRecipeCostUseCase(i(), i()), export: true),
-        Bind((i) => GetRecipesDomainUseCase(i()), export: true),
-      ];
+  void binds(Injector i) {
+    i.addSingleton<RecipeIngredientRepository>(
+      SQLiteRecipeIngredientRepository.new,
+    );
+    i.addSingleton<RecipeRepository>(
+      SQLiteRecipeRepository.new,
+    );
+    i.addSingleton(SaveRecipeUseCase.new);
+    i.addSingleton(GetRecipesUseCase.new);
+    i.addSingleton(GetRecipeUseCase.new);
+    i.addSingleton(DeleteRecipeUseCase.new);
+    i.addSingleton(GetRecipeCostUseCase.new);
+    i.addSingleton(GetRecipesDomainUseCase.new);
+  }
 
   @override
-  List<ModularRoute> get routes => [
-        ChildRoute(
-          Modular.initialRoute,
-          child: (_, __) => const RecipesListScreen(),
-        ),
-        ChildRoute(
-          '/edit',
-          child: (_, route) {
-            if (route.data is! int?) {
-              throw Exception(
-                  'The route /edit only accepts values of type int? as argument');
-            }
-            return EditRecipeScreen(id: route.data as int?);
-          },
-        )
-      ];
+  void routes(RouteManager r) {
+    r.child(
+      Modular.initialRoute,
+      child: (_) => const RecipesListScreen(),
+    );
+    r.child(
+      '/edit',
+      child: (context) {
+        final route = ModalRoute.of(context);
+        final arguments = route?.settings.arguments;
+        if (arguments is! int?) {
+          throw Exception(
+              'The route /edit only accepts values of type int? as argument');
+        }
+        return EditRecipeScreen(id: arguments);
+      },
+    );
+  }
 }

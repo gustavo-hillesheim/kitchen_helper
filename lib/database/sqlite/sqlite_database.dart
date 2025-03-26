@@ -24,6 +24,8 @@ class SQLiteDatabase {
 
   SQLiteDatabase(this._database) : _executor = _database;
 
+  static SQLiteDatabase get instance => _instance!;
+
   static Future<SQLiteDatabase> getInstance() async {
     _instance ??= SQLiteDatabase(await _initDatabase());
     return _instance!;
