@@ -7,12 +7,11 @@ import 'modules/ingredients/ingredients_module.dart';
 import 'modules/orders/orders_module.dart';
 import 'modules/recipes/recipes_module.dart';
 import 'modules/clients/clients_module.dart';
-import 'common/widget/client_selector_service.dart';
 
 class AppModule extends Module {
   @override
   void binds(Injector i) {
-    i.addInstance(SQLiteDatabase.instance);
+    i.addInstance(Modular.tryGet<SQLiteDatabase>() ?? SQLiteDatabase.instance);
     i.addLazySingleton(() => Dio());
   }
 

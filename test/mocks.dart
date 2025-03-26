@@ -14,7 +14,6 @@ import 'package:kitchen_helper/modules/recipes/data/repository/sqlite_recipe_ing
 import 'package:kitchen_helper/modules/recipes/presenter/screen/edit_recipe/edit_recipe_bloc.dart';
 import 'package:kitchen_helper/modules/recipes/recipes.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ModularNavigateMock extends Mock implements IModularNavigator {}
@@ -502,7 +501,7 @@ void mockRecipeIngredientsSelectorService() {
       (_) async => Right([listingCakeRecipeDto, listingIceCreamRecipeDto]));
   when(() => getRecipesDomainUseCase.execute(any())).thenAnswer(
       (_) async => const Right([cakeRecipeDomain, iceCreamRecipeDomain]));
-  initModule(FakeModule(
+  Modular.bindModule(FakeModule(
     getRecipeUseCase,
     getRecipesUseCase,
     getIngredientsUseCase,
@@ -524,10 +523,10 @@ class FakeModule extends Module {
   );
 
   @override
-  List<Bind<Object>> get binds => [
-        Bind.instance<GetRecipeUseCase>(getRecipeUseCase),
-        Bind.instance<GetRecipesUseCase>(getRecipesUseCase),
-        Bind.instance<GetIngredientsUseCase>(getIngredientsUseCase),
-        Bind.instance<GetRecipesDomainUseCase>(getRecipesDomainUseCase),
-      ];
+  void binds(Injector i) {
+    i.addInstance<GetRecipeUseCase>(getRecipeUseCase);
+    i.addInstance<GetRecipesUseCase>(getRecipesUseCase);
+    i.addInstance<GetIngredientsUseCase>(getIngredientsUseCase);
+    i.addInstance<GetRecipesDomainUseCase>(getRecipesDomainUseCase);
+  }
 }

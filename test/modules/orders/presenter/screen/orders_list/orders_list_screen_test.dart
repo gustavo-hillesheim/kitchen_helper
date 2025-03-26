@@ -10,7 +10,6 @@ import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/order
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
@@ -152,19 +151,16 @@ void main() {
 }
 
 void mockOrderListTile() {
-  final getListingOrderProductsUseCase = GetListingOrderProductsUseCaseMock();
-
-  initModule(FakeModule([
-    Bind.instance<GetListingOrderProductsUseCase>(
-        getListingOrderProductsUseCase),
-  ]));
+  Modular.bindModule(FakeModule());
 }
 
 class FakeModule extends Module {
   @override
-  final List<Bind> binds;
-
-  FakeModule(this.binds);
+  void binds(Injector i) {
+    i.addInstance<GetListingOrderProductsUseCase>(
+      GetListingOrderProductsUseCaseMock(),
+    );
+  }
 }
 
 class OrdersListBlocMock extends Mock implements OrdersListBloc {}

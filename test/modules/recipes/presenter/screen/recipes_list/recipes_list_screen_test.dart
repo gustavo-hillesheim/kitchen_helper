@@ -174,10 +174,12 @@ void main() {
   testWidgets('WHEN tap on addNewRecipe SHOULD go to EditRecipeScreen',
       (tester) async {
     final navigator = mockNavigator();
-    when(() => navigator.pushNamed(
+    when(() => navigator.pushNamed<bool?>(
           './edit',
           arguments: any(named: 'arguments'),
-        )).thenAnswer((_) async => false);
+        )).thenAnswer((_) {
+      return Future.value(false);
+    });
     when(() => bloc.load()).thenAnswer(
       (_) async => streamController.sink.add(const SuccessState([])),
     );
@@ -186,13 +188,13 @@ void main() {
     await tester.pump();
 
     await tap(find.text('Adicionar receita'), tester);
-    verify(() => navigator.pushNamed('./edit', arguments: null));
+    verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
   });
 
   testWidgets('WHEN tap on RecipeListTipe SHOULD go to EditRecipeScreen',
       (tester) async {
     final navigator = mockNavigator();
-    when(() => navigator.pushNamed(
+    when(() => navigator.pushNamed<bool?>(
           './edit',
           arguments: any(named: 'arguments'),
         )).thenAnswer((_) async => true);
@@ -207,7 +209,8 @@ void main() {
     await tap(find.byType(RecipeListTile), tester);
     await tester.pumpAndSettle();
 
-    verify(() => navigator.pushNamed('./edit', arguments: cakeRecipe.id));
+    verify(
+        () => navigator.pushNamed<bool?>('./edit', arguments: cakeRecipe.id));
     verify(() => bloc.load()).called(2);
   });
 }
