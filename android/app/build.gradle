@@ -35,6 +35,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
+    namespace 'dev.gustavohill.kitchen_helper'
     compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {
@@ -52,7 +53,7 @@ android {
 
     defaultConfig {
         applicationId "dev.gustavohill.kitchen_helper"
-        minSdkVersion 19
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
