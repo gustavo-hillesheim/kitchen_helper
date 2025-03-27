@@ -84,4 +84,7 @@ void main() {
 
 class DioMock extends Mock implements Dio {}
 
-class FakeRequestOptions extends Fake implements RequestOptions {}
+class FakeRequestOptions extends Fake implements RequestOptions {
+  @override
+  bool get preserveHeaderCase => false;
+}
