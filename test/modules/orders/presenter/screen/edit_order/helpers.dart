@@ -229,7 +229,7 @@ Future<void> inputDate(
   // Inputs date
   await tester.tap(finder);
   await tester.pumpAndSettle();
-  await tester.tap(find.byIcon(Icons.edit));
+  await tester.tap(find.byIcon(Icons.edit_outlined));
   await tester.pumpAndSettle();
   await tester.enterText(
       find.byType(TextField).hitTestable(), format.format(date));
@@ -237,7 +237,7 @@ Future<void> inputDate(
   await tester.tap(find.text('OK'));
   await tester.pumpAndSettle();
   // Inputs time
-  await tester.tap(find.byIcon(Icons.keyboard));
+  await tester.tap(find.byIcon(Icons.keyboard_outlined));
   await tester.pumpAndSettle();
   if (date.hour >= 12) {
     await tester.tap(find.text('PM'));
