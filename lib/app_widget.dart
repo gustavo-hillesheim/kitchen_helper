@@ -16,6 +16,7 @@ class AppWidget extends StatelessWidget {
   }
 
   ThemeData createTheme() => ThemeData(
+        useMaterial3: false,
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.blue,
         ),
