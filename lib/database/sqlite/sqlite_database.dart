@@ -86,6 +86,7 @@ class SQLiteDatabase {
       if (error is _TransactionException) {
         return error.either as T;
       }
+      return null as T;
     });
   }
 
