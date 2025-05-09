@@ -23,17 +23,17 @@ abstract class Failure extends Equatable {
 }
 
 class BusinessFailure extends Failure {
-  BusinessFailure(String message) : super(message);
+  BusinessFailure(super.message);
 }
 
 class RepositoryFailure extends Failure {
-  RepositoryFailure(String message) : super(message);
+  RepositoryFailure(super.message);
 }
 
 class DatabaseFailure extends Failure {
   final DatabaseException exception;
 
-  DatabaseFailure(String message, this.exception) : super(message);
+  DatabaseFailure(super.message, this.exception);
 
   @override
   List<Object?> get props => [message, exception];

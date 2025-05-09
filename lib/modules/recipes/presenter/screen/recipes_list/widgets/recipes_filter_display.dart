@@ -8,9 +8,9 @@ class RecipesFilterDisplay extends StatefulWidget {
   final ValueChanged<RecipesFilter?> onFilter;
 
   const RecipesFilterDisplay({
-    Key? key,
+    super.key,
     required this.onFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<RecipesFilterDisplay> createState() => _RecipesFilterDisplayState();
@@ -80,10 +80,9 @@ class _RecipesFilterForm extends StatefulWidget {
   final ValueChanged<RecipesFilter> onFilter;
 
   const _RecipesFilterForm({
-    Key? key,
     required this.initialValue,
     required this.onFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<_RecipesFilterForm> createState() => __RecipesFilterFormState();
@@ -121,7 +120,7 @@ class __RecipesFilterFormState extends State<_RecipesFilterForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Filtrar receitas',
-                style: Theme.of(context).textTheme.headline6),
+                style: Theme.of(context).textTheme.titleLarge),
             kMediumSpacerVertical,
             AppTextFormField(
               name: 'Nome',
@@ -144,8 +143,8 @@ class __RecipesFilterFormState extends State<_RecipesFilterForm> {
             ),
             kMediumSpacerVertical,
             PrimaryButton(
-              child: const Text('Filtrar'),
               onPressed: _onFilter,
+              child: const Text('Filtrar'),
             ),
           ],
         ),

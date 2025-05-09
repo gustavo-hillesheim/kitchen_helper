@@ -9,9 +9,9 @@ class OrdersFilterDisplay extends StatefulWidget {
   final ValueChanged<EditingOrdersFilter?> onChange;
 
   const OrdersFilterDisplay({
-    Key? key,
+    super.key,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   @override
   _OrdersFilterDisplayState createState() => _OrdersFilterDisplayState();
@@ -142,10 +142,9 @@ class _OrdersFilterForm extends StatefulWidget {
   final ValueChanged<EditingOrdersFilter> onFilter;
 
   const _OrdersFilterForm({
-    Key? key,
     required this.initialValue,
     required this.onFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<_OrdersFilterForm> createState() => __OrdersFilterFormState();
@@ -185,7 +184,7 @@ class __OrdersFilterFormState extends State<_OrdersFilterForm> {
           children: [
             Text(
               'Filtrar pedidos',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             kMediumSpacerVertical,
             _clientNotifier.builder(
@@ -246,8 +245,8 @@ class __OrdersFilterFormState extends State<_OrdersFilterForm> {
             ),
             kMediumSpacerVertical,
             PrimaryButton(
-              child: const Text('Filtrar'),
               onPressed: _onFilter,
+              child: const Text('Filtrar'),
             ),
           ],
         ),

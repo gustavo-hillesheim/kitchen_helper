@@ -11,10 +11,10 @@ class EditIngredientScreen extends StatefulWidget {
   final EditIngredientBloc? bloc;
 
   const EditIngredientScreen({
-    Key? key,
+    super.key,
     this.id,
     this.bloc,
-  }) : super(key: key);
+  });
 
   @override
   State<EditIngredientScreen> createState() => _EditIngredientScreenState();

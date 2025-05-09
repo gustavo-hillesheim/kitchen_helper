@@ -11,7 +11,7 @@ import 'widgets/order_list_tile.dart';
 class OrdersListScreen extends StatefulWidget {
   final OrdersListBloc? bloc;
 
-  const OrdersListScreen({Key? key, this.bloc}) : super(key: key);
+  const OrdersListScreen({super.key, this.bloc});
 
   @override
   State<OrdersListScreen> createState() => _OrdersListScreenState();

@@ -29,7 +29,8 @@ void main() {
     'Should navigate to EditIngredientScreen on tap on add button',
     (tester) async {
       final navigator = mockNavigator();
-      when(() => navigator.pushNamed('./edit')).thenAnswer((_) async => false);
+      when(() => navigator.pushNamed<bool?>('./edit'))
+          .thenAnswer((_) async => false);
       when(() => bloc.load()).thenAnswer((_) async {});
 
       await tester.pumpWidget(
@@ -38,7 +39,7 @@ void main() {
 
       await tester.tap(find.text('Adicionar'));
 
-      verify(() => navigator.pushNamed('./edit', arguments: null));
+      verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
     },
   );
 
@@ -46,7 +47,8 @@ void main() {
     'Should reload if EditIngredientScreen returns true',
     (tester) async {
       final navigator = mockNavigator();
-      when(() => navigator.pushNamed('./edit')).thenAnswer((_) async => true);
+      when(() => navigator.pushNamed<bool?>('./edit'))
+          .thenAnswer((_) async => true);
       when(() => bloc.load()).thenAnswer((_) async {});
 
       await tester.pumpWidget(
@@ -55,7 +57,7 @@ void main() {
 
       await tester.tap(find.text('Adicionar'));
 
-      verify(() => navigator.pushNamed('./edit', arguments: null));
+      verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
       verify(() => bloc.load()).called(2);
     },
   );
@@ -73,7 +75,8 @@ void main() {
 
   testWidgets('Should show Empty if there are no ingredients', (tester) async {
     final navigator = mockNavigator();
-    when(() => navigator.pushNamed('./edit')).thenAnswer((_) async => false);
+    when(() => navigator.pushNamed<bool?>('./edit'))
+        .thenAnswer((_) async => false);
     when(() => bloc.load()).thenAnswer(
         (_) async => streamController.sink.add(const SuccessState([])));
 
@@ -87,7 +90,7 @@ void main() {
 
     await tester.tap(find.byType(ElevatedButton));
 
-    verify(() => navigator.pushNamed('./edit', arguments: null));
+    verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
   });
 
   testWidgets('Should show Empty with error message if there is a Failure',
@@ -119,7 +122,7 @@ void main() {
     'Should navigate to EditIngredientScreen when IngredientListTile is tapped',
     (tester) async {
       final navigator = mockNavigator();
-      when(() => navigator.pushNamed(any(), arguments: egg.id))
+      when(() => navigator.pushNamed<bool?>(any(), arguments: egg.id))
           .thenAnswer((_) async => false);
       when(() => bloc.load()).thenAnswer((_) async =>
           streamController.sink.add(const SuccessState([listingEggDto])));
@@ -131,7 +134,7 @@ void main() {
 
       await tester.tap(find.byType(IngredientListTile));
 
-      verify(() => navigator.pushNamed('./edit', arguments: egg.id));
+      verify(() => navigator.pushNamed<bool?>('./edit', arguments: egg.id));
     },
   );
 

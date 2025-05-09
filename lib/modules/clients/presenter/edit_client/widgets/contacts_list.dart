@@ -15,11 +15,11 @@ class ContactsList extends StatelessWidget {
 
   const ContactsList(
     this.contacts, {
-    Key? key,
+    super.key,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +77,9 @@ class ContactListTile extends StatelessWidget {
 
   const ContactListTile(
     this.contact, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +96,11 @@ class EditContactForm extends StatefulWidget {
   final VoidCallback onCancel;
 
   const EditContactForm({
-    Key? key,
+    super.key,
     required this.onSave,
     required this.onCancel,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   _EditContactFormState createState() => _EditContactFormState();
@@ -136,7 +136,7 @@ class _EditContactFormState extends State<EditContactForm> {
                     widget.initialValue != null
                         ? 'Editar contato'
                         : 'Adicionar contato',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   AppTextFormField(
@@ -148,18 +148,18 @@ class _EditContactFormState extends State<EditContactForm> {
                     children: [
                       Expanded(
                         child: SecondaryButton(
-                          child: const Text('Cancelar'),
                           onPressed: _cancel,
+                          child: const Text('Cancelar'),
                         ),
                       ),
                       kSmallSpacerHorizontal,
                       Expanded(
                         child: PrimaryButton(
+                          size: null,
+                          onPressed: _save,
                           child: Text(widget.initialValue != null
                               ? 'Salvar'
                               : 'Adicionar'),
-                          size: null,
-                          onPressed: _save,
                         ),
                       ),
                     ],

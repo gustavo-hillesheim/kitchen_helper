@@ -38,7 +38,7 @@ class FailureState<T> extends ScreenState<T> {
 }
 
 abstract class AppCubit<T> extends Cubit<ScreenState<T>> {
-  AppCubit(ScreenState<T> initialState) : super(initialState);
+  AppCubit(super.initialState);
 
   Future<Either<Failure, T>> runEither(
       Future<Either<Failure, T>> Function() fn) async {

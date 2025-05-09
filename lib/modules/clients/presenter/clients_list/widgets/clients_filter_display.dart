@@ -7,9 +7,9 @@ class ClientsFilterDisplay extends StatefulWidget {
   final ValueChanged<EditingClientsFilter?> onChange;
 
   const ClientsFilterDisplay({
-    Key? key,
+    super.key,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   @override
   State<ClientsFilterDisplay> createState() => _ClientsFilterDisplayState();
@@ -66,10 +66,9 @@ class _ClientsFilterForm extends StatefulWidget {
   final ValueChanged<EditingClientsFilter> onFilter;
 
   const _ClientsFilterForm({
-    Key? key,
     required this.initialValue,
     required this.onFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<_ClientsFilterForm> createState() => __ClientsFilterFormState();
@@ -99,7 +98,7 @@ class __ClientsFilterFormState extends State<_ClientsFilterForm> {
           children: [
             Text(
               'Filtrar pedidos',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             kMediumSpacerVertical,
             AppTextFormField(
@@ -109,8 +108,8 @@ class __ClientsFilterFormState extends State<_ClientsFilterForm> {
             ),
             kMediumSpacerVertical,
             PrimaryButton(
-              child: const Text('Filtrar'),
               onPressed: _onFilter,
+              child: const Text('Filtrar'),
             ),
           ],
         ),

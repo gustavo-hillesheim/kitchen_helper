@@ -12,12 +12,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'core/device_info.dart';
 import 'app_module.dart';
 import 'app_widget.dart';
+import 'database/sqlite/sqlite.dart';
+import 'firebase_options.dart';
 
 void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       await DeviceInfo.initialize();
 
       FirebaseCrashlytics.instance
@@ -32,9 +36,13 @@ void main() async {
         );
       }).sendPort);
 
+      await SQLiteDatabase.getInstance();
+
       runApp(DevicePreview(
-        builder: (_) =>
-            ModularApp(module: AppModule(), child: const AppWidget()),
+        builder: (_) => ModularApp(
+          module: AppModule(),
+          child: const AppWidget(),
+        ),
         enabled: !kReleaseMode && Platform.isWindows,
       ));
     },

@@ -16,7 +16,7 @@ class AppTextFormField extends StatefulWidget {
   final int? maxLength;
 
   const AppTextFormField({
-    Key? key,
+    super.key,
     required this.name,
     this.required = true,
     this.onChanged,
@@ -28,10 +28,10 @@ class AppTextFormField extends StatefulWidget {
     this.multiline,
     this.initialValue,
     this.maxLength,
-  }) : super(key: key);
+  });
 
   AppTextFormField.number({
-    Key? key,
+    super.key,
     required this.name,
     this.required = true,
     this.onChanged,
@@ -44,11 +44,10 @@ class AppTextFormField extends StatefulWidget {
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         initialValue =
-            initialValue != null ? Formatter.simpleNumber(initialValue) : null,
-        super(key: key);
+            initialValue != null ? Formatter.simpleNumber(initialValue) : null;
 
   AppTextFormField.money({
-    Key? key,
+    super.key,
     required this.name,
     this.required = true,
     this.onChanged,
@@ -60,8 +59,7 @@ class AppTextFormField extends StatefulWidget {
     num? initialValue,
   })  : keyboardType = TextInputType.number,
         prefixText = 'R\$',
-        initialValue = initialValue?.toStringAsFixed(2),
-        super(key: key);
+        initialValue = initialValue?.toStringAsFixed(2);
 
   @override
   State<AppTextFormField> createState() => _AppTextFormFieldState();

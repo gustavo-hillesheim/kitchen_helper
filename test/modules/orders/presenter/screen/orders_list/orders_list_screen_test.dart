@@ -10,7 +10,6 @@ import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/order
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/orders_filter_display.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/orders_list/widgets/order_list_tile.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../../finders.dart';
 import '../../../../../mocks.dart';
@@ -70,7 +69,8 @@ void main() {
     mockOrderListTile();
     final navigator = mockNavigator();
     when(
-      () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
+      () =>
+          navigator.pushNamed<bool?>(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => true);
 
     when(() => bloc.load()).thenAnswer((_) async {
@@ -84,7 +84,8 @@ void main() {
     await tester.pump();
 
     await tester.tap(find.byType(OrderListTile));
-    verify(() => navigator.pushNamed('./edit', arguments: batmanOrder.id));
+    verify(
+        () => navigator.pushNamed<bool?>('./edit', arguments: batmanOrder.id));
     verify(() => bloc.load());
   });
 
@@ -92,7 +93,8 @@ void main() {
       (tester) async {
     final navigator = mockNavigator();
     when(
-      () => navigator.pushNamed(any(), arguments: any(named: 'arguments')),
+      () =>
+          navigator.pushNamed<bool?>(any(), arguments: any(named: 'arguments')),
     ).thenAnswer((_) async => false);
 
     when(() => bloc.load()).thenAnswer((_) async {
@@ -107,7 +109,7 @@ void main() {
     verify(() => bloc.load());
 
     await tester.tap(find.text('Adicionar'));
-    verify(() => navigator.pushNamed('./edit', arguments: null));
+    verify(() => navigator.pushNamed<bool?>('./edit', arguments: null));
     verifyNever(() => bloc.load());
   });
 
@@ -131,7 +133,7 @@ void main() {
       'WHEN navigate to edit screen with filter on AND should reload '
       'SHOULD reload with filter', (tester) async {
     final navigator = mockNavigator();
-    when(() => navigator.pushNamed(any())).thenAnswer((_) async => true);
+    when(() => navigator.pushNamed<bool?>(any())).thenAnswer((_) async => true);
     when(() => bloc.load(any())).thenAnswer((_) async {
       streamController.sink.add(const SuccessState([]));
     });
@@ -152,19 +154,16 @@ void main() {
 }
 
 void mockOrderListTile() {
-  final getListingOrderProductsUseCase = GetListingOrderProductsUseCaseMock();
-
-  initModule(FakeModule([
-    Bind.instance<GetListingOrderProductsUseCase>(
-        getListingOrderProductsUseCase),
-  ]));
+  Modular.bindModule(FakeModule());
 }
 
 class FakeModule extends Module {
   @override
-  final List<Bind> binds;
-
-  FakeModule(this.binds);
+  void binds(Injector i) {
+    i.addInstance<GetListingOrderProductsUseCase>(
+      GetListingOrderProductsUseCaseMock(),
+    );
+  }
 }
 
 class OrdersListBlocMock extends Mock implements OrdersListBloc {}

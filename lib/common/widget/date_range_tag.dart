@@ -12,13 +12,13 @@ class DateRangeTag extends StatelessWidget {
   final bool isActive;
 
   const DateRangeTag({
-    Key? key,
+    super.key,
     required this.identifier,
     this.isActive = false,
     this.start,
     this.end,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

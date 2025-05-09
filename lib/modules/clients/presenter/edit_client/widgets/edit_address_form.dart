@@ -12,11 +12,11 @@ class EditAddressForm extends StatefulWidget {
   final VoidCallback onCancel;
 
   const EditAddressForm({
-    Key? key,
+    super.key,
     required this.initialValue,
     required this.onSave,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   _EditAddressFormState createState() => _EditAddressFormState();
@@ -168,7 +168,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
               widget.initialValue != null
                   ? 'Editar endereço'
                   : 'Adicionar endereço',
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             kMediumSpacerVertical,
             Row(
@@ -251,17 +251,17 @@ class _EditAddressFormState extends State<EditAddressForm> {
               children: [
                 Expanded(
                   child: SecondaryButton(
-                    child: const Text('Cancelar'),
                     onPressed: _cancel,
+                    child: const Text('Cancelar'),
                   ),
                 ),
                 kSmallSpacerHorizontal,
                 Expanded(
                   child: PrimaryButton(
-                    child: Text(
-                        widget.initialValue != null ? 'Salvar' : 'Adicionar'),
                     size: null,
                     onPressed: _save,
+                    child: Text(
+                        widget.initialValue != null ? 'Salvar' : 'Adicionar'),
                   ),
                 ),
               ],

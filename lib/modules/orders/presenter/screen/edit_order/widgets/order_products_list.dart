@@ -16,12 +16,12 @@ class OrderProductsList extends StatelessWidget {
   final List<EditingOrderProductDto> products;
 
   const OrderProductsList({
-    Key? key,
+    super.key,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
     required this.products,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,16 +87,16 @@ class OrderProductListTile extends StatelessWidget {
 
   const OrderProductListTile(
     this.product, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final nameText = AutoSizeText(
       product.name,
-      style: textTheme.headline6!.copyWith(
+      style: textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w400,
       ),
       softWrap: false,
@@ -104,14 +104,14 @@ class OrderProductListTile extends StatelessWidget {
     );
     final priceText = Text(
       Formatter.currency(product.price),
-      style: textTheme.headline5!.copyWith(
+      style: textTheme.headlineSmall!.copyWith(
         fontWeight: FontWeight.w300,
       ),
     );
     final quantityText = Text(
       '${Formatter.simpleNumber(product.quantity)} '
       '${product.measurementUnit.abbreviation}',
-      style: textTheme.subtitle2,
+      style: textTheme.titleSmall,
     );
     final productInfo = Row(
       children: [
@@ -132,8 +132,8 @@ class OrderProductListTile extends StatelessWidget {
     );
 
     return FlatTile(
-      child: productInfo,
       onTap: onTap,
+      child: productInfo,
     );
   }
 }

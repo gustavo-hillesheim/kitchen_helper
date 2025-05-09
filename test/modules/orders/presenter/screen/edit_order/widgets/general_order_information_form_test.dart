@@ -9,7 +9,6 @@ import 'package:kitchen_helper/modules/clients/clients.dart';
 import 'package:kitchen_helper/modules/orders/orders.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../../../finders.dart';
 import '../../../../../../mocks.dart';
@@ -39,7 +38,7 @@ void main() {
         .thenAnswer((_) async => const Right([
               ClientDomainDto(id: 1, label: 'Test Client'),
             ]));
-    initModule(FakeModule(getClientsDomainUseCase));
+    Modular.bindModule(FakeModule(getClientsDomainUseCase));
   });
 
   Future<void> pumpWidget(WidgetTester tester) async {
@@ -163,7 +162,9 @@ class FakeModule extends Module {
   FakeModule(this.getClientsDomainUseCase);
 
   @override
-  List<Bind<Object>> get binds => [
-        Bind((i) => ClientSelectorService(getClientsDomainUseCase)),
-      ];
+  void binds(Injector i) {
+    i.addInstance<ClientSelectorService>(
+      ClientSelectorService(getClientsDomainUseCase),
+    );
+  }
 }

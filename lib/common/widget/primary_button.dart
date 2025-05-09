@@ -11,12 +11,12 @@ class PrimaryButton extends StatefulWidget {
   final bool? isLoading;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.child,
     required this.onPressed,
     this.size = const Size.fromHeight(48),
     this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   State<PrimaryButton> createState() => _PrimaryButtonState();
@@ -29,8 +29,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
   @override
   void didChangeDependencies() {
     buttonStyle = ButtonStyle(
-      minimumSize: MaterialStateProperty.all(widget.size),
-      backgroundColor: MaterialStateProperty.all(
+      minimumSize: WidgetStateProperty.all(widget.size),
+      backgroundColor: WidgetStateProperty.all(
         Theme.of(context).colorScheme.secondary,
       ),
     );
@@ -63,7 +63,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onPressed: null,
       child: Center(
           child: CircularProgressIndicator(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.surface,
       )),
     );
   }

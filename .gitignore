@@ -44,10 +44,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-.fvm/flutter_sdk
+/android/app/.cxx
 
 **/*.g.dart
 .vscode
 android/key.properties
 android/app/google-services.json
 stacktraces
+
+# FVM Version Cache
+.fvm/

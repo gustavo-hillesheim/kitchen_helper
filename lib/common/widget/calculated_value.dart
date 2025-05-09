@@ -9,11 +9,11 @@ class CalculatedValue extends StatelessWidget {
   final List<CalculationStep> calculation;
 
   const CalculatedValue({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     required this.calculation,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,20 +9,20 @@ class ClientListTile extends StatelessWidget {
 
   const ClientListTile(
     this.client, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return FlatTile(
+      onTap: onTap,
       child: Text(
         client.name,
-        style: Theme.of(context).textTheme.headline6!.copyWith(
+        style: Theme.of(context).textTheme.titleLarge!.copyWith(
               fontWeight: FontWeight.w400,
             ),
       ),
-      onTap: onTap,
     );
   }
 }

@@ -267,7 +267,8 @@ void main() {
       mockDeleteDiscountsByOrder().thenAnswer((_) async => const Right(null));
       mockDeleteProductsByOrder().thenAnswer((_) async => const Right(null));
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.deleteById(tableName, idColumn, batmanOrder.id!));
         verify(
           () => orderDiscountRepository.deleteByOrder(batmanOrder.id!),
@@ -281,14 +282,15 @@ void main() {
       final result = await repository.deleteById(batmanOrder.id!);
 
       expect(result.isRight(), true);
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to delete order SHOULD NOT delete order products',
         () async {
       mockDeleteById().thenThrow(FakeDatabaseException('could not delete'));
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.deleteById(tableName, idColumn, batmanOrder.id!));
         verifyNever(() => orderProductRepository.deleteByOrder(any()));
         return result;
@@ -300,7 +302,7 @@ void main() {
         result.getLeft().toNullable()?.message,
         SQLiteRepository.couldNotDeleteMessage,
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test(
@@ -312,7 +314,8 @@ void main() {
         (_) async => Left(FakeFailure('failure')),
       );
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.deleteById(tableName, idColumn, batmanOrder.id!));
         verify(() => orderProductRepository.deleteByOrder(batmanOrder.id!));
         verify(() => orderDiscountRepository.deleteByOrder(batmanOrder.id!));
@@ -322,7 +325,7 @@ void main() {
       final result = await repository.deleteById(batmanOrder.id!);
 
       expect(result.getLeft().toNullable()?.message, 'failure');
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test(
@@ -332,7 +335,8 @@ void main() {
       mockDeleteDiscountsByOrder()
           .thenAnswer((_) async => Left(FakeFailure('failure')));
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.deleteById(tableName, idColumn, batmanOrder.id!));
         verifyNever(
             () => orderProductRepository.deleteByOrder(batmanOrder.id!));
@@ -343,7 +347,7 @@ void main() {
       final result = await repository.deleteById(batmanOrder.id!);
 
       expect(result.getLeft().toNullable()?.message, 'failure');
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     testExceptionsOnDeleteById(
@@ -371,7 +375,8 @@ void main() {
         cakeOrderProductEntityWithId.id!
       ];
       mockTransaction<Either<Failure, int>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, int>>(invocation);
         verify(() => database.insert(tableName, repository.toMap(batmanOrder)));
         verify(() => orderProductRepository.create(cakeOrderProductEntity));
         verify(() => orderProductRepository.create(iceCreamOrderProductEntity));
@@ -386,13 +391,14 @@ void main() {
       final result = await repository.create(batmanOrder);
 
       expect(result.getRight().toNullable(), batmanOrder.id!);
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
     });
 
     test('WHEN fails to create order SHOULD NOT create products nor discounts',
         () async {
       mockTransaction<Either<Failure, int>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, int>>(invocation);
         verify(() => database.insert(tableName, repository.toMap(batmanOrder)));
         verifyNever(() => orderProductRepository.create(any()));
         verifyNever(() => orderDiscountRepository.create(any()));
@@ -406,13 +412,14 @@ void main() {
         result.getLeft().toNullable()?.message,
         SQLiteRepository.couldNotInsertMessage,
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
     });
 
     test('WHEN orderProductRepository retuns Failure SHOULD return Failure',
         () async {
       mockTransaction<Either<Failure, int>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, int>>(invocation);
         verify(() => database.insert(tableName, repository.toMap(batmanOrder)));
         verify(() => orderProductRepository.create(cakeOrderProductEntity));
         verify(() => orderProductRepository.create(iceCreamOrderProductEntity));
@@ -426,13 +433,14 @@ void main() {
       final result = await repository.create(batmanOrder);
 
       expect(result.getLeft().toNullable()?.message, 'failure');
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
     });
 
     test('WHEN orderDiscountRepository retuns Failure SHOULD return Failure',
         () async {
       mockTransaction<Either<Failure, int>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, int>>(invocation);
         verify(() => database.insert(tableName, repository.toMap(batmanOrder)));
         verify(() => orderProductRepository.create(cakeOrderProductEntity));
         verify(() => orderProductRepository.create(iceCreamOrderProductEntity));
@@ -447,7 +455,7 @@ void main() {
       final result = await repository.create(batmanOrder);
 
       expect(result.getLeft().toNullable()?.message, 'failure');
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, int>>(any()));
     });
 
     testExceptionsOnCreate(
@@ -471,7 +479,8 @@ void main() {
         cakeOrderProductEntityWithId.id!,
       ];
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -496,13 +505,14 @@ void main() {
       final result = await repository.update(batmanOrder);
 
       expect(result.isRight(), true);
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to update order SHOULD not recreate products or discounts',
         () async {
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -523,12 +533,13 @@ void main() {
         result.getLeft().toNullable()?.message,
         SQLiteRepository.couldNotUpdateMessage,
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to delete products SHOULD not recreate them', () async {
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -553,12 +564,13 @@ void main() {
         result.getLeft().toNullable()?.message,
         'failure',
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to delete discounts SHOULD not recreate them', () async {
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -582,12 +594,13 @@ void main() {
         result.getLeft().toNullable()?.message,
         'failure',
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to create products SHOULD return Failure', () async {
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -616,12 +629,13 @@ void main() {
         result.getLeft().toNullable()?.message,
         'create failure',
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     test('WHEN fails to create discounts SHOULD return Failure', () async {
       mockTransaction<Either<Failure, void>>().thenAnswer((invocation) async {
-        final result = await executeTransaction(invocation);
+        final result =
+            await executeTransaction<Either<Failure, void>>(invocation);
         verify(() => database.update(
               tableName,
               batmanOrder.toJson()
@@ -648,7 +662,7 @@ void main() {
         result.getLeft().toNullable()?.message,
         'create failure',
       );
-      verify(() => database.insideTransaction(any()));
+      verify(() => database.insideTransaction<Either<Failure, void>>(any()));
     });
 
     testExceptionsOnUpdate(

@@ -9,7 +9,7 @@ abstract class QueryOperator<T> extends Equatable {
 }
 
 class Contains extends QueryOperator<String> {
-  const Contains(String value) : super(value);
+  const Contains(super.value);
 
   @override
   String get operation => "LIKE '%' || ? || '%'";
@@ -19,7 +19,7 @@ class Contains extends QueryOperator<String> {
 }
 
 class GreaterOrEqualThan extends QueryOperator<Object> {
-  const GreaterOrEqualThan(Object value) : super(value);
+  const GreaterOrEqualThan(super.value);
 
   @override
   String get operation => '>= ?';
@@ -29,7 +29,7 @@ class GreaterOrEqualThan extends QueryOperator<Object> {
 }
 
 class LowerOrEqualThan extends QueryOperator<Object> {
-  const LowerOrEqualThan(Object value) : super(value);
+  const LowerOrEqualThan(super.value);
 
   @override
   String get operation => '<= ?';

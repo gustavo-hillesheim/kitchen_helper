@@ -78,8 +78,8 @@ class AppBarHeader implements Header {
     final textTheme = Theme.of(context).textTheme;
     const kBackButtonSize = 24;
     final animationProgress = _animationProgress(availableHeight);
-    final expandedFontSize = textTheme.headline6!.fontSize! * 1.5;
-    final collapsedFontSize = textTheme.headline6!.fontSize!;
+    final expandedFontSize = textTheme.titleLarge!.fontSize! * 1.5;
+    final collapsedFontSize = textTheme.titleLarge!.fontSize!;
     const expandedPadding = 0;
     const collapsedPadding = kBackButtonSize;
     final fontSize = collapsedFontSize +
@@ -92,7 +92,7 @@ class AppBarHeader implements Header {
       ),
       child: AutoSizeText(
         title,
-        style: Theme.of(context).textTheme.headline4!.copyWith(
+        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
               color: Colors.white,
             ),
         maxFontSize: fontSize.roundToDouble(),
@@ -105,9 +105,8 @@ class AppBarHeader implements Header {
         icon: Icon(action!.icon),
         label: Text(action!.label),
         style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all(Colors.white),
-          overlayColor:
-              MaterialStateProperty.all(Colors.white.withOpacity(0.1)),
+          foregroundColor: WidgetStateProperty.all(Colors.white),
+          overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.1)),
         ),
       );
 }

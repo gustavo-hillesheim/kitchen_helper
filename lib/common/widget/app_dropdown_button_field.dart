@@ -10,13 +10,13 @@ class AppDropdownButtonField<T> extends StatelessWidget {
   final ValueChanged<T?>? onChange;
 
   const AppDropdownButtonField({
-    Key? key,
+    super.key,
     required this.name,
     required this.values,
     this.required = true,
     this.value,
     this.onChange,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

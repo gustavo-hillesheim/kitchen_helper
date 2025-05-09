@@ -216,10 +216,10 @@ void main() {
     mockDelete(transaction, 1);
     mockRawQuery(transaction, []);
 
-    when(() => sqfliteDatabase.transaction(any())).thenAnswer(
+    when(() => sqfliteDatabase.transaction<String>(any())).thenAnswer(
         (invocation) => invocation.positionalArguments[0](transaction));
 
-    final result = await database.insideTransaction(() async {
+    final result = await database.insideTransaction<String>(() async {
       await database.insert('people', {'name': 'mike'});
       await database.update('people', {'name': 'johnson'}, 'id', 1);
       await database.findById('people', 'id', 1);
@@ -246,10 +246,12 @@ void main() {
       'WHEN the action inside a transaction returns an Failure Either'
       'SHOULD throw an exception AND return the Either', () async {
     final transaction = TransactionMock();
-    when(() => sqfliteDatabase.transaction(any())).thenAnswer(
-        (invocation) => invocation.positionalArguments[0](transaction));
+    when(() => sqfliteDatabase.transaction<Either<FakeFailure, dynamic>>(any()))
+        .thenAnswer(
+            (invocation) => invocation.positionalArguments[0](transaction));
 
-    final result = await database.insideTransaction(() {
+    final result =
+        await database.insideTransaction<Either<FakeFailure, dynamic>>(() {
       return Left(FakeFailure('fake error'));
     });
 

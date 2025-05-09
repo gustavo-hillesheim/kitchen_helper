@@ -24,7 +24,7 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
   final Widget? headerBottom;
 
   ListPageTemplate({
-    Key? key,
+    super.key,
     required this.title,
     required this.bloc,
     required this.tileBuilder,
@@ -35,8 +35,7 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
     required this.onAdd,
     OnLoadFn? onLoad,
     this.headerBottom,
-  })  : onLoad = onLoad ?? (() => bloc.load()),
-        super(key: key);
+  }) : onLoad = onLoad ?? (() => bloc.load());
 
   @override
   Widget build(BuildContext context) {

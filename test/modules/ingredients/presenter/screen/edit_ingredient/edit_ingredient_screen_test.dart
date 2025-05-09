@@ -177,12 +177,12 @@ void main() {
   test('Should navigate to ingredients route', () async {
     final navigator = mockNavigator();
 
-    when(() => navigator.pushNamed(any(), arguments: any(named: 'arguments')))
-        .thenAnswer((_) async => false);
+    when(() => navigator.pushNamed<bool?>(any(),
+        arguments: any(named: 'arguments'))).thenAnswer((_) async => false);
 
     EditIngredientScreen.navigate(egg.id);
 
-    verify(() => navigator.pushNamed('./edit', arguments: egg.id));
+    verify(() => navigator.pushNamed<bool?>('./edit', arguments: egg.id));
   });
 }
 
@@ -193,8 +193,8 @@ class MeasurementUnitSelectorFinder extends MatchFinder {
 
   MeasurementUnitSelectorFinder({
     this.value,
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
+    super.skipOffstage,
+  });
 
   @override
   String get description => 'MeasurementUnitSelector(value: $value)';

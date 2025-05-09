@@ -14,12 +14,12 @@ class ScreenStateBuilder<T> extends StatelessWidget {
   final ErrorBuilder errorBuilder;
 
   const ScreenStateBuilder({
-    Key? key,
+    super.key,
     required this.stateStream,
     required this.successBuilder,
     required this.errorBuilder,
     this.loadingBuilder = _defaultLoadingBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

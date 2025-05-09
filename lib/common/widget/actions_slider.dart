@@ -6,10 +6,10 @@ class ActionsSlider extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const ActionsSlider({
-    Key? key,
+    super.key,
     required this.child,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

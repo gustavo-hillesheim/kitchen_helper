@@ -9,10 +9,10 @@ class EditDiscountForm extends StatefulWidget {
   final ValueChanged<Discount> onSave;
 
   const EditDiscountForm({
-    Key? key,
+    super.key,
     this.initialValue,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _EditDiscountFormState createState() => _EditDiscountFormState();
@@ -54,7 +54,7 @@ class _EditDiscountFormState extends State<EditDiscountForm> {
                     widget.initialValue != null
                         ? 'Editar desconto'
                         : 'Adicionar desconto',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   kMediumSpacerVertical,
                   Column(
@@ -92,8 +92,8 @@ class _EditDiscountFormState extends State<EditDiscountForm> {
                   ),
                   kMediumSpacerVertical,
                   PrimaryButton(
-                    child: const Text('Salvar'),
                     onPressed: _save,
+                    child: const Text('Salvar'),
                   ),
                 ],
               ),

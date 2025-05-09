@@ -5,7 +5,7 @@ import '../constants.dart';
 class BottomCard extends StatelessWidget {
   final Widget child;
 
-  const BottomCard({Key? key, required this.child}) : super(key: key);
+  const BottomCard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

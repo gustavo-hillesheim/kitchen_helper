@@ -12,10 +12,10 @@ class BodyWithHeader extends StatefulWidget {
   final Widget body;
 
   const BodyWithHeader({
-    Key? key,
+    super.key,
     required this.header,
     required this.body,
-  }) : super(key: key);
+  });
 
   @override
   _BodyWithHeaderState createState() => _BodyWithHeaderState();
@@ -55,8 +55,8 @@ class _BodyWithHeaderState extends State<BodyWithHeader> {
           child: Padding(
             padding: EdgeInsets.only(top: headerHeight - 1),
             child: PrimaryScrollController(
-              child: widget.body,
               controller: scrollController,
+              child: widget.body,
             ),
           ),
         ),
@@ -130,21 +130,14 @@ class StoppableScrollPosition extends ScrollPositionWithSingleContext {
   final BeforeScrollCallback beforeScroll;
 
   StoppableScrollPosition({
-    required ScrollPhysics physics,
-    required ScrollContext context,
+    required super.physics,
+    required super.context,
     required this.beforeScroll,
-    double? initialPixels = 0.0,
-    bool keepScrollOffset = true,
-    ScrollPosition? oldPosition,
-    String? debugLabel,
-  }) : super(
-          physics: physics,
-          context: context,
-          initialPixels: initialPixels,
-          keepScrollOffset: keepScrollOffset,
-          oldPosition: oldPosition,
-          debugLabel: debugLabel,
-        );
+    super.initialPixels,
+    super.keepScrollOffset,
+    super.oldPosition,
+    super.debugLabel,
+  });
 
   @override
   double setPixels(double newPixels) {

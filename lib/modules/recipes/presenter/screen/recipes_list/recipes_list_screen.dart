@@ -11,7 +11,7 @@ import 'widgets/recipe_list_tile.dart';
 class RecipesListScreen extends StatefulWidget {
   final RecipesListBloc? bloc;
 
-  const RecipesListScreen({Key? key, this.bloc}) : super(key: key);
+  const RecipesListScreen({super.key, this.bloc});
 
   @override
   State<RecipesListScreen> createState() => _RecipesListScreenState();

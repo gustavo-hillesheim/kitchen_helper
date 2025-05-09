@@ -23,8 +23,7 @@ void main() {
 class ContainerByColorFinder extends MatchFinder {
   final Color color;
 
-  ContainerByColorFinder(this.color, {bool skipOffstage = true})
-      : super(skipOffstage: skipOffstage);
+  ContainerByColorFinder(this.color, {super.skipOffstage});
 
   @override
   String get description => 'Container(color: $color)';

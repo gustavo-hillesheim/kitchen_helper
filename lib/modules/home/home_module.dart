@@ -4,7 +4,7 @@ import 'presenter/screen/menu/menu_screen.dart';
 
 class HomeModule extends Module {
   @override
-  List<ModularRoute> get routes => [
-        ChildRoute(Modular.initialRoute, child: (_, __) => const MenuScreen()),
-      ];
+  void routes(RouteManager r) {
+    r.child(Modular.initialRoute, child: (_) => const MenuScreen());
+  }
 }

@@ -17,10 +17,10 @@ class EditOrderScreen extends StatefulWidget {
   final EditOrderBloc? bloc;
 
   const EditOrderScreen({
-    Key? key,
+    super.key,
     this.id,
     this.bloc,
-  }) : super(key: key);
+  });
 
   static Future<bool?> navigate([int? id]) {
     return Modular.to.pushNamed<bool?>('./edit', arguments: id);
@@ -273,8 +273,8 @@ class _EditOrderScreenState extends State<EditOrderScreen>
             Padding(
               padding: kMediumEdgeInsets,
               child: PrimaryButton(
-                child: const Text('Salvar'),
                 onPressed: _save,
+                child: const Text('Salvar'),
               ),
             ),
           ],

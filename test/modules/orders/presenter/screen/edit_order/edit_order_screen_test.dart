@@ -14,7 +14,6 @@ import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widget
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/general_order_information_form.dart';
 import 'package:kitchen_helper/modules/orders/presenter/screen/edit_order/widgets/order_products_list.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:modular_test/modular_test.dart';
 
 import '../../../../../mocks.dart';
 import 'helpers.dart';
@@ -49,7 +48,7 @@ void main() {
               ClientDomainDto(
                   id: spidermanClient.id!, label: spidermanClient.name),
             ]));
-    initModule(FakeModule(clientSelectorService));
+    Modular.bindModule(FakeModule(clientSelectorService));
   });
 
   Future<void> pumpWidget(WidgetTester tester,
@@ -283,5 +282,7 @@ class FakeModule extends Module {
   FakeModule(this.clientSelectorService);
 
   @override
-  List<Bind<Object>> get binds => [Bind((i) => clientSelectorService)];
+  void binds(Injector i) {
+    i.addInstance<ClientSelectorService>(clientSelectorService);
+  }
 }

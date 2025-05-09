@@ -12,11 +12,11 @@ class Expandable extends StatefulWidget {
   final Widget? bottom;
 
   const Expandable({
-    Key? key,
+    super.key,
     required this.flexibleBuilder,
     this.top,
     this.bottom,
-  }) : super(key: key);
+  });
 
   @override
   _ExpandableState createState() => _ExpandableState();

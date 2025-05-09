@@ -1,48 +1,41 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'app_guard.dart';
 import 'database/sqlite/sqlite.dart';
 import 'modules/home/home_module.dart';
 import 'modules/ingredients/ingredients_module.dart';
 import 'modules/orders/orders_module.dart';
 import 'modules/recipes/recipes_module.dart';
 import 'modules/clients/clients_module.dart';
-import 'common/widget/client_selector_service.dart';
 
 class AppModule extends Module {
   @override
-  List<Bind<Object>> get binds => [
-        AsyncBind((i) => SQLiteDatabase.getInstance()),
-        Bind((i) => Dio()),
-        Bind((i) => ClientSelectorService(i())),
-      ];
+  void binds(Injector i) {
+    i.addInstance(Modular.tryGet<SQLiteDatabase>() ?? SQLiteDatabase.instance);
+    i.addLazySingleton(() => Dio());
+  }
 
   @override
-  List<ModularRoute> get routes => [
-        ModuleRoute(
-          Modular.initialRoute,
-          module: HomeModule(),
-        ),
-        ModuleRoute(
-          '/ingredients',
-          module: IngredientsModule(),
-          guards: [AppGuard()],
-        ),
-        ModuleRoute(
-          '/recipes',
-          module: RecipesModule(),
-          guards: [AppGuard()],
-        ),
-        ModuleRoute(
-          '/orders',
-          module: OrdersModule(),
-          guards: [AppGuard()],
-        ),
-        ModuleRoute(
-          '/clients',
-          module: ClientsModule(),
-          guards: [AppGuard()],
-        ),
-      ];
+  void routes(RouteManager r) {
+    r.module(
+      Modular.initialRoute,
+      module: HomeModule(),
+    );
+    r.module(
+      '/ingredients',
+      module: IngredientsModule(),
+    );
+    r.module(
+      '/recipes',
+      module: RecipesModule(),
+    );
+    r.module(
+      '/orders',
+      module: OrdersModule(),
+    );
+    r.module(
+      '/clients',
+      module: ClientsModule(),
+    );
+  }
 }

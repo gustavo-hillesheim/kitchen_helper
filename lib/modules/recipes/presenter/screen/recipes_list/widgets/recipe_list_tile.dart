@@ -10,16 +10,16 @@ class RecipeListTile extends StatelessWidget {
 
   const RecipeListTile(
     this.recipe, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final nameText = AutoSizeText(
       recipe.name,
-      style: textTheme.headline6!.copyWith(
+      style: textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w400,
       ),
       maxLines: 2,
@@ -28,7 +28,7 @@ class RecipeListTile extends StatelessWidget {
     final quantityProducedText = Text(
       'Produz ${Formatter.simpleNumber(recipe.quantityProduced)} '
       '${recipe.measurementUnit.label}',
-      style: textTheme.subtitle2,
+      style: textTheme.titleSmall,
     );
     final widgets = <Widget>[
       nameText,
@@ -42,7 +42,7 @@ class RecipeListTile extends StatelessWidget {
         'Vende ${Formatter.simpleNumber(quantitySold)} '
         '${recipe.measurementUnit.label} '
         'por ${Formatter.currency(price)}',
-        style: textTheme.subtitle2,
+        style: textTheme.titleSmall,
       );
       widgets.add(kSmallSpacerVertical);
       widgets.add(quantitySoldText);

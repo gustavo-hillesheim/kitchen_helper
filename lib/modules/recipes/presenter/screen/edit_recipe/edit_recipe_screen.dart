@@ -16,10 +16,10 @@ class EditRecipeScreen extends StatefulWidget {
   final int? id;
 
   const EditRecipeScreen({
-    Key? key,
+    super.key,
     this.id,
     this.bloc,
-  }) : super(key: key);
+  });
 
   static Future<bool?> navigate([int? id]) {
     return Modular.to.pushNamed<bool?>('./edit', arguments: id);
@@ -191,8 +191,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen>
                 stream: bloc.stream,
                 builder: (_, snapshot) => PrimaryButton(
                   onPressed: _save,
-                  child: const Text('Salvar'),
                   isLoading: snapshot.data is LoadingState,
+                  child: const Text('Salvar'),
                 ),
               ),
             ),

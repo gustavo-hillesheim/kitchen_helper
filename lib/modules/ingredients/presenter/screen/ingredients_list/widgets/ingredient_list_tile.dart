@@ -11,15 +11,15 @@ class IngredientListTile extends StatelessWidget {
   const IngredientListTile(
     this.ingredient, {
     this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final nameText = AutoSizeText(
       ingredient.name,
-      style: textTheme.headline6!.copyWith(
+      style: textTheme.titleLarge!.copyWith(
         fontWeight: FontWeight.w400,
       ),
       softWrap: false,
@@ -28,11 +28,11 @@ class IngredientListTile extends StatelessWidget {
     final quantityText = Text(
       '${Formatter.simpleNumber(ingredient.quantity)} '
       '${ingredient.measurementUnit.label}',
-      style: textTheme.subtitle2,
+      style: textTheme.titleSmall,
     );
     final priceText = Text(
       Formatter.currency(ingredient.cost),
-      style: textTheme.headline5!.copyWith(
+      style: textTheme.headlineSmall!.copyWith(
         fontWeight: FontWeight.w300,
       ),
     );
@@ -55,8 +55,8 @@ class IngredientListTile extends StatelessWidget {
     );
 
     return FlatTile(
-      child: ingredientInfo,
       onTap: onTap,
+      child: ingredientInfo,
     );
   }
 }
