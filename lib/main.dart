@@ -19,22 +19,12 @@ void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
       await DeviceInfo.initialize();
-
-      FirebaseCrashlytics.instance
-          .setUserIdentifier(DeviceInfo.instance.deviceId);
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-      // Listens for errors outside of Flutter
-      Isolate.current.addErrorListener(RawReceivePort((pair) async {
-        final List<dynamic> errorAndStacktrace = pair;
-        await FirebaseCrashlytics.instance.recordError(
-          errorAndStacktrace.first,
-          errorAndStacktrace.last,
-        );
-      }).sendPort);
+      final isPreview =
+          !kReleaseMode && (Platform.isWindows || Platform.isMacOS);
+      if (!isPreview) {
+        await _initializeFirebase();
+      }
 
       await SQLiteDatabase.getInstance();
 
@@ -43,10 +33,27 @@ void main() async {
           module: AppModule(),
           child: const AppWidget(),
         ),
-        enabled: !kReleaseMode && Platform.isWindows,
+        enabled: isPreview,
       ));
     },
     // Listens for errors inside the zone
     (e, s) => FirebaseCrashlytics.instance.recordError(e, s),
   );
+}
+
+Future<void> _initializeFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseCrashlytics.instance.setUserIdentifier(DeviceInfo.instance.deviceId);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // Listens for errors outside of Flutter
+  Isolate.current.addErrorListener(RawReceivePort((pair) async {
+    final List<dynamic> errorAndStacktrace = pair;
+    await FirebaseCrashlytics.instance.recordError(
+      errorAndStacktrace.first,
+      errorAndStacktrace.last,
+    );
+  }).sendPort);
 }

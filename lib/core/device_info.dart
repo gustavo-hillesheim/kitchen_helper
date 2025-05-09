@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 
 class DeviceInfo {
@@ -9,8 +11,13 @@ class DeviceInfo {
 
   static Future<void> initialize() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
-    final androidInfo = await deviceInfoPlugin.androidInfo;
-    final deviceId = androidInfo.id;
+    final String deviceId;
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfoPlugin.androidInfo;
+      deviceId = androidInfo.id;
+    } else {
+      deviceId = '';
+    }
     _instance ??= DeviceInfo._(deviceId: deviceId);
   }
 
