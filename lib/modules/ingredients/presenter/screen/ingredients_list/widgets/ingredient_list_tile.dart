@@ -11,8 +11,8 @@ class IngredientListTile extends StatelessWidget {
   const IngredientListTile(
     this.ingredient, {
     this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +55,8 @@ class IngredientListTile extends StatelessWidget {
     );
 
     return FlatTile(
-      child: ingredientInfo,
       onTap: onTap,
+      child: ingredientInfo,
     );
   }
 }

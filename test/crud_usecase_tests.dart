@@ -146,7 +146,7 @@ void deleteUseCaseTests<T extends Entity<ID>, ID>({
     final result = await usecase.execute(entityWithId);
 
     expect(result.isRight(), true);
-    verify(() => repository.deleteById(entityWithId.id!));
+    verify(() => repository.deleteById(entityWithId.id as ID));
   });
 
   test('WHEN entity returns a Failure SHOULD return a Failure too', () async {
@@ -158,7 +158,7 @@ void deleteUseCaseTests<T extends Entity<ID>, ID>({
     final result = await usecase.execute(entityWithId);
 
     expect(result.getLeft().toNullable()?.message, 'delete error');
-    verify(() => repository.deleteById(entityWithId.id!));
+    verify(() => repository.deleteById(entityWithId.id as ID));
   });
 
   test('WHEN entity doesn\'t have an id SHOULD return a Failure', () async {
@@ -170,6 +170,6 @@ void deleteUseCaseTests<T extends Entity<ID>, ID>({
       result.getLeft().toNullable(),
       BusinessFailure(errorMessageWithoutId),
     );
-    verifyNever(() => repository.deleteById(entityWithId.id!));
+    verifyNever(() => repository.deleteById(entityWithId.id as ID));
   });
 }

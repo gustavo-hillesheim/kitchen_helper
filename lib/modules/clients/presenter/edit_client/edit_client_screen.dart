@@ -12,7 +12,7 @@ import 'edit_client_bloc.dart';
 class EditClientScreen extends StatefulWidget {
   final int? id;
 
-  const EditClientScreen({Key? key, this.id}) : super(key: key);
+  const EditClientScreen({super.key, this.id});
 
   static Future<bool?> navigate([int? id]) {
     return Modular.to.pushNamed<bool?>('./edit', arguments: id);

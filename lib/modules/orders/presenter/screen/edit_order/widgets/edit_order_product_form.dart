@@ -10,11 +10,11 @@ class EditOrderProductForm extends StatefulWidget {
   final EditingOrderProductDto? initialValue;
 
   const EditOrderProductForm({
-    Key? key,
+    super.key,
     required this.onSave,
     required this.onCancel,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   _EditOrderProductFormState createState() => _EditOrderProductFormState();
@@ -89,18 +89,18 @@ class _EditOrderProductFormState extends State<EditOrderProductForm> {
                     children: [
                       Expanded(
                         child: SecondaryButton(
-                          child: const Text('Cancelar'),
                           onPressed: _cancel,
+                          child: const Text('Cancelar'),
                         ),
                       ),
                       kSmallSpacerHorizontal,
                       Expanded(
                         child: PrimaryButton(
+                          size: null,
+                          onPressed: _save,
                           child: Text(widget.initialValue != null
                               ? 'Salvar'
                               : 'Adicionar'),
-                          size: null,
-                          onPressed: _save,
                         ),
                       ),
                     ],

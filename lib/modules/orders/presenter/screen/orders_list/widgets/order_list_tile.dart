@@ -15,10 +15,10 @@ class OrderListTile extends StatefulWidget {
 
   const OrderListTile(
     this.order, {
-    Key? key,
+    super.key,
     required this.onTap,
     this.bloc,
-  }) : super(key: key);
+  });
 
   @override
   State<OrderListTile> createState() => _OrderListTileState();

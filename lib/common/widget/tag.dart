@@ -9,12 +9,12 @@ class Tag extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const Tag({
-    Key? key,
+    super.key,
     required this.label,
     this.onDelete,
     this.color,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

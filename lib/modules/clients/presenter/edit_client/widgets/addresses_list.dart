@@ -16,11 +16,11 @@ class AddressesList extends StatelessWidget {
 
   const AddressesList(
     this.addresses, {
-    Key? key,
+    super.key,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +78,9 @@ class AddressListTile extends StatelessWidget {
 
   const AddressListTile(
     this.address, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -562,13 +562,13 @@ class SQLiteContactRepositoryMock extends Mock
 extension on Client {
   List<AddressEntity> addressEntities() {
     return addresses
-        .map((a) => AddressEntity.fromAddress(a, clientId: this.id))
+        .map((a) => AddressEntity.fromAddress(a, clientId: id))
         .toList();
   }
 
   List<ContactEntity> contactEntities() {
     return contacts
-        .map((c) => ContactEntity.fromContact(c, clientId: this.id))
+        .map((c) => ContactEntity.fromContact(c, clientId: id))
         .toList();
   }
 }

@@ -193,8 +193,8 @@ class MeasurementUnitSelectorFinder extends MatchFinder {
 
   MeasurementUnitSelectorFinder({
     this.value,
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
+    super.skipOffstage,
+  });
 
   @override
   String get description => 'MeasurementUnitSelector(value: $value)';

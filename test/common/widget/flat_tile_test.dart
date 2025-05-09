@@ -10,8 +10,8 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(
       home: FlatTile(
-        child: child,
         onTap: onTap,
+        child: child,
       ),
     ));
 

@@ -10,8 +10,8 @@ class EmptyFinder extends MatchFinder {
   EmptyFinder({
     required this.text,
     this.subtext,
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
+    super.skipOffstage,
+  });
 
   @override
   String get description => 'Empty(text: $text, subtext: $subtext)';
@@ -38,8 +38,8 @@ class AppTextFormFieldFinder extends MatchFinder {
     this.type,
     this.prefix,
     this.value = '',
-    bool skipOffstage = true,
-  }) : super(skipOffstage: skipOffstage);
+    super.skipOffstage,
+  });
 
   @override
   String get description => 'AppTextFormField(name: $name, type: $type, '

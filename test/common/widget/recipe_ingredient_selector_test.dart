@@ -30,7 +30,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: RecipeIngredientSelector(
-          onChanged: onChanged,
+          onChanged: onChanged.call,
           initialValue: initialValue,
           showOnly: showOnly ?? RecipeIngredientSelectorItems.all,
           recipeFilter: recipeFilter,

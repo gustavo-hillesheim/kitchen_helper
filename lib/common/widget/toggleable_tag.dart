@@ -10,13 +10,13 @@ class ToggleableTag extends StatefulWidget {
   final ValueChanged<bool> onChange;
 
   const ToggleableTag({
-    Key? key,
+    super.key,
     required this.label,
     required this.onChange,
     this.isActive,
     this.activeColor,
     this.inactiveColor,
-  }) : super(key: key);
+  });
 
   @override
   _ToggleableTagState createState() => _ToggleableTagState();

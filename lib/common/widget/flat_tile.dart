@@ -10,11 +10,11 @@ class FlatTile extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   const FlatTile({
-    Key? key,
+    super.key,
     required this.child,
     this.padding = defaultPadding,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

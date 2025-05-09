@@ -29,7 +29,7 @@ class GeneralOrderInformationForm extends StatelessWidget {
   final double discount;
 
   const GeneralOrderInformationForm({
-    Key? key,
+    super.key,
     required this.orderDateNotifier,
     required this.deliveryDateNotifier,
     required this.statusNotifier,
@@ -41,7 +41,7 @@ class GeneralOrderInformationForm extends StatelessWidget {
     required this.contactNotifier,
     required this.searchAddressDomainFn,
     required this.addressNotifier,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

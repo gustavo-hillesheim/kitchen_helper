@@ -10,11 +10,11 @@ class MeasurementUnitSelector extends StatelessWidget {
   final ValueChanged<MeasurementUnit?> onChange;
 
   const MeasurementUnitSelector({
-    Key? key,
+    super.key,
     this.value,
     this.required = true,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

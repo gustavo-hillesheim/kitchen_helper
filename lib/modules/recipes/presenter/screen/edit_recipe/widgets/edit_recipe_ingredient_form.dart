@@ -11,12 +11,12 @@ class EditRecipeIngredientForm extends StatefulWidget {
   final int? recipeToIgnore;
 
   const EditRecipeIngredientForm({
-    Key? key,
+    super.key,
     required this.onSave,
     required this.onCancel,
     this.recipeToIgnore,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   _EditRecipeIngredientFormState createState() =>
@@ -89,18 +89,18 @@ class _EditRecipeIngredientFormState extends State<EditRecipeIngredientForm> {
                     children: [
                       Expanded(
                         child: SecondaryButton(
-                          child: const Text('Cancelar'),
                           onPressed: _cancel,
+                          child: const Text('Cancelar'),
                         ),
                       ),
                       kSmallSpacerHorizontal,
                       Expanded(
                         child: PrimaryButton(
+                          size: null,
+                          onPressed: _save,
                           child: Text(widget.initialValue != null
                               ? 'Salvar'
                               : 'Adicionar'),
-                          size: null,
-                          onPressed: _save,
                         ),
                       ),
                     ],

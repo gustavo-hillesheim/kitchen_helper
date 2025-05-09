@@ -11,7 +11,7 @@ import 'clients_list_bloc.dart';
 class ClientsListScreen extends StatefulWidget {
   final ClientsListBloc? bloc;
 
-  const ClientsListScreen({Key? key, this.bloc}) : super(key: key);
+  const ClientsListScreen({super.key, this.bloc});
 
   @override
   State<ClientsListScreen> createState() => _ClientsListScreenState();

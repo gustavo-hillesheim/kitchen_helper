@@ -12,13 +12,13 @@ class AppDateTimeField extends StatelessWidget {
   final ValueChanged<DateTime?>? onChanged;
 
   const AppDateTimeField({
-    Key? key,
+    super.key,
     required this.name,
     this.required = true,
     this.controller,
     this.initialValue,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

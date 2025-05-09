@@ -6,10 +6,10 @@ class FilterWithTags extends StatelessWidget {
   final List<Widget> tags;
 
   const FilterWithTags({
-    Key? key,
+    super.key,
     this.onOpenFilter,
     required this.tags,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

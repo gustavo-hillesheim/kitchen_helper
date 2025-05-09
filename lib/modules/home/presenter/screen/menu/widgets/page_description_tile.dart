@@ -11,12 +11,12 @@ class PageDescriptionTile extends StatefulWidget {
   final IconData icon;
 
   const PageDescriptionTile({
-    Key? key,
+    super.key,
     required this.name,
     required this.description,
     required this.route,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   _PageDescriptionTileState createState() => _PageDescriptionTileState();

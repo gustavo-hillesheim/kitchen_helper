@@ -11,7 +11,7 @@ void main() {
     void onDelete() => tapped = true;
 
     await tester.pumpWidget(MaterialApp(
-      home: ActionsSlider(child: child, onDelete: onDelete),
+      home: ActionsSlider(onDelete: onDelete, child: child),
     ));
 
     expect(find.byWidget(child), findsOneWidget);

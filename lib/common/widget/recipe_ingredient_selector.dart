@@ -28,14 +28,14 @@ class RecipeIngredientSelector extends StatefulWidget {
   final RecipeIngredientSelectorItems showOnly;
 
   const RecipeIngredientSelector({
-    Key? key,
+    super.key,
     required this.onChanged,
     this.initialValue,
     this.recipeFilter,
     this.service,
     this.recipeToIgnore,
     this.showOnly = RecipeIngredientSelectorItems.all,
-  }) : super(key: key);
+  });
 
   @override
   State<RecipeIngredientSelector> createState() =>

@@ -1,5 +1,5 @@
 /// This library contains pre-made tests for SQLiteRepositories
-library sqlite_repository_tests;
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitchen_helper/core/core.dart';

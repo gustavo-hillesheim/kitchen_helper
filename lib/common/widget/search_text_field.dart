@@ -28,7 +28,7 @@ class SearchTextField<T> extends StatelessWidget {
   final String errorSubtext;
 
   const SearchTextField({
-    Key? key,
+    super.key,
     required this.name,
     required this.onChanged,
     required this.onSearch,
@@ -44,8 +44,7 @@ class SearchTextField<T> extends StatelessWidget {
     GetLabelFn<T>? getListItemLabel,
   })  : getContentLabel = getContentLabel ?? defaultGetLabel,
         getListItemLabel =
-            getListItemLabel ?? getContentLabel ?? defaultGetLabel,
-        super(key: key);
+            getListItemLabel ?? getContentLabel ?? defaultGetLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +133,7 @@ class _SearchDialog<T> extends StatefulWidget {
   final String errorSubtext;
 
   const _SearchDialog({
-    Key? key,
+    super.key,
     required this.name,
     required this.searchFn,
     required this.getLabelFromValue,
@@ -144,7 +143,7 @@ class _SearchDialog<T> extends StatefulWidget {
     required this.emptySubtext,
     required this.errorTitle,
     required this.errorSubtext,
-  }) : super(key: key);
+  });
 
   @override
   State<_SearchDialog<T>> createState() => _SearchDialogState<T>();

@@ -16,12 +16,12 @@ class DiscountList extends StatelessWidget {
   final OnDeleteDiscount onDelete;
 
   const DiscountList({
-    Key? key,
+    super.key,
     required this.discounts,
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +81,9 @@ class DiscountListTile extends StatelessWidget {
 
   const DiscountListTile(
     this.discount, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

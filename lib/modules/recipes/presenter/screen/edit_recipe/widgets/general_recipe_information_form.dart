@@ -19,7 +19,7 @@ class GeneralRecipeInformationForm extends StatelessWidget {
   final EditRecipeBloc bloc;
 
   const GeneralRecipeInformationForm({
-    Key? key,
+    super.key,
     required this.quantityProducedController,
     required this.notesController,
     required this.quantitySoldController,
@@ -28,7 +28,7 @@ class GeneralRecipeInformationForm extends StatelessWidget {
     required this.measurementUnitNotifier,
     required this.cost,
     required this.bloc,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

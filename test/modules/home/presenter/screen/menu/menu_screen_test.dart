@@ -31,8 +31,7 @@ class PageDescriptionTileFinder extends MatchFinder {
   final String name;
   final String route;
 
-  PageDescriptionTileFinder(this.name, this.route, {bool skipOffstage = true})
-      : super(skipOffstage: skipOffstage);
+  PageDescriptionTileFinder(this.name, this.route, {super.skipOffstage});
 
   @override
   String get description => 'PageDescriptionTile(name: $name)';

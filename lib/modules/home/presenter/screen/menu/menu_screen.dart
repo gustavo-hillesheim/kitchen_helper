@@ -5,7 +5,7 @@ import 'package:kitchen_helper/core/device_info.dart';
 import 'widgets/page_description_tile.dart';
 
 class MenuScreen extends StatelessWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  const MenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

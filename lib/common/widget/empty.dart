@@ -9,12 +9,12 @@ class Empty extends StatelessWidget {
   final Widget? action;
 
   const Empty({
-    Key? key,
+    super.key,
     required this.text,
     this.icon = Icons.no_food_outlined,
     this.subtext,
     this.action,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

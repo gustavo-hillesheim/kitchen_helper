@@ -7,9 +7,9 @@ class IngredientsFilterDisplay extends StatefulWidget {
   final ValueChanged<IngredientsFilter?> onFilter;
 
   const IngredientsFilterDisplay({
-    Key? key,
+    super.key,
     required this.onFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<IngredientsFilterDisplay> createState() =>
@@ -68,10 +68,9 @@ class _IngredientsFilterForm extends StatefulWidget {
   final ValueChanged<IngredientsFilter> onFilter;
 
   const _IngredientsFilterForm({
-    Key? key,
     required this.onFilter,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   State<_IngredientsFilterForm> createState() => __IngredientsFilterFormState();
@@ -117,7 +116,7 @@ class __IngredientsFilterFormState extends State<_IngredientsFilterForm> {
               controller: _nameController,
             ),
             kMediumSpacerVertical,
-            PrimaryButton(child: const Text('Filtrar'), onPressed: _onFilter),
+            PrimaryButton(onPressed: _onFilter, child: const Text('Filtrar')),
           ],
         ),
       ),

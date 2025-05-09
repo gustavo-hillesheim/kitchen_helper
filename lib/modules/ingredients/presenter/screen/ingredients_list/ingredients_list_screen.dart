@@ -11,7 +11,7 @@ import 'widgets/ingredient_list_tile.dart';
 class IngredientsListScreen extends StatefulWidget {
   final IngredientsListBloc? bloc;
 
-  const IngredientsListScreen({Key? key, this.bloc}) : super(key: key);
+  const IngredientsListScreen({super.key, this.bloc});
 
   @override
   State<IngredientsListScreen> createState() => _IngredientsListScreenState();

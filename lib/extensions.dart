@@ -24,7 +24,7 @@ extension EitherExtension<L, R> on Either<L, R> {
   }
 
   Either<L, NR> asLeftOf<NR>() {
-    return Left<L, NR>(getLeft().toNullable()!);
+    return Left<L, NR>(getLeft().toNullable() as L);
   }
 
   Either<L, NR> combine<NR, OR>(
@@ -38,8 +38,8 @@ extension EitherExtension<L, R> on Either<L, R> {
       return other.asLeftOf();
     }
     return Right(combiner(
-      getRight().toNullable()!,
-      other.getRight().toNullable()!,
+      getRight().toNullable() as R,
+      other.getRight().toNullable() as OR,
     ));
   }
 }
@@ -76,7 +76,7 @@ extension IterableEitherExtension<L, R> on Iterable<Either<L, R>> {
       if (element.isLeft()) {
         return element.asLeftOf();
       }
-      elements.add(element.getRight().toNullable()!);
+      elements.add(element.getRight().toNullable() as R);
     }
     return Right(elements);
   }

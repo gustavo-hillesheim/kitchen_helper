@@ -12,11 +12,11 @@ class ClientSelector extends StatefulWidget {
   final bool required;
 
   const ClientSelector({
-    Key? key,
+    super.key,
     required this.onChange,
     this.value,
     this.required = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ClientSelector> createState() => _ClientSelectorState();
