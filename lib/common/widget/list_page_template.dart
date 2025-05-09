@@ -35,7 +35,7 @@ class ListPageTemplate<T extends ListingDto, E extends Entity<int>>
     required this.onAdd,
     OnLoadFn? onLoad,
     this.headerBottom,
-  })  : onLoad = onLoad ?? (() => bloc.load());
+  }) : onLoad = onLoad ?? (() => bloc.load());
 
   @override
   Widget build(BuildContext context) {

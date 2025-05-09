@@ -106,8 +106,7 @@ class AppBarHeader implements Header {
         label: Text(action!.label),
         style: ButtonStyle(
           foregroundColor: WidgetStateProperty.all(Colors.white),
-          overlayColor:
-              WidgetStateProperty.all(Colors.white.withOpacity(0.1)),
+          overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.1)),
         ),
       );
 }
