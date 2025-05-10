@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'widgets/export_data_button.dart';
+
 class ImportExportScreen extends StatelessWidget {
   const ImportExportScreen({super.key});
 
@@ -13,10 +15,7 @@ class ImportExportScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: Text('Exportar dados'),
-              ),
+              child: ExportDataButton(),
             ),
           ),
           Row(
