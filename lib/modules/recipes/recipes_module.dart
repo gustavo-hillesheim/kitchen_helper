@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/app_module.dart';
 
@@ -37,9 +36,8 @@ class RecipesModule extends Module {
     );
     r.child(
       '/edit',
-      child: (context) {
-        final route = ModalRoute.of(context);
-        final arguments = route?.settings.arguments;
+      child: (_) {
+        final arguments = Modular.args.data;
         if (arguments is! int?) {
           throw Exception(
               'The route /edit only accepts values of type int? as argument');
