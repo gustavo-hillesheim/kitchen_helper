@@ -9,6 +9,37 @@ class ImportExportScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Importar/Exportar dados'),
       ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: Text('Exportar dados'),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              const SizedBox(width: 16),
+              Expanded(child: Divider()),
+              const SizedBox(width: 16),
+              Text('ou'),
+              const SizedBox(width: 16),
+              Expanded(child: Divider()),
+              const SizedBox(width: 16),
+            ],
+          ),
+          Expanded(
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: Text('Importar dados'),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
