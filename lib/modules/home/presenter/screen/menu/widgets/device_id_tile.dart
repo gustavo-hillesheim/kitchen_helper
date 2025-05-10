@@ -17,7 +17,7 @@ class DeviceIdTile extends StatelessWidget {
           ),
         );
       },
-      title: Center(child: Text('Seu ID: $deviceId')),
+      title: Text('Seu ID: $deviceId'),
     );
   }
 }
