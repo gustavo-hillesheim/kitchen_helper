@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kitchen_helper/app_module.dart';
 import 'package:kitchen_helper/common/widget/client_selector_service.dart';
@@ -36,9 +35,8 @@ class ClientsModule extends Module {
       Modular.initialRoute,
       child: (_) => const ClientsListScreen(),
     );
-    r.child('/edit', child: (context) {
-      final route = ModalRoute.of(context);
-      final arguments = route?.settings.arguments;
+    r.child('/edit', child: (_) {
+      final arguments = Modular.args.data;
       if (arguments is! int?) {
         throw Exception(
             'The route /edit only accepts values of type int? as argument');

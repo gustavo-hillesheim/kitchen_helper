@@ -3,7 +3,7 @@ description: App intended to help owner of autonomous kitchens to calculate thei
 
 publish_to: "none"
 
-version: 1.3.8+17
+version: 1.4.0+17
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -33,6 +33,8 @@ dependencies:
   firebase_crashlytics: ^4.3.4
   firebase_core: ^3.12.1
   device_info_plus: ^11.3.0
+  share_plus: ^11.0.0
+  file_picker: ^10.1.7
 
 dev_dependencies:
   flutter_test:
